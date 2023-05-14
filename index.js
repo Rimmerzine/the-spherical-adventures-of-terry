@@ -38,6 +38,11 @@ class Vector2D {
     this.y = y;
   }
 
+  // Add another vector to this vector
+  add(vector) {
+    return new Vector2D(this.x + vector.x, this.y + vector.y);
+  }
+
   // Multiply the vector by a scalar value
   multiply(scalar) {
     return new Vector2D(this.x * scalar, this.y * scalar);
@@ -83,8 +88,8 @@ class Ball {
   reflect(reflectionVector) {
     const dotProduct = this.velocity.dotProduct(reflectionVector);
     const reflection = {
-      x: reflectionVector.x * dotProduct * 2,
-      y: reflectionVector.y * dotProduct * 2,
+      x: reflectionVector.x * dotProduct * 2 * 0.8,
+      y: reflectionVector.y * dotProduct * 2 * 0.8,
     };
     this.velocity.x -= reflection.x;
     this.velocity.y -= reflection.y;
@@ -113,6 +118,10 @@ class Ball {
 
   // Update the ball's position and handle collisions
   update() {
+    const gravity = new Vector2D(0, 0.1); // Define the gravity vector
+
+    this.velocity = this.velocity.add(gravity);
+
     const nextPosition = this.position.add(this.velocity);
 
     let collided = false;
@@ -237,14 +246,14 @@ class Wall {
 }
 
 // Create instances of the Ball class
-const ball = new Ball(new Position2D(235, 450), 50);
+const ball = new Ball(new Position2D(150, 350), 50);
 
 // Create instances of the Wall class
 const wallOne = new Wall(new Position2D(0, 500), new Position2D(1000, 500));
 const wallTwo = new Wall(new Position2D(0, 20), new Position2D(1000, 20));
 const wallThree = new Wall(new Position2D(20, 0), new Position2D(20, 550));
 const wallFour = new Wall(new Position2D(950, 0), new Position2D(950, 550));
-const wallFive = new Wall(new Position2D(250, 250), new Position2D(350, 350));
+const wallFive = new Wall(new Position2D(300, 500), new Position2D(500, 300));
 const wallSix = new Wall(new Position2D(250, 250), new Position2D(350, 150));
 
 // Store the walls in an array
