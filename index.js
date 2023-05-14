@@ -8,6 +8,8 @@ const fps = 60; // Frames per second
 canvas.width = 1024;
 canvas.height = 576;
 
+const debugMode = false;
+
 // Define an object to store the state of the keyboard keys
 const keys = {
   a: { pressed: false },
@@ -86,6 +88,8 @@ class Ball {
     };
     this.velocity.x -= reflection.x;
     this.velocity.y -= reflection.y;
+
+    drawDebugLine(this.position, this.position.add(this.velocity.multiply(4)));
   }
 
   // Handle the collision with a wall
@@ -132,11 +136,13 @@ class Ball {
       }
     });
 
-    this.position = nextPosition;
-
     if (collided && closestPoint) {
       // Handle the wall collision
       this.handleWallCollision(collidingWall, closestPoint);
+
+      this.position = this.position.add(this.velocity);
+    } else {
+      this.position = nextPosition;
     }
   }
 
@@ -315,3 +321,13 @@ window.addEventListener("keyup", (event) => {
       break;
   }
 });
+
+function drawDebugLine(from, to) {
+  if (debugMode) {
+    context.beginPath();
+    context.moveTo(from.x, from.y);
+    context.lineTo(to.x, to.y);
+    context.strokeStyle = "black";
+    context.stroke();
+  }
+}
