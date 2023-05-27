@@ -63,6 +63,7 @@ class Game {
     this.renderer.clearCanvas();
     this.renderer.drawBall(this.ball);
     this.renderer.drawWalls(this.walls, this.ball.position.x);
+    this.renderer.drawCurvedWalls(this.walls, this.ball.position.x);
   }
 
   update() {}

@@ -32,6 +32,28 @@ class CanvasRenderer {
     visibleWalls.forEach((wall) => this.drawWall(wall, ballPositionX));
   }
 
+  drawCurvedWalls(walls, ballPositionX) {
+    this.context.beginPath();
+    this.context.moveTo(
+      walls[0].lineStart.x - ballPositionX + 400,
+      walls[0].lineStart.y
+    );
+
+    for (let i = 0; i < walls.length - 1; i++) {
+      const cpx = walls[i].lineStart.x - ballPositionX + 400;
+      const cpy = walls[i].lineStart.y;
+      const x =
+        (walls[i].lineStart.x + walls[i + 1].lineStart.x) / 2 -
+        ballPositionX +
+        400;
+      const y = (walls[i].lineStart.y + walls[i + 1].lineStart.y) / 2;
+
+      this.context.quadraticCurveTo(cpx, cpy, x, y);
+    }
+
+    this.context.stroke();
+  }
+
   drawWall(wall, ballPositionX) {
     let region = new Path2D();
     region.moveTo(wall.drawStartX - ballPositionX, this.canvas.height);
@@ -48,32 +70,6 @@ class CanvasRenderer {
     this.context.beginPath();
     this.context.moveTo(wall.drawStartX - ballPositionX, wall.lineStart.y);
     this.context.lineTo(wall.drawEndX - ballPositionX, wall.lineEnd.y);
-    this.context.strokeStyle = "green";
-    this.context.stroke();
-  }
-
-  draw(ballPosX) {
-    let region = new Path2D();
-    region.moveTo(this.drawStartX - ballPosX, this.canvas.height);
-    region.lineTo(this.drawStartX - ballPosX, this.lineStart.y);
-    region.lineTo(this.drawEndX - ballPosX, this.lineEnd.y);
-    region.lineTo(this.drawEndX - ballPosX, this.canvas.height);
-    region.closePath();
-
-    this.context.fillStyle = "brown";
-    this.context.fill(region);
-
-    this.context.lineWidth = 3;
-
-    this.context.beginPath();
-    this.context.moveTo(
-      this.lineStart.x - (ballPosX - ballSettings.displayXPosition),
-      this.lineStart.y
-    );
-    this.context.lineTo(
-      this.lineEnd.x - (ballPosX - ballSettings.displayXPosition),
-      this.lineEnd.y
-    );
     this.context.strokeStyle = "green";
     this.context.stroke();
   }
