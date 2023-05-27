@@ -9,7 +9,7 @@ class CanvasRenderer {
   drawBall(ball) {
     this.context.beginPath();
     this.context.arc(
-      ballSettings.ballDisplayXPosition,
+      ballSettings.displayXPosition,
       ball.position.y,
       ball.radius,
       0,
@@ -23,7 +23,7 @@ class CanvasRenderer {
   }
 
   drawWalls(walls, ballPositionX) {
-    const canvasMapLeft = ballPositionX - ballSettings.ballDisplayXPosition;
+    const canvasMapLeft = ballPositionX - ballSettings.displayXPosition;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
     const visibleWalls = walls.filter(
       (wall) =>
@@ -43,7 +43,7 @@ class CanvasRenderer {
     this.context.fillStyle = "brown";
     this.context.fill(region);
 
-    this.context.lineWidth = 3;
+    this.context.lineWidth = 4;
 
     this.context.beginPath();
     this.context.moveTo(wall.drawStartX - ballPositionX, wall.lineStart.y);
@@ -67,11 +67,11 @@ class CanvasRenderer {
 
     this.context.beginPath();
     this.context.moveTo(
-      this.lineStart.x - (ballPosX - ballSettings.ballDisplayXPosition),
+      this.lineStart.x - (ballPosX - ballSettings.displayXPosition),
       this.lineStart.y
     );
     this.context.lineTo(
-      this.lineEnd.x - (ballPosX - ballSettings.ballDisplayXPosition),
+      this.lineEnd.x - (ballPosX - ballSettings.displayXPosition),
       this.lineEnd.y
     );
     this.context.strokeStyle = "green";

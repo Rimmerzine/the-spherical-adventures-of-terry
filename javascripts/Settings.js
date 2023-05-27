@@ -1,7 +1,7 @@
 import Vector2D from "./Vector2D.js";
 
 export const mapSettings = {
-  floorSegmentWidth: 100,
+  floorSegmentWidth: 150,
   floorSegmentCount: 1000,
   flatFloorCount: 10,
   floorSegmentCount: 1000,
@@ -10,8 +10,14 @@ export const mapSettings = {
 
 export const ballSettings = {
   movableDistance: 10,
-  movementSpeed: 0.1,
-  ballDisplayXPosition: mapSettings.floorSegmentWidth * 4,
+  movementSpeed: 0.05,
+  displayXPosition: 400,
+  startingYPosition: 450,
+  startingRadius: 50,
+  reflectionDampeningFactor: 0.8,
+  gripFactor: 0.8,
+  totalJumps: 0,
+  jumpCooldown: 0,
 };
 
 export const gameSettings = {
@@ -20,4 +26,4 @@ export const gameSettings = {
   fps: null,
 };
 
-export const gravity = new Vector2D(0, 0.2);
+export const gravity = new Vector2D(0, 0.15);

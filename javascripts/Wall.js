@@ -6,8 +6,8 @@ class Wall {
   constructor(lineStart, lineEnd) {
     this.lineStart = lineStart;
     this.lineEnd = lineEnd;
-    this.drawStartX = lineStart.x + ballSettings.ballDisplayXPosition - 1;
-    this.drawEndX = lineEnd.x + ballSettings.ballDisplayXPosition + 1;
+    this.drawStartX = lineStart.x + ballSettings.displayXPosition - 1;
+    this.drawEndX = lineEnd.x + ballSettings.displayXPosition + 1;
     this.direction = new Vector2D(
       lineEnd.x - lineStart.x,
       lineEnd.y - lineStart.y

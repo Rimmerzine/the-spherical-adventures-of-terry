@@ -24,8 +24,14 @@
           <div class="row">
             <h2>Stats</h2>
             <dl>
-              <dt>Movement Speed</dt>
-              <dd id="movement-speed-attribute">0.1</dd>
+              <dt>Acceleration</dt>
+              <dd><span id="acceleration-attribute">1</span>m per second</dd>
+              <dt>Weight</dt>
+              <dd><span id="weight-attribute">1</span>kg</dd>
+              <dt>Grip</dt>
+              <dd id="grip-attribute">Smooth</dd>
+              <dt>Jumps</dt>
+              <dd id="jump-attribute">0</dd>
             </dl>
           </div>
           <div class="row">
@@ -34,11 +40,42 @@
           <div class="row gy-4">
             <div class="col-4">
               <button
+                title="The ball will reach it's top speed more quickly"
                 id="upgrade-speed-button"
                 type="button"
                 class="btn btn-success"
               >
-                Upgrade Speed<br />(1 point)
+                Upgrade acceleration<br />(1 point)
+              </button>
+            </div>
+            <div class="col-4">
+              <button
+                title="The ball will bounce less"
+                id="upgrade-weight-button"
+                type="button"
+                class="btn btn-success"
+              >
+                Reduce Bounce<br />(1 point)
+              </button>
+            </div>
+            <div class="col-4">
+              <button
+                title="The ball will climb hills much easier"
+                id="upgrade-grip-button"
+                type="button"
+                class="btn btn-success"
+              >
+                Upgrade Grip<br />(1 point)
+              </button>
+            </div>
+            <div class="col-4">
+              <button
+                title="Press space to jump"
+                id="upgrade-jump-button"
+                type="button"
+                class="btn btn-success"
+              >
+                Upgrade Jump<br />(1 point)
               </button>
             </div>
           </div>

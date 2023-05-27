@@ -1,10 +1,5 @@
 import Vector2D from "./Vector2D.js";
-import {
-  mapSettings,
-  gravity,
-  ballSettings,
-  gameSettings,
-} from "./Settings.js";
+import { mapSettings, gravity, ballSettings } from "./Settings.js";
 
 class Ball {
   constructor(position, radius) {
@@ -13,20 +8,23 @@ class Ball {
     this.velocity = new Vector2D(0, 0);
     this.movable = false;
     this.color = "red";
+    this.jumpCount = 0;
   }
 
   // Reflect the ball's velocity based on the given reflection vector
   reflect(reflectionVector) {
     const dotProduct = this.velocity.dotProduct(reflectionVector);
-    const slowVector = this.velocity.multiply(-0.02);
+    // const slowVector = this.velocity;
     const reflection = {
-      x: reflectionVector.x * dotProduct * 2 * 0.8,
-      y: reflectionVector.y * dotProduct * 2 * 0.8,
+      x: reflectionVector.x * dotProduct * 2 * ballSettings.gripFactor,
+      y:
+        reflectionVector.y *
+        dotProduct *
+        2 *
+        ballSettings.reflectionDampeningFactor,
     };
     this.velocity.x -= reflection.x;
     this.velocity.y -= reflection.y;
-    this.velocity.x += slowVector.x;
-    this.velocity.y += slowVector.x;
   }
 
   // Handle the collision with a wall
@@ -54,8 +52,8 @@ class Ball {
 
     const nextPosition = this.position.add(this.velocity); // where the ball will be after velocity is added to its position
 
-    if (nextPosition.x < ballSettings.ballDisplayXPosition) {
-      nextPosition.x = ballSettings.ballDisplayXPosition;
+    if (nextPosition.x < ballSettings.displayXPosition) {
+      nextPosition.x = ballSettings.displayXPosition;
       this.velocity.x = 0;
     }
 
@@ -65,10 +63,16 @@ class Ball {
     let ballMovable = false; // should the ball be able to move
 
     // get the floor tiles which are closest to the ball
-    const localFloors = walls.slice(
-      this.position.x / mapSettings.floorSegmentWidth - 1,
-      this.position.x / mapSettings.floorSegmentWidth + 2
+    const localFloors = walls.filter(
+      (wall) =>
+        wall.lineEnd.x >= this.position.x - this.radius &&
+        wall.lineStart.x <= this.position.x + this.radius
     );
+
+    // const localFloors = walls.slice(
+    //   this.position.x / mapSettings.floorSegmentWidth - 1,
+    //   this.position.x / mapSettings.floorSegmentWidth + 2
+    // );
 
     localFloors.forEach((wall) => {
       const wallClosestPosition = wall.calculateClosestPosition(nextPosition);
@@ -96,6 +100,7 @@ class Ball {
       // Handle the wall collision
       this.handleWallCollision(collidingWall, closestPoint);
       this.position = this.position.add(this.velocity);
+      this.jumpCount = 0;
     } else {
       this.position = nextPosition;
       this.movable = false;
@@ -112,6 +117,13 @@ class Ball {
   // Push the ball to the right
   pushRight() {
     if (this.movable) this.velocity.x += ballSettings.movementSpeed;
+  }
+
+  jump() {
+    if (this.jumpCount < ballSettings.totalJumps) {
+      this.velocity = this.velocity.add(new Vector2D(0, -5));
+      this.jumpCount++;
+    }
   }
 }
 

@@ -16,8 +16,11 @@ class Game {
 
   createBall() {
     this.ball = new Ball(
-      new Position2D(ballSettings.ballDisplayXPosition, 450),
-      50
+      new Position2D(
+        ballSettings.displayXPosition,
+        ballSettings.startingYPosition
+      ),
+      ballSettings.startingRadius
     );
   }
 
@@ -25,62 +28,35 @@ class Game {
     this.walls.push(new Wall(startPos, endPos));
   }
 
+  generateTerrain() {
+    // this.createAndAddWall(new Position2D(500, 750), new Position2D(700, 550));
+
+    // Create a section of floor which is all flat for the starting point
+    for (let i = 0; i < mapSettings.flatFloorCount; i++) {
+      const startPosition = new Position2D(
+        mapSettings.floorSegmentWidth * i,
+        mapSettings.floorStartingHeight
+      );
+      const endPosition = startPosition.add(
+        new Vector2D(mapSettings.floorSegmentWidth, 0)
+      );
+      this.createAndAddWall(startPosition, endPosition);
+    }
+
+    let lastHeight = mapSettings.floorStartingHeight;
+    for (let i = 0; i <= mapSettings.floorSegmentCount; i++) {
+      const nextHeight = calculateNextHeight(i, lastHeight);
+      const startPosition = calculateStartPosition(i, lastHeight);
+      const endPosition = calculateEndPosition(i, nextHeight);
+      this.createAndAddWall(startPosition, endPosition);
+      lastHeight = endPosition.y;
+    }
+  }
+
   initialise() {
     this.createBall();
 
-    // Add the starting floor segments which are all flat
-    for (let i = 0; i < mapSettings.flatFloorCount; i++) {
-      const startPos = new Position2D(
-        i * mapSettings.floorSegmentWidth,
-        mapSettings.floorStartingHeight
-      );
-      const endPos = startPos.add(
-        new Vector2D(mapSettings.floorSegmentWidth, 0)
-      );
-      this.createAndAddWall(startPos, endPos);
-    }
-
-    // ATTEMPT AT GRADUAL CURVES
-
-    // let previousX = mapSettings.floorSegmentWidth * mapSettings.flatFloorCount;
-    // let previousY = mapSettings.floorStartingHeight;
-
-    // for (let i = 0; i < mapSettings.floorSegmentCount; i++) {
-    //   const startPos = new Position2D(previousX, previousY);
-    //   const endPos = new Position2D(
-    //     previousX + mapSettings.floorSegmentWidth,
-    //     mapSettings.floorStartingHeight +
-    //       Math.sin(
-    //         i *
-    //           (mapSettings.floorSegmentWidth /
-    //             (Math.random() * (1000 + i / mapSettings.floorSegmentWidth)))
-    //       ) *
-    //         (Math.random() * (50 + i / mapSettings.floorSegmentWidth))
-    //   );
-    //   this.createAndAddWall(startPos, endPos);
-    //   previousX = endPos.x;
-    //   previousY = endPos.y;
-    // }
-
-    // Add the rest of the floor segments which adjust on height
-    let lastHeight = 0;
-    for (let i = 0; i <= 1000; i++) {
-      const newHeight = Math.random() * (100 * (i / 200) + 50);
-      const floor = new Wall(
-        new Position2D(
-          mapSettings.floorSegmentWidth * i +
-            mapSettings.floorSegmentWidth * mapSettings.flatFloorCount,
-          mapSettings.floorStartingHeight - (i - 1) - lastHeight
-        ),
-        new Position2D(
-          mapSettings.floorSegmentWidth * (i + 1) +
-            mapSettings.floorSegmentWidth * mapSettings.flatFloorCount,
-          mapSettings.floorStartingHeight - i - newHeight
-        )
-      );
-      lastHeight = newHeight;
-      this.walls.push(floor);
-    }
+    this.generateTerrain();
   }
 
   draw() {
@@ -94,6 +70,7 @@ class Game {
   handleInputs() {
     if (this.inputManager.isLeftPressed()) this.ball.pushLeft();
     if (this.inputManager.isRightPressed()) this.ball.pushRight();
+    if (this.inputManager.isJumpPressed()) this.ball.jump();
   }
 
   gameLoop() {
@@ -124,3 +101,61 @@ class Game {
 }
 
 export default Game;
+
+// Add the rest of the floor segments which adjust on height
+function calculateNextHeight(index, lastHeight) {
+  const { floorStartingHeight } = mapSettings;
+  const maxPossibleHeight = floorStartingHeight - 50 - index / 2;
+  const maxAllowedDifference = index / 10;
+
+  const allowedMinimum =
+    lastHeight + maxAllowedDifference > floorStartingHeight
+      ? lastHeight + maxAllowedDifference
+      : floorStartingHeight;
+  const allowedMaximum =
+    lastHeight - maxAllowedDifference < maxPossibleHeight
+      ? lastHeight - maxAllowedDifference
+      : maxPossibleHeight;
+
+  return Math.ceil(
+    Math.random() * (allowedMinimum - allowedMaximum + 1) + allowedMaximum
+  );
+}
+
+function calculateStartPosition(index, height) {
+  const x =
+    mapSettings.floorSegmentWidth * index +
+    mapSettings.floorSegmentWidth * mapSettings.flatFloorCount;
+  const y = height;
+  return new Position2D(x, y);
+}
+
+function calculateEndPosition(index, height) {
+  const x =
+    mapSettings.floorSegmentWidth * (index + 1) +
+    mapSettings.floorSegmentWidth * mapSettings.flatFloorCount;
+  const y = height;
+  return new Position2D(x, y);
+}
+
+// ATTEMPT AT GRADUAL CURVES
+
+// let previousX = mapSettings.floorSegmentWidth * mapSettings.flatFloorCount;
+// let previousY = mapSettings.floorStartingHeight;
+
+// for (let i = 0; i < mapSettings.floorSegmentCount; i++) {
+//   const startPos = new Position2D(previousX, previousY);
+//   const endPos = new Position2D(
+//     previousX + mapSettings.floorSegmentWidth,
+//     mapSettings.floorStartingHeight +
+//       Math.sin(
+//         i *
+//           (mapSettings.floorSegmentWidth /
+//             (Math.random() * (1000 + i / mapSettings.floorSegmentWidth)))
+//       ) *
+//         (Math.random() * (50 + i / mapSettings.floorSegmentWidth))
+//   );
+//   this.createAndAddWall(startPos, endPos);
+//   previousX = endPos.x;
+//   previousY = endPos.y;
+// }

@@ -13,13 +13,3 @@ canvas.height = 750;
 const game = new Game(canvas);
 game.initialise();
 game.start();
-
-document
-  .getElementById("upgrade-speed-button")
-  .addEventListener("click", upgradeSpeed);
-
-function upgradeSpeed() {
-  ballSettings.movementSpeed += 0.05;
-  document.getElementById("movement-speed-attribute").innerText =
-    Math.round(ballSettings.movementSpeed * 100) / 100;
-}
