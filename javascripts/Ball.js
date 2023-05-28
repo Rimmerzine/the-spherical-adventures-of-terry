@@ -28,7 +28,6 @@ class Ball {
     }
     this.velocity.x -= reflection.x;
     this.velocity.y -= reflection.y;
-    this.velocity.y = -Math.abs(this.velocity.y);
     this.jumpCount = 0;
   }
 
