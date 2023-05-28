@@ -26,4 +26,8 @@ export const gameSettings = {
   fps: null,
 };
 
+export const featureSwitches = {
+  curvedFlooringSwitch: true,
+};
+
 export const gravity = new Vector2D(0, 0.15);

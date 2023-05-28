@@ -32,19 +32,21 @@ class CanvasRenderer {
     visibleWalls.forEach((wall) => this.drawWall(wall, ballPositionX));
   }
 
-  drawCurvedWalls(walls, ballPositionX) {
+  drawCurvedWalls(floor, ballPositionX) {
     this.context.beginPath();
     this.context.moveTo(
-      walls[0].drawStartX - ballPositionX,
-      walls[0].lineStart.y
+      floor[0].x - ballPositionX + ballSettings.displayXPosition,
+      floor[0].y
     );
 
-    for (let i = 0; i < walls.length - 1; i++) {
-      const cpx = walls[i].drawStartX - ballPositionX;
-      const cpy = walls[i].lineStart.y;
+    for (let i = 1; i < floor.length - 1; i++) {
+      const cpx = floor[i].x - ballPositionX + ballSettings.displayXPosition;
+      const cpy = floor[i].y;
       const x =
-        (walls[i].drawStartX + walls[i + 1].drawStartX) / 2 - ballPositionX;
-      const y = (walls[i].lineStart.y + walls[i + 1].lineStart.y) / 2;
+        (floor[i].x + floor[i + 1].x) / 2 -
+        ballPositionX +
+        ballSettings.displayXPosition;
+      const y = (floor[i].y + floor[i + 1].y) / 2;
 
       this.context.quadraticCurveTo(cpx, cpy, x, y);
     }

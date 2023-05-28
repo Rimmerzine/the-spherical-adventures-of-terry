@@ -1,5 +1,10 @@
 import CanvasRenderer from "./CanvasRenderer.js";
-import { gameSettings, mapSettings, ballSettings } from "./Settings.js";
+import {
+  gameSettings,
+  mapSettings,
+  ballSettings,
+  featureSwitches,
+} from "./Settings.js";
 import Ball from "./Ball.js";
 import Wall from "./Wall.js";
 import Position2D from "./Position2D.js";
@@ -12,6 +17,7 @@ class Game {
     this.inputManager = new InputManager();
     this.ball = null;
     this.walls = [];
+    this.floor = [];
   }
 
   createBall() {
@@ -41,6 +47,9 @@ class Game {
         new Vector2D(mapSettings.floorSegmentWidth, 0)
       );
       this.createAndAddWall(startPosition, endPosition);
+      if (featureSwitches.curvedFlooringSwitch) {
+        this.floor.push(startPosition);
+      }
     }
 
     let lastHeight = mapSettings.floorStartingHeight;
@@ -49,21 +58,24 @@ class Game {
       const startPosition = calculateStartPosition(i, lastHeight);
       const endPosition = calculateEndPosition(i, nextHeight);
       this.createAndAddWall(startPosition, endPosition);
+      this.floor.push(endPosition);
       lastHeight = endPosition.y;
     }
   }
 
   initialise() {
     this.createBall();
-
     this.generateTerrain();
   }
 
   draw() {
     this.renderer.clearCanvas();
     this.renderer.drawBall(this.ball);
-    this.renderer.drawWalls(this.walls, this.ball.position.x);
-    this.renderer.drawCurvedWalls(this.walls, this.ball.position.x);
+    if (featureSwitches.curvedFlooringSwitch) {
+      this.renderer.drawCurvedWalls(this.floor, this.ball.position.x);
+    } else {
+      this.renderer.drawWalls(this.walls, this.ball.position.x);
+    }
   }
 
   update() {}
