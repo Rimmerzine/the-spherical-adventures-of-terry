@@ -33,7 +33,12 @@ class CanvasRenderer {
   }
 
   drawClosestPositionOnFloor(floor, ball) {
-    const position = findClosestPointAndNormal(floor, ball.position);
+    const position = findClosestPoint(
+      floor,
+      ball.position,
+      this.canvas.width,
+      this.context
+    );
 
     this.context.beginPath();
     this.context.arc(
@@ -53,7 +58,7 @@ class CanvasRenderer {
     const canvasMapRight = canvasMapLeft + this.canvas.width;
     const visibleFloor = floor.filter(
       (floor) =>
-        floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 2 &&
+        floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 3 &&
         floor.x <= canvasMapRight + mapSettings.floorSegmentWidth * 3
     );
 
@@ -108,48 +113,76 @@ class CanvasRenderer {
 export default CanvasRenderer;
 
 function calculateDistance(pointOne, pointTwo) {
+  if (pointOne == null || pointTwo == null) return Infinity;
   const dx = pointTwo.x - pointOne.x;
   const dy = pointTwo.y - pointOne.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
   return distance;
 }
 
-function findClosestPointAndNormal(curvedLine, givenPoint) {
-  let closestPoint = null;
-  let closestDistance = Infinity;
-  let closestNormal = null;
+function findClosestPoint(floor, givenPoint, canvasWidth, context) {
+  const canvasMapLeft = givenPoint.x - ballSettings.displayXPosition;
+  const canvasMapRight = canvasMapLeft + canvasWidth;
 
-  for (let i = 0; i < curvedLine.length - 2; i++) {
-    const start = curvedLine[i];
-    const control = curvedLine[i + 1];
-    const end = curvedLine[i + 2];
+  const visibleFloor = floor.filter(
+    (floor) =>
+      floor.x >= canvasMapLeft &&
+      floor.x <= canvasMapRight - mapSettings.floorSegmentWidth * 2
+  );
 
-    for (let t = 0; t <= 1; t += 0.01) {
-      const x =
-        Math.pow(1 - t, 2) * start.x +
-        2 * (1 - t) * t * control.x +
-        Math.pow(t, 2) * end.x;
-      const y =
-        Math.pow(1 - t, 2) * start.y +
-        2 * (1 - t) * t * control.y +
-        Math.pow(t, 2) * end.y;
+  let point = null;
 
-      const distance = Math.sqrt(
-        Math.pow(x - givenPoint.x, 2) + Math.pow(y - givenPoint.y, 2)
+  for (let i = 1; i < visibleFloor.length - 1; i++) {
+    const sx = (visibleFloor[i - 1].x + visibleFloor[i].x) / 2;
+    const sy = (visibleFloor[i - 1].y + visibleFloor[i].y) / 2;
+    const cpx = visibleFloor[i].x;
+    const cpy = visibleFloor[i].y;
+    const x = (visibleFloor[i].x + visibleFloor[i + 1].x) / 2;
+    const y = (visibleFloor[i].y + visibleFloor[i + 1].y) / 2;
+
+    for (let j = 0.0; j <= 1.0; j += 0.01) {
+      const newPoint = getQuadraticCurvePoint(sx, sy, cpx, cpy, x, y, j);
+      context.beginPath();
+      context.arc(
+        newPoint.x - givenPoint.x + ballSettings.displayXPosition,
+        newPoint.y,
+        2,
+        0,
+        2 * Math.PI
       );
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestPoint = { x, y };
-
-        const tangentX =
-          2 * (1 - t) * (control.x - start.x) + 2 * t * (end.x - control.x);
-        const tangentY =
-          2 * (1 - t) * (control.y - start.y) + 2 * t * (end.y - control.y);
-
-        closestNormal = { x: -tangentY, y: tangentX };
+      context.strokeStyle = "yellow";
+      context.stroke();
+      context.closePath();
+      if (
+        calculateDistance(newPoint, givenPoint) <
+        calculateDistance(point, givenPoint)
+      ) {
+        point = newPoint;
       }
     }
   }
 
-  return closestPoint;
+  console.info(point);
+
+  return point;
+}
+
+function _getQBezierValue(t, p1, p2, p3) {
+  var iT = 1 - t;
+  return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
+}
+
+function getQuadraticCurvePoint(
+  startX,
+  startY,
+  cpX,
+  cpY,
+  endX,
+  endY,
+  position
+) {
+  return {
+    x: _getQBezierValue(position, startX, cpX, endX),
+    y: _getQBezierValue(position, startY, cpY, endY),
+  };
 }

@@ -71,11 +71,11 @@ class Game {
   draw() {
     this.renderer.clearCanvas();
     this.renderer.drawBall(this.ball);
+    this.renderer.drawWalls(this.walls, this.ball.position.x);
     if (featureSwitches.curvedFlooringSwitch) {
       this.renderer.drawCurvedWalls(this.floor, this.ball.position.x);
       this.renderer.drawClosestPositionOnFloor(this.floor, this.ball);
     }
-    this.renderer.drawWalls(this.walls, this.ball.position.x);
   }
 
   update() {}
