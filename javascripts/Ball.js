@@ -47,7 +47,7 @@ class Ball {
   }
 
   // Update the ball's position and handle collisions
-  update(walls) {
+  update(walls, floor) {
     this.velocity = this.velocity.add(gravity); // add gravity to the balls current velocity
 
     const nextPosition = this.position.add(this.velocity); // where the ball will be after velocity is added to its position

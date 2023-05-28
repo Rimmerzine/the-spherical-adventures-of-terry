@@ -73,9 +73,9 @@ class Game {
     this.renderer.drawBall(this.ball);
     if (featureSwitches.curvedFlooringSwitch) {
       this.renderer.drawCurvedWalls(this.floor, this.ball.position.x);
-    } else {
-      this.renderer.drawWalls(this.walls, this.ball.position.x);
+      this.renderer.drawClosestPositionOnFloor(this.floor, this.ball);
     }
+    this.renderer.drawWalls(this.walls, this.ball.position.x);
   }
 
   update() {}
@@ -105,7 +105,7 @@ class Game {
     this.handleInputs();
     this.update();
 
-    this.ball.update(this.walls);
+    this.ball.update(this.walls, this.floor);
   }
 
   start() {

@@ -32,21 +32,46 @@ class CanvasRenderer {
     visibleWalls.forEach((wall) => this.drawWall(wall, ballPositionX));
   }
 
-  drawCurvedWalls(floor, ballPositionX) {
+  drawClosestPositionOnFloor(floor, ball) {
+    const position = findClosestPointAndNormal(floor, ball.position);
+
     this.context.beginPath();
-    this.context.moveTo(
-      floor[0].x - ballPositionX + ballSettings.displayXPosition,
-      floor[0].y
+    this.context.arc(
+      position.x - ball.position.x + ballSettings.displayXPosition,
+      position.y,
+      10,
+      0,
+      2 * Math.PI
+    );
+    this.context.strokeStyle = "black";
+    this.context.stroke();
+    this.context.closePath();
+  }
+
+  drawCurvedWalls(floor, ballPositionX) {
+    const canvasMapLeft = ballPositionX - ballSettings.displayXPosition;
+    const canvasMapRight = canvasMapLeft + this.canvas.width;
+    const visibleFloor = floor.filter(
+      (floor) =>
+        floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 2 &&
+        floor.x <= canvasMapRight + mapSettings.floorSegmentWidth * 3
     );
 
-    for (let i = 1; i < floor.length - 1; i++) {
-      const cpx = floor[i].x - ballPositionX + ballSettings.displayXPosition;
-      const cpy = floor[i].y;
+    this.context.beginPath();
+    this.context.moveTo(
+      visibleFloor[0].x - ballPositionX + ballSettings.displayXPosition,
+      visibleFloor[0].y
+    );
+
+    for (let i = 1; i < visibleFloor.length - 1; i++) {
+      const cpx =
+        visibleFloor[i].x - ballPositionX + ballSettings.displayXPosition;
+      const cpy = visibleFloor[i].y;
       const x =
-        (floor[i].x + floor[i + 1].x) / 2 -
+        (visibleFloor[i].x + visibleFloor[i + 1].x) / 2 -
         ballPositionX +
         ballSettings.displayXPosition;
-      const y = (floor[i].y + floor[i + 1].y) / 2;
+      const y = (visibleFloor[i].y + visibleFloor[i + 1].y) / 2;
 
       this.context.quadraticCurveTo(cpx, cpy, x, y);
     }
@@ -81,3 +106,50 @@ class CanvasRenderer {
 }
 
 export default CanvasRenderer;
+
+function calculateDistance(pointOne, pointTwo) {
+  const dx = pointTwo.x - pointOne.x;
+  const dy = pointTwo.y - pointOne.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  return distance;
+}
+
+function findClosestPointAndNormal(curvedLine, givenPoint) {
+  let closestPoint = null;
+  let closestDistance = Infinity;
+  let closestNormal = null;
+
+  for (let i = 0; i < curvedLine.length - 2; i++) {
+    const start = curvedLine[i];
+    const control = curvedLine[i + 1];
+    const end = curvedLine[i + 2];
+
+    for (let t = 0; t <= 1; t += 0.01) {
+      const x =
+        Math.pow(1 - t, 2) * start.x +
+        2 * (1 - t) * t * control.x +
+        Math.pow(t, 2) * end.x;
+      const y =
+        Math.pow(1 - t, 2) * start.y +
+        2 * (1 - t) * t * control.y +
+        Math.pow(t, 2) * end.y;
+
+      const distance = Math.sqrt(
+        Math.pow(x - givenPoint.x, 2) + Math.pow(y - givenPoint.y, 2)
+      );
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestPoint = { x, y };
+
+        const tangentX =
+          2 * (1 - t) * (control.x - start.x) + 2 * t * (end.x - control.x);
+        const tangentY =
+          2 * (1 - t) * (control.y - start.y) + 2 * t * (end.y - control.y);
+
+        closestNormal = { x: -tangentY, y: tangentX };
+      }
+    }
+  }
+
+  return closestPoint;
+}
