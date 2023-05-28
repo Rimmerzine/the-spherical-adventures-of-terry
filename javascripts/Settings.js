@@ -26,8 +26,15 @@ export const gameSettings = {
   fps: null,
 };
 
-export const featureSwitches = {
-  curvedFlooringSwitch: true,
+export const debugSettings = {
+  targetFps: 60,
+  debugMode: true,
+  drawClosestCollisionPoint: true,
+  drawNormalisedDisplacementVector: true,
+  drawReflectionVector: true,
+  closestPoint: null,
+  normalisedDisplacementVector: null,
+  reflectionVector: null,
 };
 
-export const gravity = new Vector2D(0, 0.15);
+export const gravity = new Vector2D(0, 0.1);
