@@ -1,7 +1,7 @@
 import Vector2D from "./Vector2D.js";
 
 export const mapSettings = {
-  floorSegmentWidth: 150,
+  floorSegmentWidth: 200,
   floorSegmentCount: 1000,
   flatFloorCount: 10,
   floorSegmentCount: 1000,
@@ -21,20 +21,21 @@ export const ballSettings = {
 };
 
 export const gameSettings = {
-  debugMode: false,
   times: [],
   fps: null,
 };
 
 export const debugSettings = {
-  targetFps: 60,
-  debugMode: true,
+  targetFps: 144,
+  debugMode: false,
   drawClosestCollisionPoint: true,
   drawNormalisedDisplacementVector: true,
   drawReflectionVector: true,
+  drawCollisionFloors: true,
   closestPoint: null,
   normalisedDisplacementVector: null,
   reflectionVector: null,
+  collisionFloors: null,
 };
 
-export const gravity = new Vector2D(0, 0.1);
+export const gravity = new Vector2D(0, 0.15);

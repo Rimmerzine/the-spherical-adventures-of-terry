@@ -45,6 +45,8 @@ class Game {
       this.floor.push(endPosition);
       lastHeight = endPosition.y;
     }
+
+    console.info(this.floor);
   }
 
   initialise() {
@@ -124,7 +126,7 @@ function calculateNextHeight(index, lastHeight) {
 
 function calculateNextPosition(index, height) {
   const x =
-    mapSettings.floorSegmentWidth * (index + 1) +
+    mapSettings.floorSegmentWidth * index +
     mapSettings.floorSegmentWidth * mapSettings.flatFloorCount;
   const y = height;
   return new Position2D(x, y);

@@ -30,8 +30,8 @@ class CanvasRenderer {
         floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 3 &&
         floor.x <= canvasMapRight + mapSettings.floorSegmentWidth * 3
     );
-
     this.context.beginPath();
+    this.context.lineWidth = 1;
     this.context.moveTo(
       visibleFloor[0].x - ballPositionX + ballSettings.displayXPosition,
       visibleFloor[0].y
@@ -63,6 +63,7 @@ class CanvasRenderer {
     this.drawNormalisedDisplacementVector(ball);
     this.drawBallVelocity(ball);
     this.drawReflectionVector(ball);
+    this.drawCollisionFloors(ball);
   }
 
   drawClosestPositionOnFloor(ball) {
@@ -135,6 +136,42 @@ class CanvasRenderer {
         endPosition.x - ball.position.x + ballSettings.displayXPosition,
         endPosition.y
       );
+      this.context.stroke();
+    }
+  }
+
+  drawCollisionFloors(ball) {
+    if (debugSettings.collisionFloors) {
+      this.context.beginPath();
+      this.context.lineWidth = 3;
+      this.context.strokeStyle = "yellow";
+      this.context.moveTo(
+        debugSettings.collisionFloors[0].x -
+          ball.position.x +
+          ballSettings.displayXPosition,
+        debugSettings.collisionFloors[0].y
+      );
+
+      for (let i = 1; i < debugSettings.collisionFloors.length - 1; i++) {
+        const cpx =
+          debugSettings.collisionFloors[i].x -
+          ball.position.x +
+          ballSettings.displayXPosition;
+        const cpy = debugSettings.collisionFloors[i].y;
+        const x =
+          (debugSettings.collisionFloors[i].x +
+            debugSettings.collisionFloors[i + 1].x) /
+            2 -
+          ball.position.x +
+          ballSettings.displayXPosition;
+        const y =
+          (debugSettings.collisionFloors[i].y +
+            debugSettings.collisionFloors[i + 1].y) /
+          2;
+
+        this.context.quadraticCurveTo(cpx, cpy, x, y);
+      }
+
       this.context.stroke();
     }
   }

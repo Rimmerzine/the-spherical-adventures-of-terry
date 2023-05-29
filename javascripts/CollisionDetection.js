@@ -10,9 +10,11 @@ class CollisionDetection {
     const canvasMapLeft = ballNextPosition.x - ballSettings.displayXPosition;
     const visibleFloor = floor.filter(
       (floor) =>
-        floor.x >= canvasMapLeft &&
-        floor.x <= canvasMapLeft + mapSettings.floorSegmentWidth * 6
+        floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth &&
+        floor.x <= canvasMapLeft + mapSettings.floorSegmentWidth * 4
     );
+
+    debugSettings.collisionFloors = visibleFloor;
 
     // get the closest point to the ball on the floor
     const position = findClosestPoint(visibleFloor, ballNextPosition);
