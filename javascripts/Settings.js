@@ -5,13 +5,16 @@ export const mapSettings = {
   floorSegmentCount: 1000,
   flatFloorCount: 10,
   floorSegmentCount: 1000,
-  floorStartingHeight: 650,
+  floorStartingHeight:
+    document.getElementById("canvas-container").offsetWidth / 2 - 50,
 };
 
 export const ballSettings = {
-  movableDistance: 10,
-  movementSpeed: 0.05,
-  displayXPosition: 400,
+  movableDistance: 2,
+  acceleration: 0.04,
+  maxSpeed: 4,
+  displayXPosition:
+    ((mapSettings.flatFloorCount - 1) * mapSettings.floorSegmentWidth) / 4,
   startingYPosition: 450,
   startingRadius: 50,
   reflectionDampeningFactor: 0.8,

@@ -23,6 +23,10 @@ class InputManager {
     document
       .getElementById("upgrade-jump-button")
       .addEventListener("click", this.upgradeJump);
+
+    document
+      .getElementById("upgrade-max-speed-button")
+      .addEventListener("click", this.upgradeMaxSpeed);
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
@@ -71,11 +75,11 @@ class InputManager {
   }
 
   upgradeSpeed() {
-    if (ballSettings.movementSpeed <= 0.225) {
-      ballSettings.movementSpeed += 0.025;
+    if (ballSettings.acceleration <= 0.22) {
+      ballSettings.acceleration += 0.02;
     }
     document.getElementById("acceleration-attribute").innerText =
-      Math.round(ballSettings.movementSpeed * 2000) / 100;
+      Math.round(ballSettings.acceleration * 2000) / 100;
   }
 
   upgradeWeight() {
@@ -100,6 +104,14 @@ class InputManager {
     }
     document.getElementById("jump-attribute").innerText =
       ballSettings.totalJumps;
+  }
+
+  upgradeMaxSpeed() {
+    if (ballSettings.maxSpeed < 15) {
+      ballSettings.maxSpeed++;
+    }
+    document.getElementById("max-speed-attribute").innerText =
+      ballSettings.maxSpeed;
   }
 }
 

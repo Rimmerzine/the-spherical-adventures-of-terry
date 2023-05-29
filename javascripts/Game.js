@@ -46,7 +46,7 @@ class Game {
       lastHeight = endPosition.y;
     }
 
-    console.info(this.floor);
+    console.debug(this.floor);
   }
 
   initialise() {
@@ -107,8 +107,8 @@ export default Game;
 // Add the rest of the floor segments which adjust on height
 function calculateNextHeight(index, lastHeight) {
   const { floorStartingHeight } = mapSettings;
-  const maxPossibleHeight = floorStartingHeight - 50 - index / 2;
-  const maxAllowedDifference = index / 10;
+  const maxPossibleHeight = floorStartingHeight - 150 - index;
+  const maxAllowedDifference = index / 4;
 
   const allowedMinimum =
     lastHeight + maxAllowedDifference > floorStartingHeight

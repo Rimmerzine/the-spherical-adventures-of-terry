@@ -49,12 +49,18 @@ class Ball {
 
   // Push the ball to the left
   pushLeft() {
-    if (this.movable) this.velocity.x -= ballSettings.movementSpeed;
+    if (this.movable) {
+      if (this.velocity.x > -ballSettings.maxSpeed)
+        this.velocity.x -= ballSettings.acceleration;
+    }
   }
 
   // Push the ball to the right
   pushRight() {
-    if (this.movable) this.velocity.x += ballSettings.movementSpeed;
+    if (this.movable) {
+      if (this.velocity.x < ballSettings.maxSpeed)
+        this.velocity.x += ballSettings.acceleration;
+    }
   }
 
   jump() {
