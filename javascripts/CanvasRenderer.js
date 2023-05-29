@@ -16,8 +16,48 @@ class CanvasRenderer {
       2 * Math.PI
     );
     this.context.strokeStyle = "black";
-    this.context.stroke();
+
     this.context.fillStyle = ball.color;
+    this.context.fill();
+    this.context.lineWidth = 3;
+    this.context.stroke();
+    this.context.closePath();
+
+    this.context.beginPath();
+    this.context.lineWidth = 2;
+    this.context.arc(
+      ballSettings.displayXPosition + 35 / (50 / ball.radius),
+      ball.position.y,
+      ball.radius / 2,
+      1.3,
+      Math.PI - 0.8
+    );
+    this.context.stroke();
+    this.context.closePath();
+
+    this.context.beginPath();
+    this.context.arc(
+      ballSettings.displayXPosition + 35 / (50 / ball.radius),
+      ball.position.y - 10 / (50 / ball.radius),
+      ball.radius / 6,
+      0,
+      2 * Math.PI
+    );
+    this.context.fillStyle = "white";
+    this.context.fill();
+    this.context.lineWidth = 2;
+    this.context.stroke();
+    this.context.closePath();
+
+    this.context.beginPath();
+    this.context.arc(
+      ballSettings.displayXPosition + 40 / (50 / ball.radius),
+      ball.position.y - 10 / (50 / ball.radius),
+      ball.radius / 20,
+      0,
+      2 * Math.PI
+    );
+    this.context.fillStyle = "black";
     this.context.fill();
     this.context.closePath();
   }
@@ -31,26 +71,30 @@ class CanvasRenderer {
         floor.x <= canvasMapRight + mapSettings.floorSegmentWidth * 3
     );
     this.context.beginPath();
-    this.context.lineWidth = 1;
-    this.context.moveTo(
+    this.context.lineWidth = 5;
+    this.context.strokeStyle = "green";
+    this.context.fillStyle = "brown";
+    this.context.moveTo(0, this.canvas.height);
+    this.context.lineTo(
       visibleFloor[0].x - ballPositionX + ballSettings.displayXPosition,
-      visibleFloor[0].y
+      visibleFloor[0].y + 2
     );
 
     for (let i = 1; i < visibleFloor.length - 1; i++) {
       const cpx =
         visibleFloor[i].x - ballPositionX + ballSettings.displayXPosition;
-      const cpy = visibleFloor[i].y;
+      const cpy = visibleFloor[i].y + 2;
       const x =
         (visibleFloor[i].x + visibleFloor[i + 1].x) / 2 -
         ballPositionX +
         ballSettings.displayXPosition;
-      const y = (visibleFloor[i].y + visibleFloor[i + 1].y) / 2;
+      const y = (visibleFloor[i].y + 2 + visibleFloor[i + 1].y + 2) / 2;
 
       this.context.quadraticCurveTo(cpx, cpy, x, y);
     }
-
+    this.context.lineTo(this.canvas.width, this.canvas.height);
     this.context.stroke();
+    this.context.fill();
   }
 
   clearCanvas() {

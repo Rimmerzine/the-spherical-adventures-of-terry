@@ -22,7 +22,10 @@ class CollisionDetection {
       debugSettings.closestPoint = position;
     }
 
-    if (calculateDistance(position, ballNextPosition) <= ball.radius + ballSettings.movableDistance) {
+    if (
+      calculateDistance(position, ballNextPosition) <=
+      ball.radius + ballSettings.movableDistance
+    ) {
       ball.movable = true;
     } else {
       ball.movable = false;

@@ -7,7 +7,7 @@ class Ball {
     this.position = position;
     this.velocity = new Vector2D(0, 0);
     this.movable = true;
-    this.color = "red";
+    this.color = "yellow";
     this.jumpCount = 0;
   }
 
