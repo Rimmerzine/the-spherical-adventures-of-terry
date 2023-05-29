@@ -7,59 +7,61 @@ class CanvasRenderer {
   }
 
   drawBall(ball) {
-    this.context.beginPath();
-    this.context.arc(
-      ballSettings.displayXPosition,
-      ball.position.y,
-      ball.radius,
-      0,
-      2 * Math.PI
-    );
-    this.context.strokeStyle = "black";
+    const x = ballSettings.displayXPosition;
+    const y = ball.position.y;
+    const radius = ball.radius;
+    const scale = 0.8 * radius;
 
-    this.context.fillStyle = ball.color;
+    // Draw the gray background
+    this.context.beginPath();
+    this.context.arc(x, y, radius, 0, 2 * Math.PI);
+    this.context.fillStyle = "gray";
     this.context.fill();
+    this.context.strokeStyle = "black";
     this.context.lineWidth = 3;
     this.context.stroke();
-    this.context.closePath();
 
+    // Draw the yellow ball
     this.context.beginPath();
-    this.context.lineWidth = 2;
-    this.context.arc(
-      ballSettings.displayXPosition + 35 / (50 / ball.radius),
-      ball.position.y,
-      ball.radius / 2,
-      1.3,
-      Math.PI - 0.8
-    );
+    this.context.arc(x, y, scale, 0, 2 * Math.PI);
+    this.context.fillStyle = ball.color;
+    this.context.fill();
     this.context.stroke();
-    this.context.closePath();
 
+    // Calculate common values for the mouth and eye
+    const mouthOffsetX = 0.7 * scale;
+    const mouthRadius = scale / 2;
+    const eyeOffsetX = 0.7 * scale;
+    const eyeOffsetY = 0.2 * scale;
+    const eyeRadius = scale / 6;
+    const pupilOffsetX = 0.1 * scale;
+    const pupilRadius = scale / 20;
+
+    // Draw the mouth
     this.context.beginPath();
-    this.context.arc(
-      ballSettings.displayXPosition + 35 / (50 / ball.radius),
-      ball.position.y - 10 / (50 / ball.radius),
-      ball.radius / 6,
-      0,
-      2 * Math.PI
-    );
+    this.context.arc(x + mouthOffsetX, y, mouthRadius, 1.3, Math.PI - 0.8);
+    this.context.lineWidth = 2;
+    this.context.stroke();
+
+    // Draw the eye white
+    this.context.beginPath();
+    this.context.arc(x + eyeOffsetX, y - eyeOffsetY, eyeRadius, 0, 2 * Math.PI);
     this.context.fillStyle = "white";
     this.context.fill();
     this.context.lineWidth = 2;
     this.context.stroke();
-    this.context.closePath();
 
+    // Draw the pupil
     this.context.beginPath();
     this.context.arc(
-      ballSettings.displayXPosition + 40 / (50 / ball.radius),
-      ball.position.y - 10 / (50 / ball.radius),
-      ball.radius / 20,
+      x + eyeOffsetX + pupilOffsetX,
+      y - eyeOffsetY,
+      pupilRadius,
       0,
       2 * Math.PI
     );
     this.context.fillStyle = "black";
     this.context.fill();
-    this.context.closePath();
   }
 
   drawCurvedWalls(floor, ballPositionX) {
