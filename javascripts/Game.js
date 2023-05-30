@@ -16,6 +16,7 @@ class Game {
     this.inputManager = new InputManager();
     this.ball = null;
     this.floor = [];
+    this.clouds = [];
   }
 
   createBall() {
@@ -49,18 +50,34 @@ class Game {
     console.debug(this.floor);
   }
 
+  generateClouds() {
+    for (let i = 0; i <= mapSettings.floorSegmentCount; i++) {
+      const cloud = {
+        x: i * mapSettings.floorSegmentWidth * 2 + Math.random() * 500,
+        y: Math.random() * 500,
+        size: 100,
+        density: 30,
+        seed: i + 1,
+      };
+      this.clouds.push(cloud);
+    }
+  }
+
   initialise() {
     this.createBall();
     this.generateTerrain();
+    this.generateClouds();
   }
 
   draw() {
     this.renderer.clearCanvas();
-    this.renderer.drawBall(this.ball);
+    this.renderer.drawClouds(this.clouds, this.ball.position);
     this.renderer.drawCurvedWalls(this.floor, this.ball.position);
     if (debugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.ball);
     }
+    this.renderer.drawBall(this.ball);
+    this.renderer.drawFps(gameSettings.fps);
   }
 
   update() {

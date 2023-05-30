@@ -3,7 +3,5 @@ class Floor {
     this.floor = [];
   }
 
-  generateTerrain() {
-
-  }
+  generateTerrain() {}
 }

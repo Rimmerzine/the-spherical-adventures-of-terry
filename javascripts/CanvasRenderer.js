@@ -6,6 +6,11 @@ class CanvasRenderer {
     this.context = canvas.getContext("2d");
   }
 
+  drawFps(fps) {
+    this.context.font = "22px serif";
+    this.context.strokeText(fps, 10, 30);
+  }
+
   drawBall(ball) {
     const x = ballSettings.displayXPosition;
     const y = ballSettings.startingYPosition;
@@ -73,20 +78,23 @@ class CanvasRenderer {
         floor.x <= canvasMapRight + mapSettings.floorSegmentWidth * 3
     );
     this.context.beginPath();
-    this.context.lineWidth = 5;
+    this.context.lineWidth = 21;
     this.context.strokeStyle = "green";
     this.context.fillStyle = "brown";
     this.context.moveTo(0, this.canvas.height);
     this.context.lineTo(
       visibleFloor[0].x - ballPosition.x + ballSettings.displayXPosition,
-      visibleFloor[0].y - ballPosition.y + ballSettings.startingYPosition + 2
+      visibleFloor[0].y - ballPosition.y + ballSettings.startingYPosition + 10
     );
 
     for (let i = 1; i < visibleFloor.length - 1; i++) {
       const cpx =
         visibleFloor[i].x - ballPosition.x + ballSettings.displayXPosition;
       const cpy =
-        visibleFloor[i].y - ballPosition.y + ballSettings.startingYPosition + 2;
+        visibleFloor[i].y -
+        ballPosition.y +
+        ballSettings.startingYPosition +
+        10;
       const x =
         (visibleFloor[i].x + visibleFloor[i + 1].x) / 2 -
         ballPosition.x +
@@ -95,11 +103,11 @@ class CanvasRenderer {
         (visibleFloor[i].y -
           ballPosition.y +
           ballSettings.startingYPosition +
-          2 +
+          10 +
           visibleFloor[i + 1].y -
           ballPosition.y +
           ballSettings.startingYPosition +
-          2) /
+          10) /
         2;
 
       this.context.quadraticCurveTo(cpx, cpy, x, y);
@@ -107,6 +115,58 @@ class CanvasRenderer {
     this.context.lineTo(this.canvas.width, this.canvas.height);
     this.context.stroke();
     this.context.fill();
+  }
+
+  drawCloud(x, y, size, density, seed) {
+    // Set cloud color
+    this.context.fillStyle = "#ffffff"; // Set the color to white (change it as desired)
+
+    // Calculate the maximum and minimum circle radii
+    const maxRadius = size / 2;
+    const minRadius = maxRadius / 3;
+
+    // Calculate the maximum and minimum circle positions
+    const maxX = x + size;
+    const minX = x - size;
+    const maxY = y + size / 2;
+    const minY = y - size / 2;
+
+    const random = seededRandom(seed);
+
+    // Draw random circles to create a fluffy cloud effect
+    for (let i = 0; i < density; i++) {
+      const radius = random() * (maxRadius - minRadius) + minRadius;
+      const posX = random() * (maxX - minX) + minX;
+      const posY = random() * (maxY - minY) + minY;
+
+      // Draw the circle
+      this.context.beginPath();
+      this.context.arc(posX, posY, radius, 0, 2 * Math.PI);
+      this.context.closePath();
+      this.context.fill();
+    }
+  }
+
+  drawClouds(clouds, ballPosition) {
+    const canvasMapLeft = ballPosition.x - ballSettings.displayXPosition;
+    const canvasMapRight = canvasMapLeft + this.canvas.width;
+
+    const visibleClouds = clouds.filter(
+      (cloud) =>
+        cloud.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 10 &&
+        cloud.x <= canvasMapRight + mapSettings.floorSegmentWidth * 10
+    );
+
+    for (let i = 0; i < visibleClouds.length; i++) {
+      const cloud = visibleClouds[i];
+      this.drawCloud(
+        cloud.x - ballPosition.x,
+        cloud.y - ballPosition.y / 3,
+        cloud.size,
+        cloud.density,
+        cloud.seed
+      );
+    }
   }
 
   clearCanvas() {
@@ -243,3 +303,14 @@ class CanvasRenderer {
 }
 
 export default CanvasRenderer;
+
+function seededRandom(seed) {
+  let value = seed % 2147483647;
+  const multiplier = 16807;
+  const modulus = 2147483647;
+
+  return function () {
+    value = (value * multiplier) % modulus;
+    return value / modulus;
+  };
+}
