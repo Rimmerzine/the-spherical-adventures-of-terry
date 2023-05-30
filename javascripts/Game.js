@@ -57,7 +57,7 @@ class Game {
   draw() {
     this.renderer.clearCanvas();
     this.renderer.drawBall(this.ball);
-    this.renderer.drawCurvedWalls(this.floor, this.ball.position.x);
+    this.renderer.drawCurvedWalls(this.floor, this.ball.position);
     if (debugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.ball);
     }

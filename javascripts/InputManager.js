@@ -3,6 +3,8 @@ import { ballSettings } from "./Settings.js";
 class InputManager {
   constructor() {
     this.keys = {};
+    this.leftScreenTouch = false;
+    this.rightScreenTouch = false;
 
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
@@ -27,6 +29,14 @@ class InputManager {
     document
       .getElementById("upgrade-max-speed-button")
       .addEventListener("click", this.upgradeMaxSpeed);
+
+    document
+      .getElementById("canvas-container")
+      .addEventListener("touchstart", this.touchStartHandler);
+
+    document
+      .getElementById("canvas-container")
+      .addEventListener("touchend", this.touchEndHandler);
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
@@ -48,7 +58,9 @@ class InputManager {
   }
 
   isLeftPressed() {
-    if (this.keys["a"]) {
+    if (this.leftScreenTouch) {
+      return true;
+    } else if (this.keys["a"]) {
       return this.keys["a"].pressed;
     } else {
       return false;
@@ -56,7 +68,9 @@ class InputManager {
   }
 
   isRightPressed() {
-    if (this.keys["d"]) {
+    if (this.rightScreenTouch) {
+      return true;
+    } else if (this.keys["d"]) {
       return this.keys["d"].pressed;
     } else {
       return false;
@@ -113,6 +127,23 @@ class InputManager {
     document.getElementById("max-speed-attribute").innerText =
       ballSettings.maxSpeed;
   }
+
+  touchStartHandler = (event) => {
+    const { clientX, target } = event.touches[0];
+    const { left, width } = target.getBoundingClientRect();
+    const touchX = clientX - left;
+
+    if (touchX < width / 2) {
+      this.leftScreenTouch = true;
+    } else {
+      this.rightScreenTouch = true;
+    }
+  };
+
+  touchEndHandler = () => {
+    this.leftScreenTouch = false;
+    this.rightScreenTouch = false;
+  };
 }
 
 export default InputManager;

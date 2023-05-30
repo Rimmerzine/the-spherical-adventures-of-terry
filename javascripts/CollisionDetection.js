@@ -10,8 +10,8 @@ class CollisionDetection {
     const canvasMapLeft = ballNextPosition.x - ballSettings.displayXPosition;
     const visibleFloor = floor.filter(
       (floor) =>
-        floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth &&
-        floor.x <= canvasMapLeft + mapSettings.floorSegmentWidth * 4
+        floor.x >= ballNextPosition.x - mapSettings.floorSegmentWidth * 3 &&
+        floor.x <= ballNextPosition.x + mapSettings.floorSegmentWidth * 3
     );
 
     debugSettings.collisionFloors = visibleFloor;
