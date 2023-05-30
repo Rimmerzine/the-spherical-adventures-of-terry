@@ -29,7 +29,7 @@ class CanvasRenderer {
     //Draw the lines from the center to the edge
     const angleStep = (2 * Math.PI) / 8;
     for (let i = 0; i < 8; i++) {
-      const angle = i * angleStep + ball.position.x / 100;
+      const angle = i * angleStep + ball.position.x / 60;
       const lineEndX = x + radius * Math.cos(angle);
       const lineEndY = y + radius * Math.sin(angle);
 
