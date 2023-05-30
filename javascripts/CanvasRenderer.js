@@ -7,8 +7,8 @@ class CanvasRenderer {
   }
 
   drawFps(fps) {
-    this.context.font = "22px serif";
-    this.context.strokeText(fps, 10, 30);
+    this.context.font = "16px serif";
+    this.context.strokeText(fps, 10, 20);
   }
 
   drawBall(ball) {
@@ -25,6 +25,20 @@ class CanvasRenderer {
     this.context.strokeStyle = "black";
     this.context.lineWidth = 3;
     this.context.stroke();
+
+    //Draw the lines from the center to the edge
+    const angleStep = (2 * Math.PI) / 8;
+    for (let i = 0; i < 8; i++) {
+      const angle = i * angleStep + ball.position.x / 100;
+      const lineEndX = x + radius * Math.cos(angle);
+      const lineEndY = y + radius * Math.sin(angle);
+
+      // Draw the line
+      this.context.beginPath();
+      this.context.moveTo(x, y);
+      this.context.lineTo(lineEndX, lineEndY);
+      this.context.stroke();
+    }
 
     // Draw the yellow ball
     this.context.beginPath();

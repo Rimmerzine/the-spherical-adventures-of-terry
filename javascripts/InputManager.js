@@ -37,6 +37,12 @@ class InputManager {
     document
       .getElementById("canvas-container")
       .addEventListener("touchend", this.touchEndHandler);
+
+    document.addEventListener("keyup", function (event) {
+      if (event.key == " ") {
+        event.preventDefault();
+      }
+    });
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
