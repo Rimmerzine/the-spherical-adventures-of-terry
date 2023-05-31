@@ -7,7 +7,6 @@ import Position2D from "./Position2D.js";
 class CollisionDetection {
   static ballFloorCollision(ball, floor) {
     const ballNextPosition = ball.position.add(ball.velocity);
-    const canvasMapLeft = ballNextPosition.x - ballSettings.displayXPosition;
     const visibleFloor = floor.filter(
       (floor) =>
         floor.x >= ballNextPosition.x - mapSettings.floorSegmentWidth * 3 &&

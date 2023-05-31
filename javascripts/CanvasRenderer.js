@@ -29,7 +29,7 @@ class CanvasRenderer {
     //Draw the lines from the center to the edge
     const angleStep = (2 * Math.PI) / 8;
     for (let i = 0; i < 8; i++) {
-      const angle = i * angleStep + ball.position.x / 60;
+      const angle = i * angleStep + ball.position.x / 100;
       const lineEndX = x + radius * Math.cos(angle);
       const lineEndY = y + radius * Math.sin(angle);
 
@@ -83,13 +83,15 @@ class CanvasRenderer {
     this.context.fill();
   }
 
-  drawCurvedWalls(floor, ballPosition) {
+  drawCurvedWalls(terrainManager, ballPosition) {
     const canvasMapLeft = ballPosition.x - ballSettings.displayXPosition;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
-    const visibleFloor = floor.filter(
-      (floor) =>
-        floor.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 3 &&
-        floor.x <= canvasMapRight + mapSettings.floorSegmentWidth * 3
+    const visibleTerrain = terrainManager.terrain.filter(
+      (terrain) =>
+        terrain.x >=
+          canvasMapLeft - terrainManager.terrainSettings.segmentWidth * 3 &&
+        terrain.x <=
+          canvasMapRight + terrainManager.terrainSettings.segmentWidth * 3
     );
     this.context.beginPath();
     this.context.lineWidth = 21;
@@ -97,28 +99,28 @@ class CanvasRenderer {
     this.context.fillStyle = "brown";
     this.context.moveTo(0, this.canvas.height);
     this.context.lineTo(
-      visibleFloor[0].x - ballPosition.x + ballSettings.displayXPosition,
-      visibleFloor[0].y - ballPosition.y + ballSettings.startingYPosition + 10
+      visibleTerrain[0].x - ballPosition.x + ballSettings.displayXPosition,
+      visibleTerrain[0].y - ballPosition.y + ballSettings.startingYPosition + 10
     );
 
-    for (let i = 1; i < visibleFloor.length - 1; i++) {
+    for (let i = 1; i < visibleTerrain.length - 1; i++) {
       const cpx =
-        visibleFloor[i].x - ballPosition.x + ballSettings.displayXPosition;
+        visibleTerrain[i].x - ballPosition.x + ballSettings.displayXPosition;
       const cpy =
-        visibleFloor[i].y -
+        visibleTerrain[i].y -
         ballPosition.y +
         ballSettings.startingYPosition +
         10;
       const x =
-        (visibleFloor[i].x + visibleFloor[i + 1].x) / 2 -
+        (visibleTerrain[i].x + visibleTerrain[i + 1].x) / 2 -
         ballPosition.x +
         ballSettings.displayXPosition;
       const y =
-        (visibleFloor[i].y -
+        (visibleTerrain[i].y -
           ballPosition.y +
           ballSettings.startingYPosition +
           10 +
-          visibleFloor[i + 1].y -
+          visibleTerrain[i + 1].y -
           ballPosition.y +
           ballSettings.startingYPosition +
           10) /

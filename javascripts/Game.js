@@ -9,18 +9,33 @@ import {
 import Ball from "./Ball.js";
 import Position2D from "./Position2D.js";
 import InputManager from "./InputManager.js";
+import TerrainManager from "./TerrainManager.js";
+import TerrainSettings from "./TerrainSettings.js";
 
 class Game {
   constructor(canvas) {
+    const startingHeight = (canvas.offsetHeight * 2) / 3;
+    const terrainSettings = new TerrainSettings(
+      150,
+      10,
+      1000,
+      startingHeight,
+      startingHeight + 100,
+      startingHeight - 100,
+      startingHeight + 1000,
+      startingHeight - 1000,
+      50,
+      500
+    );
+
     this.renderer = new CanvasRenderer(canvas);
     this.inputManager = new InputManager();
     this.ball = null;
-    this.floor = [];
+    this.terrainManager = new TerrainManager(terrainSettings);
     this.clouds = [];
   }
 
   resetLevel() {
-    console.error("reset");
     this.initialise();
     this.inputManager.resetLevelPressed = false;
   }
@@ -33,28 +48,6 @@ class Game {
       ),
       ballSettings.startingRadius
     );
-  }
-
-  generateTerrain() {
-    this.floor = [];
-    // Create a section of floor which is all flat for the starting point
-    for (let i = 0; i < mapSettings.flatFloorCount; i++) {
-      const position = new Position2D(
-        mapSettings.floorSegmentWidth * i,
-        mapSettings.floorStartingHeight
-      );
-      this.floor.push(position);
-    }
-
-    let lastHeight = mapSettings.floorStartingHeight;
-    for (let i = 0; i <= mapSettings.floorSegmentCount; i++) {
-      const nextHeight = calculateNextHeight(i, lastHeight);
-      const endPosition = calculateNextPosition(i, nextHeight);
-      this.floor.push(endPosition);
-      lastHeight = endPosition.y;
-    }
-
-    console.debug(this.floor);
   }
 
   generateClouds() {
@@ -73,14 +66,14 @@ class Game {
 
   initialise() {
     this.createBall();
-    this.generateTerrain();
+    this.terrainManager.generateTerrain();
     this.generateClouds();
   }
 
   draw() {
     this.renderer.clearCanvas();
     this.renderer.drawClouds(this.clouds, this.ball.position);
-    this.renderer.drawCurvedWalls(this.floor, this.ball.position);
+    this.renderer.drawCurvedWalls(this.terrainManager, this.ball.position);
     if (debugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.ball);
     }
@@ -89,8 +82,11 @@ class Game {
   }
 
   update() {
-    this.ball.update(this.walls, this.floor);
-    CollisionDetection.ballFloorCollision(this.ball, this.floor);
+    this.ball.update(this.walls, this.terrainManager.terrain);
+    CollisionDetection.ballFloorCollision(
+      this.ball,
+      this.terrainManager.terrain
+    );
     this.ball.move();
   }
 

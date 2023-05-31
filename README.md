@@ -1,1 +1,1 @@
-# bouncing-ball
+# The Spherical Adventures of Terry
