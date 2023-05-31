@@ -1,11 +1,6 @@
 import CanvasRenderer from "./CanvasRenderer.js";
 import CollisionDetection from "./CollisionDetection.js";
-import {
-  gameSettings,
-  mapSettings,
-  ballSettings,
-  debugSettings,
-} from "./Settings.js";
+import { gameSettings, ballSettings, debugSettings } from "./Settings.js";
 import Ball from "./Ball.js";
 import Position2D from "./Position2D.js";
 import InputManager from "./InputManager.js";
@@ -20,12 +15,12 @@ class Game {
       10,
       1000,
       startingHeight,
-      startingHeight + 100,
-      startingHeight - 100,
-      startingHeight + 1000,
-      startingHeight - 1000,
-      50,
-      500
+      startingHeight + 50,
+      startingHeight - 50,
+      startingHeight + 500,
+      startingHeight - 500,
+      100,
+      1000
     );
 
     this.renderer = new CanvasRenderer(canvas);
@@ -52,9 +47,11 @@ class Game {
 
   generateClouds() {
     this.clouds = [];
-    for (let i = 0; i <= mapSettings.floorSegmentCount; i++) {
+    for (let i = 0; i <= this.terrainManager.terrainSettings.curveCount; i++) {
       const cloud = {
-        x: i * mapSettings.floorSegmentWidth * 2 + Math.random() * 500,
+        x:
+          i * this.terrainManager.terrainSettings.segmentWidth * 2 +
+          Math.random() * 500,
         y: Math.random() * 500,
         size: 100,
         density: 30,
@@ -83,10 +80,7 @@ class Game {
 
   update() {
     this.ball.update(this.walls, this.terrainManager.terrain);
-    CollisionDetection.ballFloorCollision(
-      this.ball,
-      this.terrainManager.terrain
-    );
+    CollisionDetection.ballFloorCollision(this.ball, this.terrainManager);
     this.ball.move();
   }
 

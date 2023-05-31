@@ -1,16 +1,18 @@
 import { ballSettings } from "./Settings.js";
-import { mapSettings } from "./Settings.js";
 import { debugSettings } from "./Settings.js";
 import Vector2D from "./Vector2D.js";
 import Position2D from "./Position2D.js";
 
 class CollisionDetection {
-  static ballFloorCollision(ball, floor) {
+  static ballFloorCollision(ball, terrainManager) {
     const ballNextPosition = ball.position.add(ball.velocity);
-    const visibleFloor = floor.filter(
+    const visibleFloor = terrainManager.terrain.filter(
       (floor) =>
-        floor.x >= ballNextPosition.x - mapSettings.floorSegmentWidth * 3 &&
-        floor.x <= ballNextPosition.x + mapSettings.floorSegmentWidth * 3
+        floor.x >=
+          ballNextPosition.x -
+            terrainManager.terrainSettings.segmentWidth * 3 &&
+        floor.x <=
+          ballNextPosition.x + terrainManager.terrainSettings.segmentWidth * 3
     );
 
     debugSettings.collisionFloors = visibleFloor;

@@ -1,7 +1,5 @@
 import Game from "./Game.js";
-import { ballSettings, mapSettings } from "./Settings.js";
-import Terrain from "./TerrainManager.js";
-import TerrainSettings from "./TerrainSettings.js";
+import { ballSettings } from "./Settings.js";
 
 ("use strict");
 

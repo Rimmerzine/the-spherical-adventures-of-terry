@@ -1,4 +1,4 @@
-import { mapSettings, ballSettings, debugSettings } from "./Settings.js";
+import { ballSettings, debugSettings } from "./Settings.js";
 
 class CanvasRenderer {
   constructor(canvas) {
@@ -87,10 +87,10 @@ class CanvasRenderer {
     const canvasMapLeft = ballPosition.x - ballSettings.displayXPosition;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
     const visibleTerrain = terrainManager.terrain.filter(
-      (terrain) =>
-        terrain.x >=
+      (floor) =>
+        floor.x >=
           canvasMapLeft - terrainManager.terrainSettings.segmentWidth * 3 &&
-        terrain.x <=
+        floor.x <=
           canvasMapRight + terrainManager.terrainSettings.segmentWidth * 3
     );
     this.context.beginPath();
@@ -169,8 +169,7 @@ class CanvasRenderer {
 
     const visibleClouds = clouds.filter(
       (cloud) =>
-        cloud.x >= canvasMapLeft - mapSettings.floorSegmentWidth * 10 &&
-        cloud.x <= canvasMapRight + mapSettings.floorSegmentWidth * 10
+        cloud.x >= canvasMapLeft - 1000 && cloud.x <= canvasMapRight + 1000
     );
 
     for (let i = 0; i < visibleClouds.length; i++) {

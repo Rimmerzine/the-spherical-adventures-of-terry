@@ -1,14 +1,5 @@
 import Vector2D from "./Vector2D.js";
 
-export const mapSettings = {
-  floorSegmentWidth: 200,
-  floorSegmentCount: 1000,
-  flatFloorCount: 10,
-  floorSegmentCount: 1000,
-  floorStartingHeight:
-    document.getElementById("canvas-container").offsetHeight / (3 / 2),
-};
-
 export const ballSettings = {
   movableDistance: 2,
   acceleration: 0.04,
