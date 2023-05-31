@@ -7,6 +7,7 @@ class Terrain {
   }
 
   generateTerrain() {
+    this.terrain = [];
     for (let i = 0; i < this.terrainSettings.flatCount; i++) {
       const position = new Position2D(
         this.terrainSettings.segmentWidth * i,
