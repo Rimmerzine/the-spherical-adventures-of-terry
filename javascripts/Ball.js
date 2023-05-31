@@ -14,7 +14,6 @@ class Ball {
   // Reflect the ball's velocity based on the given reflection vector
   reflect(reflectionVector) {
     const dotProduct = this.velocity.dotProduct(reflectionVector);
-    // const slowVector = this.velocity;
     const reflection = {
       x: reflectionVector.x * dotProduct * 2 * ballSettings.gripFactor,
       y:

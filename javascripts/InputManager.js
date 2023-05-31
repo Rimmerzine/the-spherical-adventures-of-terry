@@ -5,6 +5,7 @@ class InputManager {
     this.keys = {};
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
+    this.resetLevelPressed = false;
 
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
@@ -43,6 +44,10 @@ class InputManager {
         event.preventDefault();
       }
     });
+
+    document
+      .getElementById("reset-level-button")
+      .addEventListener("click", this.resetLevel.bind(this));
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
@@ -150,6 +155,10 @@ class InputManager {
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
   };
+
+  resetLevel() {
+    this.resetLevelPressed = true;
+  }
 }
 
 export default InputManager;

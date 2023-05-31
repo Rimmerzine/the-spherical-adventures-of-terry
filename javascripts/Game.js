@@ -19,6 +19,12 @@ class Game {
     this.clouds = [];
   }
 
+  resetLevel() {
+    console.error("reset");
+    this.initialise();
+    this.inputManager.resetLevelPressed = false;
+  }
+
   createBall() {
     this.ball = new Ball(
       new Position2D(
@@ -30,6 +36,7 @@ class Game {
   }
 
   generateTerrain() {
+    this.floor = [];
     // Create a section of floor which is all flat for the starting point
     for (let i = 0; i < mapSettings.flatFloorCount; i++) {
       const position = new Position2D(
@@ -51,6 +58,7 @@ class Game {
   }
 
   generateClouds() {
+    this.clouds = [];
     for (let i = 0; i <= mapSettings.floorSegmentCount; i++) {
       const cloud = {
         x: i * mapSettings.floorSegmentWidth * 2 + Math.random() * 500,
@@ -90,6 +98,7 @@ class Game {
     if (this.inputManager.isLeftPressed()) this.ball.pushLeft();
     if (this.inputManager.isRightPressed()) this.ball.pushRight();
     if (this.inputManager.isJumpPressed()) this.ball.jump();
+    if (this.inputManager.resetLevelPressed) this.resetLevel();
   }
 
   gameLoop() {

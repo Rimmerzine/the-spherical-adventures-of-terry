@@ -1,5 +1,7 @@
 import Game from "./Game.js";
 import { ballSettings, mapSettings } from "./Settings.js";
+import Terrain from "./Terrain.js";
+import TerrainSettings from "./TerrainSettings.js";
 
 ("use strict");
 
@@ -14,6 +16,20 @@ canvas.height = parent.offsetHeight;
 const game = new Game(canvas);
 game.initialise();
 game.start();
+
+const terrainSettings = new TerrainSettings(
+  200,
+  10,
+  1000,
+  document.getElementById("canvas-container").offsetHeight / (3 / 2),
+  document.getElementById("canvas-container").offsetHeight / (3 / 2) + 100,
+  document.getElementById("canvas-container").offsetHeight / (3 / 2) - 100,
+  document.getElementById("canvas-container").offsetHeight / (3 / 2) + 1000,
+  document.getElementById("canvas-container").offsetHeight / (3 / 2) - 1000,
+  50,
+  500
+);
+// const terrain = new Terrain(terrainSettings).generateTerrain();
 
 window.addEventListener("resize", resize);
 
