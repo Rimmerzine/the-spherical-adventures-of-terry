@@ -20,7 +20,7 @@ export const gameSettings = {
 };
 
 export const debugSettings = {
-  targetFps: 60,
+  targetFps: 144,
   debugMode: false,
   drawClosestCollisionPoint: true,
   drawNormalisedDisplacementVector: true,
