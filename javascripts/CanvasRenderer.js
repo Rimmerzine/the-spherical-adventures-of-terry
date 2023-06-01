@@ -8,13 +8,13 @@ class CanvasRenderer {
 
   drawFps(fps) {
     this.context.font = "16px serif";
-    this.context.strokeText(fps, 10, 20);
+    this.context.strokeText(`${fps} fps`, 10, 20);
   }
 
   drawBall(ball) {
-    const x = ballSettings.displayXPosition;
-    const y = ballSettings.startingYPosition;
-    const radius = ball.radius;
+    const x = ball.attributes.startingPosition.x;
+    const y = ball.attributes.startingPosition.y;
+    const radius = ball.attributes.radius;
     const scale = 0.8 * radius;
 
     // Draw the gray background
@@ -29,7 +29,7 @@ class CanvasRenderer {
     //Draw the lines from the center to the edge
     const angleStep = (2 * Math.PI) / 8;
     for (let i = 0; i < 8; i++) {
-      const angle = i * angleStep + ball.position.x / 100;
+      const angle = i * angleStep + ball.attributes.position.x / 100;
       const lineEndX = x + radius * Math.cos(angle);
       const lineEndY = y + radius * Math.sin(angle);
 
@@ -43,7 +43,7 @@ class CanvasRenderer {
     // Draw the yellow ball
     this.context.beginPath();
     this.context.arc(x, y, scale, 0, 2 * Math.PI);
-    this.context.fillStyle = ball.color;
+    this.context.fillStyle = ball.attributes.colour;
     this.context.fill();
     this.context.stroke();
 
@@ -83,8 +83,9 @@ class CanvasRenderer {
     this.context.fill();
   }
 
-  drawCurvedWalls(terrainManager, ballPosition) {
-    const canvasMapLeft = ballPosition.x - ballSettings.displayXPosition;
+  drawCurvedWalls(terrainManager, ball) {
+    const canvasMapLeft =
+      ball.attributes.position.x - ball.attributes.startingPosition.x;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
     const visibleTerrain = terrainManager.terrain.filter(
       (floor) =>
@@ -99,30 +100,37 @@ class CanvasRenderer {
     this.context.fillStyle = "brown";
     this.context.moveTo(0, this.canvas.height);
     this.context.lineTo(
-      visibleTerrain[0].x - ballPosition.x + ballSettings.displayXPosition,
-      visibleTerrain[0].y - ballPosition.y + ballSettings.startingYPosition + 10
+      visibleTerrain[0].x -
+        ball.attributes.position.x +
+        ball.attributes.startingPosition.x,
+      visibleTerrain[0].y -
+        ball.attributes.position.y +
+        ball.attributes.startingPosition.y +
+        10
     );
 
     for (let i = 1; i < visibleTerrain.length - 1; i++) {
       const cpx =
-        visibleTerrain[i].x - ballPosition.x + ballSettings.displayXPosition;
+        visibleTerrain[i].x -
+        ball.attributes.position.x +
+        ball.attributes.startingPosition.x;
       const cpy =
         visibleTerrain[i].y -
-        ballPosition.y +
-        ballSettings.startingYPosition +
+        ball.attributes.position.y +
+        ball.attributes.startingPosition.y +
         10;
       const x =
         (visibleTerrain[i].x + visibleTerrain[i + 1].x) / 2 -
-        ballPosition.x +
-        ballSettings.displayXPosition;
+        ball.attributes.position.x +
+        ball.attributes.startingPosition.x;
       const y =
         (visibleTerrain[i].y -
-          ballPosition.y +
-          ballSettings.startingYPosition +
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y +
           10 +
           visibleTerrain[i + 1].y -
-          ballPosition.y +
-          ballSettings.startingYPosition +
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y +
           10) /
         2;
 
@@ -203,13 +211,18 @@ class CanvasRenderer {
 
       this.context.beginPath();
       this.context.arc(
-        position.x - ball.position.x + ballSettings.displayXPosition,
-        position.y - ball.position.y + ballSettings.startingYPosition,
+        position.x -
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x,
+        position.y -
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y,
         10,
         0,
         2 * Math.PI
       );
       this.context.strokeStyle = "black";
+      this.context.lineWidth = 3;
       this.context.stroke();
       this.context.closePath();
     }
@@ -225,29 +238,47 @@ class CanvasRenderer {
       const endPosition = startPosition.add(vector);
       this.context.beginPath();
       this.context.moveTo(
-        startPosition.x - ball.position.x + ballSettings.displayXPosition,
-        startPosition.y - ball.position.y + ballSettings.startingYPosition
+        startPosition.x -
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x,
+        startPosition.y -
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y
       );
       this.context.lineTo(
-        endPosition.x - ball.position.x + ballSettings.displayXPosition,
-        endPosition.y - ball.position.y + ballSettings.startingYPosition
+        endPosition.x -
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x,
+        endPosition.y -
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y
       );
       this.context.stroke();
     }
   }
 
   drawBallVelocity(ball) {
-    const startPosition = ball.position;
-    const endPosition = ball.position.add(ball.velocity.multiply(5));
+    const startPosition = ball.attributes.position;
+    const endPosition = ball.attributes.position.add(
+      ball.attributes.velocity.multiply(5)
+    );
 
     this.context.beginPath();
     this.context.moveTo(
-      startPosition.x - ball.position.x + ballSettings.displayXPosition,
-      startPosition.y - ball.position.y + ballSettings.startingYPosition
+      startPosition.x -
+        ball.attributes.position.x +
+        ball.attributes.startingPosition.x,
+      startPosition.y -
+        ball.attributes.position.y +
+        ball.attributes.startingPosition.y
     );
     this.context.lineTo(
-      endPosition.x - ball.position.x + ballSettings.displayXPosition,
-      endPosition.y - ball.position.y + ballSettings.startingYPosition
+      endPosition.x -
+        ball.attributes.position.x +
+        ball.attributes.startingPosition.x,
+      endPosition.y -
+        ball.attributes.position.y +
+        ball.attributes.startingPosition.y
     );
     this.context.stroke();
   }
@@ -260,12 +291,20 @@ class CanvasRenderer {
 
       this.context.beginPath();
       this.context.moveTo(
-        startPosition.x - ball.position.x + ballSettings.displayXPosition,
-        startPosition.y - ball.position.y + ballSettings.startingYPosition
+        startPosition.x -
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x,
+        startPosition.y -
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y
       );
       this.context.lineTo(
-        endPosition.x - ball.position.x + ballSettings.displayXPosition,
-        endPosition.y - ball.position.y + ballSettings.startingYPosition
+        endPosition.x -
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x,
+        endPosition.y -
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y
       );
       this.context.stroke();
     }
@@ -278,35 +317,35 @@ class CanvasRenderer {
       this.context.strokeStyle = "yellow";
       this.context.moveTo(
         debugSettings.collisionFloors[0].x -
-          ball.position.x +
-          ballSettings.displayXPosition,
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x,
         debugSettings.collisionFloors[0].y -
-          ball.position.y +
-          ballSettings.startingYPosition
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y
       );
 
       for (let i = 1; i < debugSettings.collisionFloors.length - 1; i++) {
         const cpx =
           debugSettings.collisionFloors[i].x -
-          ball.position.x +
-          ballSettings.displayXPosition;
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x;
         const cpy =
           debugSettings.collisionFloors[i].y -
-          ball.position.y +
-          ballSettings.startingYPosition;
+          ball.attributes.position.y +
+          ball.attributes.startingPosition.y;
         const x =
           (debugSettings.collisionFloors[i].x +
             debugSettings.collisionFloors[i + 1].x) /
             2 -
-          ball.position.x +
-          ballSettings.displayXPosition;
+          ball.attributes.position.x +
+          ball.attributes.startingPosition.x;
         const y =
           (debugSettings.collisionFloors[i].y -
-            ball.position.y +
-            ballSettings.startingYPosition +
+            ball.attributes.position.y +
+            ball.attributes.startingPosition.y +
             debugSettings.collisionFloors[i + 1].y -
-            ball.position.y +
-            ballSettings.startingYPosition) /
+            ball.attributes.position.y +
+            ball.attributes.startingPosition.y) /
           2;
 
         this.context.quadraticCurveTo(cpx, cpy, x, y);

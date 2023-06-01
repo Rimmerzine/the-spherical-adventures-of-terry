@@ -5,7 +5,9 @@ import Position2D from "./Position2D.js";
 
 class CollisionDetection {
   static ballFloorCollision(ball, terrainManager) {
-    const ballNextPosition = ball.position.add(ball.velocity);
+    const ballNextPosition = ball.attributes.position.add(
+      ball.attributes.velocity
+    );
     const visibleFloor = terrainManager.terrain.filter(
       (floor) =>
         floor.x >=
@@ -25,16 +27,18 @@ class CollisionDetection {
 
     if (
       calculateDistance(position, ballNextPosition) <=
-      ball.radius + ballSettings.movableDistance
+      ball.attributes.radius + ballSettings.movableDistance
     ) {
-      ball.movable = true;
+      ball.attributes.movable = true;
     } else {
-      ball.movable = false;
+      ball.attributes.movable = false;
     }
 
     // if the distance between the closest point and the ball is less than or equal to it's radius, collision
-    if (calculateDistance(position, ballNextPosition) <= ball.radius) {
-      ball.velocity = ball.velocity.multiply(0.99); // slow down the ball slightly whenever touching ground
+    if (
+      calculateDistance(position, ballNextPosition) <= ball.attributes.radius
+    ) {
+      ball.attributes.velocity = ball.attributes.velocity.multiply(0.99); // slow down the ball slightly whenever touching ground
       const normalisedDisplacementVector = new Vector2D(
         ballNextPosition.x - position.x,
         ballNextPosition.y - position.y

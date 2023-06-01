@@ -1,11 +1,11 @@
 import { ballSettings } from "./Settings.js";
 
 class InputManager {
-  constructor() {
+  constructor(game) {
     this.keys = {};
+    this.game = game;
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
-    this.resetLevelPressed = false;
 
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
@@ -13,23 +13,19 @@ class InputManager {
 
     document
       .getElementById("upgrade-speed-button")
-      .addEventListener("click", this.upgradeSpeed);
-
-    document
-      .getElementById("upgrade-weight-button")
-      .addEventListener("click", this.upgradeWeight);
+      .addEventListener("click", this.upgradeSpeed.bind(this));
 
     document
       .getElementById("upgrade-grip-button")
-      .addEventListener("click", this.upgradeGrip);
+      .addEventListener("click", this.upgradeGrip.bind(this));
 
     document
       .getElementById("upgrade-jump-button")
-      .addEventListener("click", this.upgradeJump);
+      .addEventListener("click", this.upgradeJump.bind(this));
 
     document
       .getElementById("upgrade-max-speed-button")
-      .addEventListener("click", this.upgradeMaxSpeed);
+      .addEventListener("click", this.upgradeMaxSpeed.bind(this));
 
     document
       .getElementById("canvas-container")
@@ -92,7 +88,7 @@ class InputManager {
     if (this.keys[" "] && this.keys[" "].pressed) {
       const now = new Date().getTime();
       const canJump = this.keys[" "].pressed && this.keys[" "].cooldown <= now; // if space is pressed and it isn't on cooldown
-      this.keys[" "].cooldown = now + 200; // add a cooldown to the key
+      this.keys[" "].cooldown = now + 100; // add a cooldown to the key
       return canJump;
     } else {
       return false;
@@ -100,43 +96,31 @@ class InputManager {
   }
 
   upgradeSpeed() {
-    if (ballSettings.acceleration <= 0.22) {
-      ballSettings.acceleration += 0.02;
-    }
+    this.game.ball.stats.getStat("acceleration").upgrade();
     document.getElementById("acceleration-attribute").innerText =
-      Math.round(ballSettings.acceleration * 2000) / 100;
-  }
-
-  upgradeWeight() {
-    if (ballSettings.reflectionDampeningFactor >= 0.6) {
-      ballSettings.reflectionDampeningFactor -= 0.05;
-    }
-    document.getElementById("weight-attribute").innerText =
-      Math.round((1 - ballSettings.reflectionDampeningFactor) * 1000) / 100;
+      Math.round(
+        this.game.ball.stats.getStat("acceleration").currentValue * 2000
+      ) / 100;
   }
 
   upgradeGrip() {
-    if (ballSettings.gripFactor >= 0.6) {
-      ballSettings.gripFactor -= 0.05;
-    }
+    this.game.ball.stats.getStat("grip").upgrade();
     document.getElementById("grip-attribute").innerText =
-      Math.round((1 - ballSettings.gripFactor) * 1000) / 100;
+      Math.round(
+        (1 - this.game.ball.stats.getStat("grip").currentValue) * 1000
+      ) / 100;
   }
 
   upgradeJump() {
-    if (ballSettings.totalJumps < 2) {
-      ballSettings.totalJumps++;
-    }
+    this.game.ball.stats.getStat("jumps").upgrade();
     document.getElementById("jump-attribute").innerText =
-      ballSettings.totalJumps;
+      this.game.ball.stats.getStat("jumps").currentValue;
   }
 
   upgradeMaxSpeed() {
-    if (ballSettings.maxSpeed < 15) {
-      ballSettings.maxSpeed++;
-    }
+    this.game.ball.stats.getStat("max-speed").upgrade();
     document.getElementById("max-speed-attribute").innerText =
-      ballSettings.maxSpeed;
+      this.game.ball.stats.getStat("max-speed").currentValue;
   }
 
   touchStartHandler = (event) => {
@@ -157,7 +141,7 @@ class InputManager {
   };
 
   resetLevel() {
-    this.resetLevelPressed = true;
+    this.game.resetLevel();
   }
 }
 
