@@ -28,9 +28,23 @@ class Game {
     this.ball = null;
     this.terrainManager = new TerrainManager(terrainSettings);
     this.clouds = [];
+    this.distanceReached = 0;
+    this.points = 0;
   }
 
   resetLevel() {
+    const newDistance = Math.max(
+      0,
+      this.ball.position.x - this.distanceReached
+    );
+    const pointsGained = Math.floor(newDistance / 5000);
+
+    this.distanceReached = this.ball.position.x - ballSettings.displayXPosition;
+    this.points += pointsGained;
+    document.getElementById(
+      "points-attribute"
+    ).innerText = `Total points: ${this.points}`;
+
     this.initialise();
     this.inputManager.resetLevelPressed = false;
   }
@@ -119,31 +133,3 @@ class Game {
 }
 
 export default Game;
-
-// Add the rest of the floor segments which adjust on height
-function calculateNextHeight(index, lastHeight) {
-  const { floorStartingHeight } = mapSettings;
-  const maxPossibleHeight = floorStartingHeight - 125 - index;
-  const maxAllowedDifference = index / 4;
-
-  const allowedMinimum =
-    lastHeight + maxAllowedDifference > floorStartingHeight
-      ? lastHeight + maxAllowedDifference
-      : floorStartingHeight;
-  const allowedMaximum =
-    lastHeight - maxAllowedDifference < maxPossibleHeight
-      ? lastHeight - maxAllowedDifference
-      : maxPossibleHeight;
-
-  return Math.ceil(
-    Math.random() * (allowedMinimum - allowedMaximum + 1) + allowedMaximum
-  );
-}
-
-function calculateNextPosition(index, height) {
-  const x =
-    mapSettings.floorSegmentWidth * index +
-    mapSettings.floorSegmentWidth * mapSettings.flatFloorCount;
-  const y = height;
-  return new Position2D(x, y);
-}
