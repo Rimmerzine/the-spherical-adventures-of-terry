@@ -3,7 +3,7 @@ import { ballSettings, debugSettings } from "./Settings.js";
 class CanvasRenderer {
   constructor(canvas) {
     this.canvas = canvas;
-    this.context = canvas.getContext("2d");
+    this.context = canvas.getContext("2d", { alpha: false });
   }
 
   drawFps(fps) {
