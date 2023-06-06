@@ -31,6 +31,9 @@ class Ball {
 
   // Push the ball to the left
   pushLeft() {
+    if (this.attributes.rotationsPerSecond > 0)
+      this.attributes.rotationsPerSecond -=
+        this.stats.getStat("acceleration").currentValue * 3;
     if (
       this.attributes.rotationsPerSecond >
       -this.stats.getStat("max-rpm").currentValue
@@ -42,6 +45,9 @@ class Ball {
 
   // Push the ball to the right
   pushRight() {
+    if (this.attributes.rotationsPerSecond < 0)
+      this.attributes.rotationsPerSecond +=
+        this.stats.getStat("acceleration").currentValue * 3;
     if (
       this.attributes.rotationsPerSecond <
       this.stats.getStat("max-rpm").currentValue
