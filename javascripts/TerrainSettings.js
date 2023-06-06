@@ -1,3 +1,5 @@
+("use strict");
+
 class TerrainSettings {
   constructor(
     segmentWidth,
@@ -9,7 +11,10 @@ class TerrainSettings {
     endMinHeight,
     endMaxHeight,
     minHeightAdjustment,
-    maxHeightAdjustment
+    maxHeightAdjustment,
+    surfaceGripCoefficient,
+    surfaceColour,
+    subsurfaceColour
   ) {
     this.segmentWidth = segmentWidth;
     this.flatCount = flatCount;
@@ -24,6 +29,10 @@ class TerrainSettings {
 
     this.differenceMinHeight = Math.abs(startMinHeight - endMinHeight);
     this.differenceMaxHeight = Math.abs(startMaxHeight - endMaxHeight);
+
+    this.surfaceGripCoefficient = surfaceGripCoefficient;
+    this.surfaceColour = surfaceColour;
+    this.subsurfaceColour = subsurfaceColour;
   }
 }
 

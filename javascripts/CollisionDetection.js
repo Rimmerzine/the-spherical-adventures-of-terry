@@ -1,7 +1,9 @@
-import { ballSettings } from "./Settings.js";
+import { gravity } from "./Settings.js";
 import { debugSettings } from "./Settings.js";
 import Vector2D from "./Vector2D.js";
 import Position2D from "./Position2D.js";
+
+("use strict");
 
 class CollisionDetection {
   static ballFloorCollision(ball, terrainManager) {
@@ -25,20 +27,11 @@ class CollisionDetection {
       debugSettings.closestPoint = position;
     }
 
-    if (
-      calculateDistance(position, ballNextPosition) <=
-      ball.attributes.radius + ballSettings.movableDistance
-    ) {
-      ball.attributes.movable = true;
-    } else {
-      ball.attributes.movable = false;
-    }
-
     // if the distance between the closest point and the ball is less than or equal to it's radius, collision
     if (
       calculateDistance(position, ballNextPosition) <= ball.attributes.radius
     ) {
-      ball.attributes.velocity = ball.attributes.velocity.multiply(0.99); // slow down the ball slightly whenever touching ground
+      // ball.attributes.velocity = ball.attributes.velocity.multiply(0.99); // slow down the ball slightly whenever touching ground
       const normalisedDisplacementVector = new Vector2D(
         ballNextPosition.x - position.x,
         ballNextPosition.y - position.y
@@ -48,12 +41,62 @@ class CollisionDetection {
           normalisedDisplacementVector;
       }
 
-      ball.reflect(normalisedDisplacementVector);
+      reflect(
+        ball,
+        terrainManager.terrainSettings.surfaceGripCoefficient,
+        normalisedDisplacementVector
+      );
     }
   }
 }
 
 export default CollisionDetection;
+
+// Reflect the ball's velocity based on the given reflection vector
+function reflect(ball, surfaceGripCoefficient, reflectionVector) {
+  const speedToAdd =
+    (4 *
+      Math.PI *
+      ball.attributes.radius *
+      ball.attributes.rotationsPerSecond) /
+      5 /
+      360 -
+    ball.attributes.velocity.x;
+
+  const perpendicularFaceVectorAddition = reflectionVector
+    .normalize()
+    .perpendicularDirection()
+    .multiply(speedToAdd)
+    .multiply(surfaceGripCoefficient);
+
+  ball.attributes.velocity = ball.attributes.velocity.add(
+    perpendicularFaceVectorAddition
+  );
+
+  ball.attributes.rotationsPerSecond =
+    ball.attributes.rotationsPerSecond - speedToAdd * surfaceGripCoefficient;
+
+  ball.attributes.rotationsPerSecond *= 0.99;
+
+  const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
+  const reflection = {
+    x:
+      reflectionVector.x *
+      dotProduct *
+      2 *
+      (1 - ball.stats.getStat("grip").currentValue),
+    y: Math.max(gravity.y, reflectionVector.y * dotProduct * 2 * 0.8),
+  };
+  if (debugSettings.drawReflectionVector) {
+    debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
+  }
+  ball.attributes.velocity.x -= reflection.x;
+  ball.attributes.velocity.y -= reflection.y;
+
+  // ball.atrributes.rotationsPerSecond;
+
+  ball.attributes.jumpCount = 0;
+}
 
 function calculateDistance(pointOne, pointTwo) {
   if (pointOne == null || pointTwo == null) return Infinity;

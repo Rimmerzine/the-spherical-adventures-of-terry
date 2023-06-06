@@ -1,3 +1,5 @@
+("use strict");
+
 class Vector2D {
   constructor(x, y) {
     this.x = x;
@@ -9,6 +11,10 @@ class Vector2D {
     return new Vector2D(this.x + vector.x, this.y + vector.y);
   }
 
+  subtract(vector) {
+    return new Vector2D(this.x - vector.x, this.y - vector.y);
+  }
+
   // Multiply the vector by a scalar value
   multiply(scalar) {
     return new Vector2D(this.x * scalar, this.y * scalar);
@@ -18,6 +24,17 @@ class Vector2D {
     return Math.sqrt(this.x ** 2 + this.y ** 2);
   }
 
+  perpendicularDirection() {
+    const x = this.y;
+    const y = -this.x;
+
+    if (x < 0) {
+      return new Vector2D(-x, y);
+    } else {
+      return new Vector2D(x, y);
+    }
+  }
+
   normalize() {
     const magnitude = this.magnitude();
     if (magnitude !== 0) {
@@ -25,6 +42,10 @@ class Vector2D {
     } else {
       return new Vector2D(0, 0);
     }
+  }
+
+  distance() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
   dotProduct(vector) {

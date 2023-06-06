@@ -1,5 +1,5 @@
 import Game from "./Game.js";
-import { ballSettings } from "./Settings.js";
+import { ballSettings, gravity } from "./Settings.js";
 
 ("use strict");
 

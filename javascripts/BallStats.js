@@ -1,3 +1,5 @@
+("use strict");
+
 class BallStats {
   constructor() {
     this.stats = new Map();

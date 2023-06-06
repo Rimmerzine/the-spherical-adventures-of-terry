@@ -1,4 +1,6 @@
-import { ballSettings } from "./Settings.js";
+import { gravity } from "./Settings.js";
+
+("use strict");
 
 class InputManager {
   constructor(game) {
@@ -24,7 +26,7 @@ class InputManager {
       .addEventListener("click", this.upgradeJump.bind(this));
 
     document
-      .getElementById("upgrade-max-speed-button")
+      .getElementById("upgrade-max-rpm-button")
       .addEventListener("click", this.upgradeMaxSpeed.bind(this));
 
     document
@@ -44,6 +46,10 @@ class InputManager {
     document
       .getElementById("reset-level-button")
       .addEventListener("click", this.resetLevel.bind(this));
+
+    document.getElementById("add-gravity").addEventListener("click", () => {
+      gravity.y = 0.1;
+    });
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
@@ -118,12 +124,12 @@ class InputManager {
   }
 
   upgradeMaxSpeed() {
-    this.game.ball.stats.getStat("max-speed").upgrade();
-    document.getElementById("max-speed-attribute").innerText =
-      this.game.ball.stats.getStat("max-speed").currentValue;
+    this.game.ball.stats.getStat("max-rpm").upgrade();
+    document.getElementById("max-rpm-attribute").innerText =
+      this.game.ball.stats.getStat("max-rpm").currentValue;
   }
 
-  touchStartHandler = (event) => {
+  touchStartHandler(event) {
     const { clientX, target } = event.touches[0];
     const { left, width } = target.getBoundingClientRect();
     const touchX = clientX - left;
@@ -133,12 +139,12 @@ class InputManager {
     } else {
       this.rightScreenTouch = true;
     }
-  };
+  }
 
-  touchEndHandler = () => {
+  touchEndHandler() {
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
-  };
+  }
 
   resetLevel() {
     this.game.resetLevel();

@@ -10,9 +10,27 @@ import BallAttributes from "./BallAttributes.js";
 import { BallStat, BallStats } from "./BallStats.js";
 import Vector2D from "./Vector2D.js";
 
+("use strict");
+
 class Game {
   constructor(canvas) {
     const startingHeight = (canvas.offsetHeight * 2) / 3;
+    // const terrainSettings = new TerrainSettings(
+    //   150,
+    //   10,
+    //   1000,
+    //   startingHeight,
+    //   startingHeight + 50,
+    //   startingHeight - 50,
+    //   startingHeight + 500,
+    //   startingHeight - 500,
+    //   100,
+    //   1000,
+    //   1.0,
+    //   "rgb(50, 50, 50)",
+    //   "rgb(20, 20, 20)"
+    // );
+
     const terrainSettings = new TerrainSettings(
       150,
       10,
@@ -23,7 +41,10 @@ class Game {
       startingHeight + 500,
       startingHeight - 500,
       100,
-      1000
+      1000,
+      0.1,
+      "rgb(30, 130, 200)",
+      "rgb(50, 180, 255)"
     );
 
     this.renderer = new CanvasRenderer(canvas);
@@ -65,7 +86,7 @@ class Game {
     );
 
     const ballStats = new BallStats()
-      .add("max-speed", new BallStat(8, 5, [1, 3, 7, 13, 21]))
+      .add("max-rpm", new BallStat(10, 5, [1, 3, 7, 13, 21]))
       .add("acceleration", new BallStat(0.025, 0.025, [1, 3, 7, 13, 21]))
       .add("grip", new BallStat(0.1, 0.1, [2, 5, 11]))
       .add("jumps", new BallStat(0, 1, [5, 20]));
@@ -130,10 +151,7 @@ class Game {
         gameSettings.times.shift();
       }
       gameSettings.times.push(now);
-      gameSettings.fps = Math.min(
-        debugSettings.targetFps,
-        gameSettings.times.length
-      );
+      gameSettings.fps = gameSettings.times.length;
 
       this.draw();
       this.update();

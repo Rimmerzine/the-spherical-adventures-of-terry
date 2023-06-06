@@ -1,5 +1,7 @@
 import Position2D from "./Position2D.js";
 
+("use strict");
+
 class Terrain {
   constructor(terrainSettings) {
     this.terrain = [];

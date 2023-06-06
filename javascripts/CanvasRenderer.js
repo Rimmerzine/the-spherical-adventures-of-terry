@@ -1,5 +1,7 @@
 import { ballSettings, debugSettings } from "./Settings.js";
 
+("use strict");
+
 class CanvasRenderer {
   constructor(canvas) {
     this.canvas = canvas;
@@ -29,7 +31,7 @@ class CanvasRenderer {
     //Draw the lines from the center to the edge
     const angleStep = (2 * Math.PI) / 8;
     for (let i = 0; i < 8; i++) {
-      const angle = i * angleStep + ball.attributes.position.x / 100;
+      const angle = i * angleStep + ball.attributes.rotation;
       const lineEndX = x + radius * Math.cos(angle);
       const lineEndY = y + radius * Math.sin(angle);
 
@@ -96,8 +98,8 @@ class CanvasRenderer {
     );
     this.context.beginPath();
     this.context.lineWidth = 21;
-    this.context.strokeStyle = "green";
-    this.context.fillStyle = "brown";
+    this.context.strokeStyle = terrainManager.terrainSettings.surfaceColour;
+    this.context.fillStyle = terrainManager.terrainSettings.subsurfaceColour;
     this.context.moveTo(0, this.canvas.height);
     this.context.lineTo(
       visibleTerrain[0].x -
@@ -203,6 +205,29 @@ class CanvasRenderer {
     this.drawBallVelocity(ball);
     this.drawReflectionVector(ball);
     this.drawCollisionFloors(ball);
+    this.drawMovementLines(ball);
+  }
+
+  drawMovementLines(ball) {
+    if (debugSettings.drawMovementLines) {
+      for (
+        let i =
+          ball.attributes.startingPosition.x -
+          (ball.attributes.position.x - ball.attributes.startingPosition.x);
+        i <=
+        ball.attributes.startingPosition.x -
+          (ball.attributes.position.x - ball.attributes.startingPosition.x) +
+          1000;
+        i += (2 * Math.PI * ball.attributes.radius) / 8
+      ) {
+        this.context.beginPath();
+        this.context.moveTo(i, this.canvas.height);
+        this.context.lineTo(i, 0);
+        this.context.lineWidth = 1;
+        this.context.stroke();
+        this.context.closePath();
+      }
+    }
   }
 
   drawClosestPositionOnFloor(ball) {

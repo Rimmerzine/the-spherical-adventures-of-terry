@@ -1,3 +1,5 @@
+("use strict");
+
 class LevelSettings {
   constructor(terrainSettings) {}
 }
