@@ -15,23 +15,23 @@ import Vector2D from "./Vector2D.js";
 class Game {
   constructor(canvas) {
     const startingHeight = (canvas.offsetHeight * 2) / 3;
-    // const terrainSettings = new TerrainSettings(
-    //   150,
-    //   10,
-    //   1000,
-    //   startingHeight,
-    //   startingHeight + 50,
-    //   startingHeight - 50,
-    //   startingHeight + 500,
-    //   startingHeight - 500,
-    //   100,
-    //   1000,
-    //   1.0,
-    //   "rgb(50, 50, 50)",
-    //   "rgb(20, 20, 20)"
-    // );
+    const tarmainTerrainSettings = new TerrainSettings(
+      150,
+      10,
+      1000,
+      startingHeight,
+      startingHeight + 50,
+      startingHeight - 50,
+      startingHeight + 500,
+      startingHeight - 500,
+      100,
+      1000,
+      1.0,
+      "rgb(50, 50, 50)",
+      "rgb(20, 20, 20)"
+    );
 
-    const terrainSettings = new TerrainSettings(
+    const iceTerrainSettings = new TerrainSettings(
       150,
       10,
       1000,
@@ -47,10 +47,26 @@ class Game {
       "rgb(50, 180, 255)"
     );
 
+    const grasslandsTerrainSettings = new TerrainSettings(
+      150,
+      10,
+      1000,
+      startingHeight,
+      startingHeight + 50,
+      startingHeight - 50,
+      startingHeight + 500,
+      startingHeight - 500,
+      100,
+      1000,
+      0.8,
+      "green",
+      "brown"
+    );
+
     this.renderer = new CanvasRenderer(canvas);
     this.inputManager = new InputManager(this);
     this.ball = null;
-    this.terrainManager = new TerrainManager(terrainSettings);
+    this.terrainManager = new TerrainManager(grasslandsTerrainSettings);
     this.clouds = [];
     this.distanceReached = 0;
     this.points = 0;

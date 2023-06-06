@@ -46,10 +46,6 @@ class InputManager {
     document
       .getElementById("reset-level-button")
       .addEventListener("click", this.resetLevel.bind(this));
-
-    document.getElementById("add-gravity").addEventListener("click", () => {
-      gravity.y = 0.1;
-    });
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently

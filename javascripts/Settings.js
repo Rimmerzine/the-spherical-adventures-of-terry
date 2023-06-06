@@ -13,7 +13,7 @@ export const gameSettings = {
 
 export const debugSettings = {
   targetFps: 60,
-  debugMode: true,
+  debugMode: false,
   drawClosestCollisionPoint: true,
   drawNormalisedDisplacementVector: true,
   drawReflectionVector: true,
@@ -25,4 +25,4 @@ export const debugSettings = {
   collisionFloors: null,
 };
 
-export const gravity = new Vector2D(0, 0);
+export const gravity = new Vector2D(0, 0.1);

@@ -85,7 +85,7 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector) {
       dotProduct *
       2 *
       (1 - ball.stats.getStat("grip").currentValue),
-    y: Math.max(gravity.y, reflectionVector.y * dotProduct * 2 * 0.8),
+    y: reflectionVector.y * dotProduct * 2 * 0.8,
   };
   if (debugSettings.drawReflectionVector) {
     debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
