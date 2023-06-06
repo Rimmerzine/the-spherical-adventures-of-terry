@@ -1,5 +1,4 @@
 import Game from "./Game.js";
-import { ballSettings, gravity } from "./Settings.js";
 
 ("use strict");
 
@@ -20,8 +19,5 @@ window.addEventListener("resize", resize);
 function resize() {
   canvas.width = parent.offsetWidth;
   canvas.height = parent.offsetHeight;
-  ballSettings.displayXPosition =
-    document.getElementById("canvas-container").offsetWidth / 2;
-  ballSettings.startingYPosition =
-    document.getElementById("canvas-container").offsetHeight / (3 / 2) - 100;
+  game.resize();
 }

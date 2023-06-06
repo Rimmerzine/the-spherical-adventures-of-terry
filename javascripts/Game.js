@@ -1,6 +1,6 @@
 import CanvasRenderer from "./CanvasRenderer.js";
 import CollisionDetection from "./CollisionDetection.js";
-import { gameSettings, ballSettings, debugSettings } from "./Settings.js";
+import { gameSettings, debugSettings } from "./Settings.js";
 import Ball from "./Ball.js";
 import Position2D from "./Position2D.js";
 import InputManager from "./InputManager.js";
@@ -14,6 +14,8 @@ import Vector2D from "./Vector2D.js";
 
 class Game {
   constructor(canvas) {
+    this.canvas = canvas;
+
     const startingHeight = (canvas.offsetHeight * 2) / 3;
     const tarmainTerrainSettings = new TerrainSettings(
       150,
@@ -73,6 +75,13 @@ class Game {
     this.requiredDelay = 0;
   }
 
+  resize() {
+    const canvasContainer = document.getElementById("canvas-container");
+    this.ball.attributes.startingPosition.x = canvasContainer.offsetWidth / 2;
+    this.ball.attributes.startingPosition.y =
+      canvasContainer.offsetHeight / (3 / 2) - 100;
+  }
+
   resetLevel() {
     const newDistance = Math.max(
       0,
@@ -81,7 +90,7 @@ class Game {
     const pointsGained = Math.floor(newDistance / 5000);
 
     this.distanceReached =
-      this.ball.attributes.position.x - ballSettings.displayXPosition;
+      this.ball.attributes.position.x - this.ball.attributes.startingPosition.x;
     this.points += pointsGained;
     document.getElementById(
       "points-attribute"
@@ -138,7 +147,7 @@ class Game {
 
   draw() {
     this.renderer.clearCanvas();
-    this.renderer.drawClouds(this.clouds, this.ball.attributes.position);
+    this.renderer.drawClouds(this.clouds, this.ball);
     this.renderer.drawCurvedWalls(this.terrainManager, this.ball);
     if (debugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.ball);

@@ -1,4 +1,4 @@
-import { ballSettings, debugSettings } from "./Settings.js";
+import { debugSettings } from "./Settings.js";
 
 ("use strict");
 
@@ -173,20 +173,21 @@ class CanvasRenderer {
     }
   }
 
-  drawClouds(clouds, ballPosition) {
-    const canvasMapLeft = ballPosition.x - ballSettings.displayXPosition;
+  drawClouds(clouds, ball) {
+    const canvasMapLeft =
+      ball.attributes.position.x - ball.attributes.startingPosition.x;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
 
     const visibleClouds = clouds.filter(
       (cloud) =>
-        cloud.x >= canvasMapLeft - 1000 && cloud.x <= canvasMapRight + 1000
+        cloud.x >= canvasMapLeft - 1000 && cloud.x <= canvasMapRight + 2000
     );
 
     for (let i = 0; i < visibleClouds.length; i++) {
       const cloud = visibleClouds[i];
       this.drawCloud(
-        cloud.x - ballPosition.x,
-        cloud.y - ballPosition.y / 3,
+        cloud.x - ball.attributes.position.x,
+        cloud.y - ball.attributes.position.y / 3,
         cloud.size,
         cloud.density,
         cloud.seed

@@ -2,10 +2,6 @@ import Vector2D from "./Vector2D.js";
 
 ("use strict");
 
-export const ballSettings = {
-  jumpCooldown: 0,
-};
-
 export const gameSettings = {
   times: [],
   fps: null,
