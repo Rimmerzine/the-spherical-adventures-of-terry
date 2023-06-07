@@ -17,7 +17,7 @@ class Game {
     this.canvas = canvas;
 
     const startingHeight = (canvas.offsetHeight * 2) / 3;
-    const tarmainTerrainSettings = new TerrainSettings(
+    const tarmacTerrainSettings = new TerrainSettings(
       150,
       10,
       1000,
@@ -44,7 +44,7 @@ class Game {
       startingHeight - 500,
       100,
       1000,
-      0.1,
+      0.02,
       "rgb(30, 130, 200)",
       "rgb(50, 180, 255)"
     );
@@ -68,11 +68,13 @@ class Game {
     this.renderer = new CanvasRenderer(canvas);
     this.inputManager = new InputManager(this);
     this.ball = null;
-    this.terrainManager = new TerrainManager(grasslandsTerrainSettings);
+    this.terrainManager = new TerrainManager(iceTerrainSettings);
     this.clouds = [];
     this.distanceReached = 0;
     this.points = 0;
     this.requiredDelay = 0;
+
+    this.lastTime = Date.now();
   }
 
   resize() {
@@ -100,18 +102,19 @@ class Game {
   }
 
   createBall() {
+    const canvasContainer = document.getElementById("canvas-container");
     const ballAttributes = new BallAttributes(
       new Position2D(
-        document.getElementById("canvas-container").offsetWidth / 2,
-        document.getElementById("canvas-container").offsetHeight / (3 / 2) - 100
+        canvasContainer.offsetWidth / 2,
+        canvasContainer.offsetHeight / (3 / 2) - 100
       ),
       50,
       "yellow",
-      new Vector2D(0, -4)
+      new Vector2D(0, -200)
     );
 
     const ballStats = new BallStats()
-      .add("max-rpm", new BallStat(10, 5, [1, 3, 7, 13, 21]))
+      .add("max-rpm", new BallStat(1, 5, [1, 3, 7, 13, 21]))
       .add("acceleration", new BallStat(0.025, 0.025, [1, 3, 7, 13, 21]))
       .add("grip", new BallStat(0.1, 0.1, [2, 5, 11]))
       .add("jumps", new BallStat(0, 1, [5, 20]));
@@ -121,15 +124,11 @@ class Game {
 
   generateClouds() {
     this.clouds = [];
-    for (
-      let i = 0;
-      i <= this.terrainManager.terrainSettings.curveCount * 2;
-      i++
-    ) {
+    const curveCount = this.terrainManager.terrainSettings.curveCount;
+    const segmentWidth = this.terrainManager.terrainSettings.segmentWidth;
+    for (let i = 0; i <= curveCount * 2; i++) {
       const cloud = {
-        x:
-          i * this.terrainManager.terrainSettings.segmentWidth * 2 +
-          Math.random() * 250,
+        x: i * segmentWidth * 2 + Math.random() * 250,
         y: Math.random() * 750,
         size: 100,
         density: 30,
@@ -157,13 +156,21 @@ class Game {
   }
 
   update() {
+    let currentTime = Date.now();
+    let deltaTime = Math.min(1 / 30, (currentTime - this.lastTime) / 1000); // convert to seconds
+    this.lastTime = currentTime;
+
     if (this.inputManager.isLeftPressed()) this.ball.pushLeft();
     if (this.inputManager.isRightPressed()) this.ball.pushRight();
     if (this.inputManager.isJumpPressed()) this.ball.jump();
 
-    this.ball.update(this.walls, this.terrainManager.terrain);
-    CollisionDetection.ballFloorCollision(this.ball, this.terrainManager);
-    this.ball.move();
+    this.ball.update(deltaTime);
+    CollisionDetection.ballFloorCollision(
+      this.ball,
+      this.terrainManager,
+      deltaTime
+    );
+    this.ball.move(deltaTime);
   }
 
   gameLoop() {

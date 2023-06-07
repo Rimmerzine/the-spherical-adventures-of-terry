@@ -6,9 +6,9 @@ import Position2D from "./Position2D.js";
 ("use strict");
 
 class CollisionDetection {
-  static ballFloorCollision(ball, terrainManager) {
+  static ballFloorCollision(ball, terrainManager, deltaTime) {
     const ballNextPosition = ball.attributes.position.add(
-      ball.attributes.velocity
+      ball.attributes.velocity.multiply(deltaTime)
     );
     const visibleFloor = terrainManager.terrain.filter(
       (floor) =>
@@ -44,7 +44,8 @@ class CollisionDetection {
       reflect(
         ball,
         terrainManager.terrainSettings.surfaceGripCoefficient,
-        normalisedDisplacementVector
+        normalisedDisplacementVector,
+        deltaTime
       );
     }
   }
@@ -53,14 +54,9 @@ class CollisionDetection {
 export default CollisionDetection;
 
 // Reflect the ball's velocity based on the given reflection vector
-function reflect(ball, surfaceGripCoefficient, reflectionVector) {
+function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
   const speedToAdd =
-    (4 *
-      Math.PI *
-      ball.attributes.radius *
-      ball.attributes.rotationsPerSecond) /
-      5 /
-      360 -
+    2 * Math.PI * ball.attributes.radius * ball.attributes.rotationsPerSecond -
     ball.attributes.velocity.x;
 
   const perpendicularFaceVectorAddition = reflectionVector
@@ -74,7 +70,8 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector) {
   );
 
   ball.attributes.rotationsPerSecond =
-    ball.attributes.rotationsPerSecond - speedToAdd * surfaceGripCoefficient;
+    ball.attributes.rotationsPerSecond -
+    (ball.attributes.rotationsPerSecond / 2) * deltaTime;
 
   ball.attributes.rotationsPerSecond *= 0.99;
 
@@ -93,9 +90,7 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector) {
   ball.attributes.velocity.x -= reflection.x;
   ball.attributes.velocity.y -= reflection.y;
 
-  // ball.atrributes.rotationsPerSecond;
-
-  ball.attributes.jumpCount = 0;
+  ball.jumpsRemaining = ball.stats.getStat("jumps").currentValue;
 }
 
 function calculateDistance(pointOne, pointTwo) {
