@@ -1,6 +1,6 @@
-import { debugSettings } from "./Settings.js";
+"use strict";
 
-("use strict");
+import { debugSettings } from "./Settings.js";
 
 class CanvasRenderer {
   constructor(canvas) {

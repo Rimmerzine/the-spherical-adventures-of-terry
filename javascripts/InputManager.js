@@ -8,44 +8,27 @@ class InputManager {
     this.game = game;
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
-
-    document.addEventListener("keydown", this.handleKeyDown.bind(this));
-
-    document.addEventListener("keyup", this.handleKeyUp.bind(this));
-
-    document
-      .getElementById("upgrade-speed-button")
-      .addEventListener("click", this.upgradeSpeed.bind(this));
-
-    document
-      .getElementById("upgrade-grip-button")
-      .addEventListener("click", this.upgradeGrip.bind(this));
-
-    document
-      .getElementById("upgrade-jump-button")
-      .addEventListener("click", this.upgradeJump.bind(this));
-
-    document
-      .getElementById("upgrade-max-rpm-button")
-      .addEventListener("click", this.upgradeMaxSpeed.bind(this));
-
-    document
-      .getElementById("canvas-container")
-      .addEventListener("touchstart", this.touchStartHandler);
-
-    document
-      .getElementById("canvas-container")
-      .addEventListener("touchend", this.touchEndHandler);
-
-    document.addEventListener("keyup", function (event) {
-      if (event.key == " ") {
-        event.preventDefault();
-      }
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.touchStartHandler = this.touchStartHandler.bind(this);
+    this.touchEndHandler = this.touchEndHandler.bind(this);
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
+    const upgradeButtons = [
+      ["upgrade-speed-button", "upgradeSpeed"],
+      ["upgrade-grip-button", "upgradeGrip"],
+      ["upgrade-jump-button", "upgradeJump"],
+      ["upgrade-max-rpm-button", "upgradeMaxSpeed"],
+      ["reset-level-button", "resetLevel"],
+    ];
+    upgradeButtons.forEach(([id, method]) => {
+      document
+        .getElementById(id)
+        .addEventListener("click", this[method].bind(this));
     });
-
-    document
-      .getElementById("reset-level-button")
-      .addEventListener("click", this.resetLevel.bind(this));
+    const canvasContainer = document.getElementById("canvas-container");
+    canvasContainer.addEventListener("touchstart", this.touchStartHandler);
+    canvasContainer.addEventListener("touchend", this.touchEndHandler);
   }
 
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently

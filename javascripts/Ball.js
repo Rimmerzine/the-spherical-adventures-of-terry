@@ -28,7 +28,9 @@ class Ball {
       this.attributes.position.x + this.attributes.velocity.x * deltaTime <
       this.attributes.startingPosition.x - 1;
     if (collided) {
-      this.attributes.velocity.x = -this.attributes.velocity.x;
+      this.attributes.velocity.x = 0;
+      this.attributes.velocity.y = 0;
+      this.attributes.rotationsPerSecond = 0;
       this.attributes.position.x = this.attributes.startingPosition.x + 1;
     }
   }

@@ -18,48 +18,48 @@ class Game {
 
     const startingHeight = (canvas.offsetHeight * 2) / 3;
     const tarmacTerrainSettings = new TerrainSettings(
-      150,
+      300,
       10,
       1000,
       startingHeight,
-      startingHeight + 50,
-      startingHeight - 50,
-      startingHeight + 500,
-      startingHeight - 500,
-      100,
-      1000,
+      startingHeight + 100,
+      startingHeight - 100,
+      startingHeight + 1000,
+      startingHeight - 1000,
+      200,
+      500,
       1.0,
       "rgb(50, 50, 50)",
       "rgb(20, 20, 20)"
     );
 
     const iceTerrainSettings = new TerrainSettings(
-      150,
+      300,
       10,
       1000,
       startingHeight,
-      startingHeight + 50,
-      startingHeight - 50,
-      startingHeight + 500,
-      startingHeight - 500,
-      100,
-      1000,
+      startingHeight + 100,
+      startingHeight - 100,
+      startingHeight + 1000,
+      startingHeight - 1000,
+      200,
+      500,
       0.02,
       "rgb(30, 130, 200)",
       "rgb(50, 180, 255)"
     );
 
     const grasslandsTerrainSettings = new TerrainSettings(
-      150,
+      300,
       10,
       1000,
       startingHeight,
-      startingHeight + 50,
-      startingHeight - 50,
-      startingHeight + 500,
-      startingHeight - 500,
-      100,
-      1000,
+      startingHeight + 100,
+      startingHeight - 100,
+      startingHeight + 1000,
+      startingHeight - 1000,
+      200,
+      500,
       0.8,
       "green",
       "brown"
@@ -68,7 +68,7 @@ class Game {
     this.renderer = new CanvasRenderer(canvas);
     this.inputManager = new InputManager(this);
     this.ball = null;
-    this.terrainManager = new TerrainManager(iceTerrainSettings);
+    this.terrainManager = new TerrainManager(grasslandsTerrainSettings);
     this.clouds = [];
     this.distanceReached = 0;
     this.points = 0;
@@ -108,7 +108,7 @@ class Game {
         canvasContainer.offsetWidth / 2,
         canvasContainer.offsetHeight / (3 / 2) - 100
       ),
-      50,
+      100,
       "yellow",
       new Vector2D(0, -200)
     );

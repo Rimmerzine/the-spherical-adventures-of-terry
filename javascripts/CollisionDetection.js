@@ -31,7 +31,6 @@ class CollisionDetection {
     if (
       calculateDistance(position, ballNextPosition) <= ball.attributes.radius
     ) {
-      // ball.attributes.velocity = ball.attributes.velocity.multiply(0.99); // slow down the ball slightly whenever touching ground
       const normalisedDisplacementVector = new Vector2D(
         ballNextPosition.x - position.x,
         ballNextPosition.y - position.y
@@ -55,9 +54,10 @@ export default CollisionDetection;
 
 // Reflect the ball's velocity based on the given reflection vector
 function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
-  const speedToAdd =
-    2 * Math.PI * ball.attributes.radius * ball.attributes.rotationsPerSecond -
-    ball.attributes.velocity.x;
+  const potentialSpeed =
+    2 * Math.PI * ball.attributes.radius * ball.attributes.rotationsPerSecond;
+  const currentSpeed = ball.attributes.velocity.x;
+  const speedToAdd = potentialSpeed - currentSpeed;
 
   const perpendicularFaceVectorAddition = reflectionVector
     .normalize()
@@ -69,11 +69,11 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
     perpendicularFaceVectorAddition
   );
 
-  ball.attributes.rotationsPerSecond =
-    ball.attributes.rotationsPerSecond -
-    (ball.attributes.rotationsPerSecond / 2) * deltaTime;
+  //TODO: This is terrible, make it better, its pretty much guess work at the moment
+  ball.attributes.rotationsPerSecond -=
+    (speedToAdd / 5) * surfaceGripCoefficient * deltaTime;
 
-  ball.attributes.rotationsPerSecond *= 0.99;
+  ball.attributes.rotationsPerSecond *= 0.975;
 
   const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
   const reflection = {
