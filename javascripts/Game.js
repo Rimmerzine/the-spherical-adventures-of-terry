@@ -68,7 +68,7 @@ class Game {
     this.renderer = new CanvasRenderer(canvas);
     this.inputManager = new InputManager(this);
     this.ball = null;
-    this.terrainManager = new TerrainManager(grasslandsTerrainSettings);
+    this.terrainManager = new TerrainManager(tarmacTerrainSettings);
     this.clouds = [];
     this.distanceReached = 0;
     this.points = 0;
@@ -185,10 +185,12 @@ class Game {
       gameSettings.times.push(now);
       gameSettings.fps = gameSettings.times.length;
 
+      // setTimeout(() => {
       this.draw();
       this.update();
 
       this.gameLoop();
+      // }, 1000 / 60);
     });
   }
 

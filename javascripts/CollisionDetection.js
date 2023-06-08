@@ -54,8 +54,8 @@ export default CollisionDetection;
 
 // Reflect the ball's velocity based on the given reflection vector
 function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
-  const potentialSpeed =
-    2 * Math.PI * ball.attributes.radius * ball.attributes.rotationsPerSecond;
+  const circumferance = 2 * Math.PI * ball.attributes.radius;
+  const potentialSpeed = circumferance * ball.attributes.rotationsPerSecond;
   const currentSpeed = ball.attributes.velocity.x;
   const speedToAdd = potentialSpeed - currentSpeed;
 
@@ -70,10 +70,15 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
   );
 
   //TODO: This is terrible, make it better, its pretty much guess work at the moment
-  ball.attributes.rotationsPerSecond -=
-    (speedToAdd / 5) * surfaceGripCoefficient * deltaTime;
+  const currentRotation = ball.attributes.rotationsPerSecond;
+  const rotationDifference =
+    (currentRotation - speedToAdd / circumferance) * deltaTime;
+  ball.attributes.rotationsPerSecond -= rotationDifference;
 
-  ball.attributes.rotationsPerSecond *= 0.975;
+  // ball.attributes.rotationsPerSecond -=
+  //   2 * Math.PI * speedToAdd * surfaceGripCoefficient * deltaTime ** 2;
+
+  // ball.attributes.rotationsPerSecond *= 0.975;
 
   const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
   const reflection = {
