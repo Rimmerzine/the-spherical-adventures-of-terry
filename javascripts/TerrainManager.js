@@ -1,15 +1,12 @@
 import Position2D from "./Position2D.js";
-
-("use strict");
-
 class Terrain {
   constructor(terrainSettings) {
     this.terrain = [];
     this.terrainSettings = terrainSettings;
   }
-
   generateTerrain() {
     this.terrain = [];
+
     for (let i = 0; i < this.terrainSettings.flatCount; i++) {
       const position = new Position2D(
         this.terrainSettings.segmentWidth * i,
@@ -17,59 +14,44 @@ class Terrain {
       );
       this.terrain.push(position);
     }
-
     let lastPosition =
       this.terrain.slice(-1)[0] ||
       new Position2D(0, this.terrainSettings.startingHeight);
-
     for (let i = 0; i < this.terrainSettings.curveCount; i++) {
       const nextHeight = this.calculateNextHeight(i, lastPosition.y);
-      const nextPosition = this.calculateNextPosition(
-        lastPosition.x,
-        nextHeight
-      );
+      const nextPosition = this.calculateNextPosition(lastPosition, nextHeight);
       this.terrain.push(nextPosition);
       lastPosition = nextPosition;
     }
-
-    console.debug(this.terrain);
+    console.log(this.terrain);
   }
-
-  // Add the rest of the floor segments which adjust on height
   calculateNextHeight(index, lastHeight) {
-    const potentialMax =
-      this.terrainSettings.startMaxHeight -
-      (this.terrainSettings.differenceMaxHeight /
-        this.terrainSettings.curveCount) *
-        index;
-
-    const potentialMin =
-      this.terrainSettings.startMinHeight +
-      (this.terrainSettings.differenceMinHeight /
-        this.terrainSettings.curveCount) *
-        index;
-
+    const maxDiff = this.terrainSettings.differenceMaxHeight;
+    const minDiff = this.terrainSettings.differenceMinHeight;
+    const maxAdj = this.terrainSettings.maxHeightAdjustment;
+    const minAdj = this.terrainSettings.minHeightAdjustment;
+    const startMax = this.terrainSettings.startMaxHeight;
+    const startMin = this.terrainSettings.startMinHeight;
+    const curveCount = this.terrainSettings.curveCount;
+    const potentialMax = startMax - (maxDiff / curveCount) * index;
+    const potentialMin = startMin + (minDiff / curveCount) * index;
     const targetHeight =
-      Math.random() * (potentialMin - potentialMax + 1) + potentialMax;
-
+      potentialMax - Math.random() * (potentialMax - potentialMin);
     const adjustment = targetHeight - lastHeight;
-
-    const allowedAdjustment =
-      this.terrainSettings.minHeightAdjustment +
-      (this.terrainSettings.maxHeightAdjustment /
-        this.terrainSettings.curveCount) *
-        index;
-
+    const allowedAdjustment = minAdj + (maxAdj / curveCount) * index;
     const limitedAdjustment = Math.max(
       Math.min(adjustment, allowedAdjustment),
       -allowedAdjustment
     );
-
     return lastHeight + limitedAdjustment;
   }
-  calculateNextPosition(lastX, newHeight) {
-    return new Position2D(lastX + this.terrainSettings.segmentWidth, newHeight);
+  calculateNextPosition(lastPosition, newHeight) {
+    lastPosition =
+      lastPosition || new Position2D(0, this.terrainSettings.startingHeight);
+    return new Position2D(
+      lastPosition.x + this.terrainSettings.segmentWidth,
+      newHeight
+    );
   }
 }
-
 export default Terrain;

@@ -6,9 +6,9 @@ import Position2D from "./Position2D.js";
 ("use strict");
 
 class CollisionDetection {
-  static ballFloorCollision(ball, terrainManager) {
+  static ballFloorCollision(ball, terrainManager, deltaTime) {
     const ballNextPosition = ball.attributes.position.add(
-      ball.attributes.velocity
+      ball.attributes.velocity.multiply(deltaTime)
     );
     const visibleFloor = terrainManager.terrain.filter(
       (floor) =>
@@ -31,7 +31,6 @@ class CollisionDetection {
     if (
       calculateDistance(position, ballNextPosition) <= ball.attributes.radius
     ) {
-      // ball.attributes.velocity = ball.attributes.velocity.multiply(0.99); // slow down the ball slightly whenever touching ground
       const normalisedDisplacementVector = new Vector2D(
         ballNextPosition.x - position.x,
         ballNextPosition.y - position.y
@@ -44,7 +43,8 @@ class CollisionDetection {
       reflect(
         ball,
         terrainManager.terrainSettings.surfaceGripCoefficient,
-        normalisedDisplacementVector
+        normalisedDisplacementVector,
+        deltaTime
       );
     }
   }
@@ -53,15 +53,11 @@ class CollisionDetection {
 export default CollisionDetection;
 
 // Reflect the ball's velocity based on the given reflection vector
-function reflect(ball, surfaceGripCoefficient, reflectionVector) {
-  const speedToAdd =
-    (4 *
-      Math.PI *
-      ball.attributes.radius *
-      ball.attributes.rotationsPerSecond) /
-      5 /
-      360 -
-    ball.attributes.velocity.x;
+function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
+  const potentialSpeed =
+    2 * Math.PI * ball.attributes.radius * ball.attributes.rotationsPerSecond;
+  const currentSpeed = ball.attributes.velocity.x;
+  const speedToAdd = potentialSpeed - currentSpeed;
 
   const perpendicularFaceVectorAddition = reflectionVector
     .normalize()
@@ -73,10 +69,11 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector) {
     perpendicularFaceVectorAddition
   );
 
-  ball.attributes.rotationsPerSecond =
-    ball.attributes.rotationsPerSecond - speedToAdd * surfaceGripCoefficient;
+  //TODO: This is terrible, make it better, its pretty much guess work at the moment
+  ball.attributes.rotationsPerSecond -=
+    (speedToAdd / 5) * surfaceGripCoefficient * deltaTime;
 
-  ball.attributes.rotationsPerSecond *= 0.99;
+  ball.attributes.rotationsPerSecond *= 0.975;
 
   const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
   const reflection = {
@@ -93,9 +90,7 @@ function reflect(ball, surfaceGripCoefficient, reflectionVector) {
   ball.attributes.velocity.x -= reflection.x;
   ball.attributes.velocity.y -= reflection.y;
 
-  // ball.atrributes.rotationsPerSecond;
-
-  ball.attributes.jumpCount = 0;
+  ball.jumpsRemaining = ball.stats.getStat("jumps").currentValue;
 }
 
 function calculateDistance(pointOne, pointTwo) {
