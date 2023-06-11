@@ -24,8 +24,7 @@ class BallStat {
   }
 
   nextUpgradeCost() {
-    if (this.upgradeCosts[this.numberOfUpgrades])
-      this.upgradeCosts[this.numberOfUpgrades];
+    if (this.upgradeCosts[this.numberOfUpgrades]) this.upgradeCosts[this.numberOfUpgrades];
     else Infinity;
   }
 

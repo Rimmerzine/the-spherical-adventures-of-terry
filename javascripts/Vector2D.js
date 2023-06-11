@@ -29,6 +29,17 @@ class Vector2D {
   // calculate the perpendicular direction of the vector
   perpendicularDirection() {
     return new Vector2D(-this.y, this.x);
+    // if (this.y > 0 && this.x > 0) {
+    //   return new Vector2D(this.y, -this.x); // :)
+    // } else if (this.y > 0 && this.x < 0) {
+    //   return new Vector2D(this.y, -this.x); // :)
+    // } else if (this.y < 0 && this.x > 0) {
+    //   return new Vector2D(-this.y, this.x); // :)
+    // } else if (this.y < 0 && this.x < 0) {
+    //   return new Vector2D(-this.y, this.x); // :)
+    // } else {
+    //   return new Vector2D(0, 0);
+    // }
   }
 
   // normalize the vector to have a magnitude of 1
@@ -51,8 +62,9 @@ class Vector2D {
     return this.x * vector.x + this.y * vector.y;
   }
 }
-export default Vector2D;
 
 export function addVectors(v1, v2) {
   return new Vector2D(v1.x + v2.x, v1.y + v2.y);
 }
+
+export default Vector2D;

@@ -14,10 +14,7 @@ class Ball {
   }
   applyGravity(deltaTime) {
     const gravityForce = gravity.multiply(deltaTime);
-    this.attributes.velocity = addVectors(
-      this.attributes.velocity,
-      gravityForce
-    );
+    this.attributes.velocity = addVectors(this.attributes.velocity, gravityForce);
   }
   updateRotation(deltaTime) {
     const rotationDelta = this.attributes.rotationsPerSecond * 360 * deltaTime;
@@ -25,8 +22,7 @@ class Ball {
   }
   handleStartingPositionCollision(deltaTime) {
     const collided =
-      this.attributes.position.x + this.attributes.velocity.x * deltaTime <
-      this.attributes.startingPosition.x - 1;
+      this.attributes.position.x + this.attributes.velocity.x * deltaTime < this.attributes.startingPosition.x - 1;
     if (collided) {
       this.attributes.velocity.x = 0;
       this.attributes.velocity.y = 0;
@@ -35,10 +31,7 @@ class Ball {
     }
   }
   move(deltaTime) {
-    this.attributes.position = addVectors(
-      this.attributes.position,
-      this.attributes.velocity.multiply(deltaTime)
-    );
+    this.attributes.position = addVectors(this.attributes.position, this.attributes.velocity.multiply(deltaTime));
   }
   pushLeft() {
     this.adjustRotationsPerSecond(-1);
@@ -59,12 +52,10 @@ class Ball {
   }
   jump() {
     if (this.jumpsRemaining > 0) {
-      this.attributes.velocity = addVectors(
-        this.attributes.velocity,
-        this.attributes.jumpVelocity
-      );
+      this.attributes.velocity = addVectors(this.attributes.velocity, this.attributes.jumpVelocity);
       this.jumpsRemaining--;
     }
   }
 }
+
 export default Ball;

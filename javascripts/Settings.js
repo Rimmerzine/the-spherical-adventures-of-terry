@@ -19,6 +19,7 @@ export const debugSettings = {
   normalisedDisplacementVector: null,
   reflectionVector: null,
   collisionFloors: null,
+  perpendicularFaceVectorAddition: null,
 };
 
 export const gravity = new Vector2D(0, 360);

@@ -22,9 +22,7 @@ class InputManager {
       ["reset-level-button", "resetLevel"],
     ];
     upgradeButtons.forEach(([id, method]) => {
-      document
-        .getElementById(id)
-        .addEventListener("click", this[method].bind(this));
+      document.getElementById(id).addEventListener("click", this[method].bind(this));
     });
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("touchstart", this.touchStartHandler);
@@ -34,10 +32,7 @@ class InputManager {
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
   // jump should only reset after landing and assuming cooldown is complete
   handleKeyDown(event) {
-    if (
-      !this.keys[event.key] ||
-      this.keys[event.key].cooldown <= new Date().getTime()
-    ) {
+    if (!this.keys[event.key] || this.keys[event.key].cooldown <= new Date().getTime()) {
       this.keys[event.key] = {
         pressed: true,
         cooldown: 0,
@@ -83,29 +78,23 @@ class InputManager {
   upgradeSpeed() {
     this.game.ball.stats.getStat("acceleration").upgrade();
     document.getElementById("acceleration-attribute").innerText =
-      Math.round(
-        this.game.ball.stats.getStat("acceleration").currentValue * 2000
-      ) / 100;
+      Math.round(this.game.ball.stats.getStat("acceleration").currentValue * 2000) / 100;
   }
 
   upgradeGrip() {
     this.game.ball.stats.getStat("grip").upgrade();
     document.getElementById("grip-attribute").innerText =
-      Math.round(
-        (1 - this.game.ball.stats.getStat("grip").currentValue) * 1000
-      ) / 100;
+      Math.round((1 - this.game.ball.stats.getStat("grip").currentValue) * 1000) / 100;
   }
 
   upgradeJump() {
     this.game.ball.stats.getStat("jumps").upgrade();
-    document.getElementById("jump-attribute").innerText =
-      this.game.ball.stats.getStat("jumps").currentValue;
+    document.getElementById("jump-attribute").innerText = this.game.ball.stats.getStat("jumps").currentValue;
   }
 
   upgradeMaxSpeed() {
     this.game.ball.stats.getStat("max-rpm").upgrade();
-    document.getElementById("max-rpm-attribute").innerText =
-      this.game.ball.stats.getStat("max-rpm").currentValue;
+    document.getElementById("max-rpm-attribute").innerText = this.game.ball.stats.getStat("max-rpm").currentValue;
   }
 
   touchStartHandler(event) {

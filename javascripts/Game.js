@@ -69,6 +69,7 @@ class Game {
     this.inputManager = new InputManager(this);
     this.ball = null;
     this.terrainManager = new TerrainManager(tarmacTerrainSettings);
+    this.collisionDetection = new CollisionDetection();
     this.clouds = [];
     this.distanceReached = 0;
     this.points = 0;
@@ -80,23 +81,16 @@ class Game {
   resize() {
     const canvasContainer = document.getElementById("canvas-container");
     this.ball.attributes.startingPosition.x = canvasContainer.offsetWidth / 2;
-    this.ball.attributes.startingPosition.y =
-      canvasContainer.offsetHeight / (3 / 2) - 100;
+    this.ball.attributes.startingPosition.y = canvasContainer.offsetHeight / (3 / 2) - 100;
   }
 
   resetLevel() {
-    const newDistance = Math.max(
-      0,
-      this.ball.attributes.position.x - this.distanceReached
-    );
+    const newDistance = Math.max(0, this.ball.attributes.position.x - this.distanceReached);
     const pointsGained = Math.floor(newDistance / 5000);
 
-    this.distanceReached =
-      this.ball.attributes.position.x - this.ball.attributes.startingPosition.x;
+    this.distanceReached = this.ball.attributes.position.x - this.ball.attributes.startingPosition.x;
     this.points += pointsGained;
-    document.getElementById(
-      "points-attribute"
-    ).innerText = `Total points: ${this.points}`;
+    document.getElementById("points-attribute").innerText = `Total points: ${this.points}`;
 
     this.initialise();
   }
@@ -104,10 +98,7 @@ class Game {
   createBall() {
     const canvasContainer = document.getElementById("canvas-container");
     const ballAttributes = new BallAttributes(
-      new Position2D(
-        canvasContainer.offsetWidth / 2,
-        canvasContainer.offsetHeight / (3 / 2) - 100
-      ),
+      new Position2D(canvasContainer.offsetWidth / 2, canvasContainer.offsetHeight / (3 / 2) - 100),
       100,
       "yellow",
       new Vector2D(0, -200)
@@ -115,7 +106,7 @@ class Game {
 
     const ballStats = new BallStats()
       .add("max-rpm", new BallStat(1, 5, [1, 3, 7, 13, 21]))
-      .add("acceleration", new BallStat(0.025, 0.025, [1, 3, 7, 13, 21]))
+      .add("acceleration", new BallStat(0.01, 0.01, [1, 3, 7, 13, 21]))
       .add("grip", new BallStat(0.1, 0.1, [2, 5, 11]))
       .add("jumps", new BallStat(0, 1, [5, 20]));
 
@@ -148,11 +139,11 @@ class Game {
     this.renderer.clearCanvas();
     this.renderer.drawClouds(this.clouds, this.ball);
     this.renderer.drawCurvedWalls(this.terrainManager, this.ball);
+    this.renderer.drawBall(this.ball);
+    this.renderer.drawFps(gameSettings.fps);
     if (debugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.ball);
     }
-    this.renderer.drawBall(this.ball);
-    this.renderer.drawFps(gameSettings.fps);
   }
 
   update() {
@@ -165,21 +156,14 @@ class Game {
     if (this.inputManager.isJumpPressed()) this.ball.jump();
 
     this.ball.update(deltaTime);
-    CollisionDetection.ballFloorCollision(
-      this.ball,
-      this.terrainManager,
-      deltaTime
-    );
+    this.collisionDetection.ballFloorCollision(this.ball, this.terrainManager, deltaTime);
     this.ball.move(deltaTime);
   }
 
   gameLoop() {
     window.requestAnimationFrame(() => {
       const now = performance.now();
-      while (
-        gameSettings.times.length > 0 &&
-        gameSettings.times[0] <= now - 1000
-      ) {
+      while (gameSettings.times.length > 0 && gameSettings.times[0] <= now - 1000) {
         gameSettings.times.shift();
       }
       gameSettings.times.push(now);
