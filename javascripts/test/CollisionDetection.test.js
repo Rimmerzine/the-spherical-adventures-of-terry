@@ -18,7 +18,7 @@ function testBall(velocity, rotation) {
   return new Ball(ballAttributes, ballStats);
 }
 
-describe("Given the ball reflects off a point directly below", () => {
+describe("Given the ball reflects off a point below", () => {
   const reflectionVector = new Vector2D(0, -1).normalize();
   describe("And the ball has no movement or rotation", () => {
     const velocity = new Vector2D(0, 0);
@@ -56,12 +56,16 @@ describe("Given the ball reflects off a point directly below", () => {
     const ball = testBall(velocity, rotation);
     const surfaceGripCooefficient = 1;
 
+    const expectedXMovement = ball.attributes.velocity.x / 2;
+    const expectedVelocity = new Vector2D(expectedXMovement, 0);
+    const expectedRotation = expectedXMovement / (2 * Math.PI * ball.attributes.radius);
+
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
     test("Then I expect the ball to continue moving to the right", () => {
-      expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x, precision);
-      expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y, precision);
-      expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
+      expect(ball.attributes.velocity.x).toBeCloseTo(expectedVelocity.x, precision);
+      expect(ball.attributes.velocity.y).toBeCloseTo(expectedVelocity.y, precision);
+      expect(ball.attributes.rotationsPerSecond).toBeCloseTo(expectedRotation, precision);
     });
   });
 
@@ -71,12 +75,16 @@ describe("Given the ball reflects off a point directly below", () => {
     const ball = testBall(velocity, rotation);
     const surfaceGripCooefficient = 1;
 
+    const expectedXMovement = ball.attributes.velocity.x / 2;
+    const expectedVelocity = new Vector2D(expectedXMovement, 0);
+    const expectedRotation = expectedXMovement / (2 * Math.PI * ball.attributes.radius);
+
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
     test("Then I expect the ball to continue moving to the left", () => {
-      expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x, precision);
-      expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y, precision);
-      expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
+      expect(ball.attributes.velocity.x).toBeCloseTo(expectedVelocity.x, precision);
+      expect(ball.attributes.velocity.y).toBeCloseTo(expectedVelocity.y, precision);
+      expect(ball.attributes.rotationsPerSecond).toBeCloseTo(expectedRotation, precision);
     });
   });
 
@@ -164,7 +172,7 @@ describe("Given the ball reflects off a point directly below", () => {
   });
 });
 
-describe("Given the ball reflects off a point directly above", () => {
+describe("Given the ball reflects off a point above", () => {
   const reflectionVector = new Vector2D(0, 1).normalize();
   describe("And the ball has no movement or rotation", () => {
     const velocity = new Vector2D(0, 0);
@@ -189,7 +197,7 @@ describe("Given the ball reflects off a point directly above", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y * -1, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -257,7 +265,7 @@ describe("Given the ball reflects off a point directly above", () => {
   });
 });
 
-describe("Given the ball reflects off a point directly right", () => {
+describe("Given the ball reflects off a point right", () => {
   const reflectionVector = new Vector2D(-1, 0).normalize();
   describe("And the ball has no movement or rotation", () => {
     const velocity = new Vector2D(0, 0);
@@ -282,7 +290,7 @@ describe("Given the ball reflects off a point directly right", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -350,7 +358,7 @@ describe("Given the ball reflects off a point directly right", () => {
   });
 });
 
-describe("Given the ball reflects off a point directly left", () => {
+describe("Given the ball reflects off a point left", () => {
   const reflectionVector = new Vector2D(1, 0).normalize();
   describe("And the ball has no movement or rotation", () => {
     const velocity = new Vector2D(0, 0);
@@ -375,7 +383,7 @@ describe("Given the ball reflects off a point directly left", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -420,7 +428,7 @@ describe("Given the ball reflects off a point directly left", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -435,7 +443,7 @@ describe("Given the ball reflects off a point directly left", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -468,7 +476,7 @@ describe("Given the ball reflects off a point bottom right", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y * -1, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -561,7 +569,7 @@ describe("Given the ball reflects off a point bottom left of it", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y * -1, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -629,7 +637,7 @@ describe("Given the ball reflects off a point bottom left of it", () => {
   });
 });
 
-describe("Given the ball reflects off a point directly top right", () => {
+describe("Given the ball reflects off a point top right", () => {
   const reflectionVector = new Vector2D(-1, 1).normalize();
   describe("And the ball has no movement or rotation", () => {
     const velocity = new Vector2D(0, 0);
@@ -654,7 +662,7 @@ describe("Given the ball reflects off a point directly top right", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y * -1, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);
@@ -722,7 +730,7 @@ describe("Given the ball reflects off a point directly top right", () => {
   });
 });
 
-describe("Given the ball reflects off a point directly top left", () => {
+describe("Given the ball reflects off a point top left", () => {
   const reflectionVector = new Vector2D(1, 1).normalize();
   describe("And the ball has no movement or rotation", () => {
     const velocity = new Vector2D(0, 0);
@@ -747,7 +755,7 @@ describe("Given the ball reflects off a point directly top left", () => {
 
     collisionDetection.reflect(ball, surfaceGripCooefficient, reflectionVector, deltaTime);
 
-    test("Then I expect the ball to have been reflected directly back", () => {
+    test("Then I expect the ball to have been reflected back", () => {
       expect(ball.attributes.velocity.x).toBeCloseTo(velocity.x * -1, precision);
       expect(ball.attributes.velocity.y).toBeCloseTo(velocity.y * -1, precision);
       expect(ball.attributes.rotationsPerSecond).toBeCloseTo(rotation, precision);

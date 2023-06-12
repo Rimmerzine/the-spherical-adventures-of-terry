@@ -28,13 +28,16 @@ class CollisionDetection {
 
     // ball.attributes.rotationsPerSecond *= 0.975;
 
+    const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
+    const { perpendicular } = calculateParallelAndPerpendicular(reflectionVector, ball.attributes.velocity);
+
     const circumferance = 2 * Math.PI * ball.attributes.radius;
+    const potentialMovement =
+      (circumferance * ball.attributes.rotationsPerSecond + Math.sign(perpendicular.x) * perpendicular.distance()) / 2;
+    const movementGain = potentialMovement - Math.sign(perpendicular.x) * perpendicular.distance();
+    const rotationGain = potentialMovement / circumferance;
 
-    const potentialMovement = (circumferance * ball.attributes.rotationsPerSecond + ball.attributes.velocity.x) / 2;
-    const movementGain = potentialMovement - ball.attributes.velocity.x;
-    const rotationGain = -movementGain / circumferance;
-
-    ball.attributes.rotationsPerSecond += rotationGain;
+    ball.attributes.rotationsPerSecond = rotationGain;
 
     const perpendicularFaceVectorAddition = reflectionVector
       .normalize()
@@ -44,10 +47,9 @@ class CollisionDetection {
 
     debugSettings.perpendicularFaceVectorAddition = perpendicularFaceVectorAddition;
 
-    const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
     const reflection = new Vector2D(
       reflectionVector.x * dotProduct * 2 * 1, // (1 - ball.stats.getStat("grip").currentValue)
-      reflectionVector.y * dotProduct * 2 * 0.8 // change back to 0.8 when finished testing
+      reflectionVector.y * dotProduct * 2 * 1 // change back to 0.8 when finished testing
     );
     if (debugSettings.drawReflectionVector) {
       debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
@@ -96,6 +98,23 @@ class CollisionDetection {
 }
 
 export default CollisionDetection;
+
+function calculateParallelAndPerpendicular(a, b) {
+  // Step 1: Calculate the unit vector of "a"
+  const magnitudeA = a.magnitude();
+  const uA = new Vector2D(a.x / magnitudeA, a.y / magnitudeA);
+
+  // Step 2: Calculate the dot product between "uA" and "b"
+  const dotProduct = uA.dotProduct(b);
+
+  // Step 3: Calculate the parallel vector
+  const parallelB = uA.multiply(dotProduct);
+
+  // Step 4: Calculate the perpendicular vector
+  const perpendicularB = b.subtract(parallelB);
+
+  return { parallel: parallelB, perpendicular: perpendicularB };
+}
 
 function calculateDistance(pointOne, pointTwo) {
   if (pointOne == null || pointTwo == null) return Infinity;

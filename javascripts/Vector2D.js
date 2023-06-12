@@ -28,18 +28,17 @@ class Vector2D {
 
   // calculate the perpendicular direction of the vector
   perpendicularDirection() {
-    return new Vector2D(-this.y, this.x);
-    // if (this.y > 0 && this.x > 0) {
-    //   return new Vector2D(this.y, -this.x); // :)
-    // } else if (this.y > 0 && this.x < 0) {
-    //   return new Vector2D(this.y, -this.x); // :)
-    // } else if (this.y < 0 && this.x > 0) {
-    //   return new Vector2D(-this.y, this.x); // :)
-    // } else if (this.y < 0 && this.x < 0) {
-    //   return new Vector2D(-this.y, this.x); // :)
-    // } else {
-    //   return new Vector2D(0, 0);
-    // }
+    if (this.y >= 0 && this.x >= 0) {
+      return new Vector2D(this.y, -this.x); // :)
+    } else if (this.y >= 0 && this.x < 0) {
+      return new Vector2D(this.y, -this.x); // :)
+    } else if (this.y < 0 && this.x >= 0) {
+      return new Vector2D(-this.y, this.x); // :)
+    } else if (this.y < 0 && this.x < 0) {
+      return new Vector2D(-this.y, this.x); // :)
+    } else {
+      return new Vector2D(0, 0);
+    }
   }
 
   // normalize the vector to have a magnitude of 1
