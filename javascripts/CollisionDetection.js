@@ -1,22 +1,52 @@
-import { gravity } from "./Settings.js";
+"use strict";
+
 import { debugSettings } from "./Settings.js";
 import Vector2D from "./Vector2D.js";
 import Position2D from "./Position2D.js";
 
-("use strict");
-
 class CollisionDetection {
-  static ballFloorCollision(ball, terrainManager, deltaTime) {
-    const ballNextPosition = ball.attributes.position.add(
-      ball.attributes.velocity.multiply(deltaTime)
+  constructor() {}
+
+  // Reflect the ball's velocity based on the given reflection vector
+  reflect(ball, surfaceGripCoefficient, reflectionVector) {
+    const { perpendicular } = calculateParallelAndPerpendicular(reflectionVector, ball.attributes.velocity);
+    const circumferance = 2 * Math.PI * ball.attributes.radius;
+    const potentialMovement =
+      (circumferance * ball.attributes.rotationsPerSecond + Math.sign(perpendicular.x) * perpendicular.distance()) / 2;
+    const movementGain = potentialMovement - Math.sign(perpendicular.x) * perpendicular.distance();
+
+    ball.attributes.rotationsPerSecond +=
+      (potentialMovement / circumferance - ball.attributes.rotationsPerSecond) * surfaceGripCoefficient;
+
+    const perpendicularFaceVectorAddition = reflectionVector
+      .normalize()
+      .perpendicularDirection()
+      .multiply(movementGain)
+      .multiply(surfaceGripCoefficient);
+
+    debugSettings.perpendicularFaceVectorAddition = perpendicularFaceVectorAddition;
+
+    const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
+    const reflection = new Vector2D(
+      reflectionVector.x * dotProduct * 2 * 0.8, // (1 - ball.stats.getStat("grip").currentValue)
+      reflectionVector.y * dotProduct * 2 * 0.8 // change back to 0.8 when finished testing
     );
+    if (debugSettings.drawReflectionVector) {
+      debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
+    }
+
+    const velocityChange = ball.attributes.velocity.add(perpendicularFaceVectorAddition).subtract(reflection);
+    ball.attributes.velocity = velocityChange;
+
+    ball.jumpsRemaining = ball.stats.getStat("jumps").currentValue;
+  }
+
+  ballFloorCollision(ball, terrainManager, deltaTime) {
+    const ballNextPosition = ball.attributes.position.add(ball.attributes.velocity.multiply(deltaTime));
     const visibleFloor = terrainManager.terrain.filter(
       (floor) =>
-        floor.x >=
-          ballNextPosition.x -
-            terrainManager.terrainSettings.segmentWidth * 3 &&
-        floor.x <=
-          ballNextPosition.x + terrainManager.terrainSettings.segmentWidth * 3
+        floor.x >= ballNextPosition.x - terrainManager.terrainSettings.segmentWidth * 3 &&
+        floor.x <= ballNextPosition.x + terrainManager.terrainSettings.segmentWidth * 3
     );
 
     debugSettings.collisionFloors = visibleFloor;
@@ -28,19 +58,16 @@ class CollisionDetection {
     }
 
     // if the distance between the closest point and the ball is less than or equal to it's radius, collision
-    if (
-      calculateDistance(position, ballNextPosition) <= ball.attributes.radius
-    ) {
+    if (calculateDistance(position, ballNextPosition) <= ball.attributes.radius) {
       const normalisedDisplacementVector = new Vector2D(
         ballNextPosition.x - position.x,
         ballNextPosition.y - position.y
       ).normalize();
       if (debugSettings.drawNormalisedDisplacementVector) {
-        debugSettings.normalisedDisplacementVector =
-          normalisedDisplacementVector;
+        debugSettings.normalisedDisplacementVector = normalisedDisplacementVector;
       }
 
-      reflect(
+      this.reflect(
         ball,
         terrainManager.terrainSettings.surfaceGripCoefficient,
         normalisedDisplacementVector,
@@ -52,50 +79,21 @@ class CollisionDetection {
 
 export default CollisionDetection;
 
-// Reflect the ball's velocity based on the given reflection vector
-function reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
-  const circumferance = 2 * Math.PI * ball.attributes.radius;
-  const potentialSpeed = circumferance * ball.attributes.rotationsPerSecond;
-  const currentSpeed = ball.attributes.velocity.x;
-  const speedToAdd = potentialSpeed - currentSpeed;
+function calculateParallelAndPerpendicular(a, b) {
+  // Step 1: Calculate the unit vector of "a"
+  const magnitudeA = a.magnitude();
+  const uA = new Vector2D(a.x / magnitudeA, a.y / magnitudeA);
 
-  const perpendicularFaceVectorAddition = reflectionVector
-    .normalize()
-    .perpendicularDirection()
-    .multiply(speedToAdd)
-    .multiply(surfaceGripCoefficient);
+  // Step 2: Calculate the dot product between "uA" and "b"
+  const dotProduct = uA.dotProduct(b);
 
-  ball.attributes.velocity = ball.attributes.velocity.add(
-    perpendicularFaceVectorAddition
-  );
+  // Step 3: Calculate the parallel vector
+  const parallelB = uA.multiply(dotProduct);
 
-  //TODO: This is terrible, make it better, its pretty much guess work at the moment
-  const currentRotation = ball.attributes.rotationsPerSecond;
-  const rotationDifference =
-    (currentRotation - speedToAdd / circumferance) * deltaTime;
-  ball.attributes.rotationsPerSecond -= rotationDifference;
+  // Step 4: Calculate the perpendicular vector
+  const perpendicularB = b.subtract(parallelB);
 
-  // ball.attributes.rotationsPerSecond -=
-  //   2 * Math.PI * speedToAdd * surfaceGripCoefficient * deltaTime ** 2;
-
-  // ball.attributes.rotationsPerSecond *= 0.975;
-
-  const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
-  const reflection = {
-    x:
-      reflectionVector.x *
-      dotProduct *
-      2 *
-      (1 - ball.stats.getStat("grip").currentValue),
-    y: reflectionVector.y * dotProduct * 2 * 0.8,
-  };
-  if (debugSettings.drawReflectionVector) {
-    debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
-  }
-  ball.attributes.velocity.x -= reflection.x;
-  ball.attributes.velocity.y -= reflection.y;
-
-  ball.jumpsRemaining = ball.stats.getStat("jumps").currentValue;
+  return { parallel: parallelB, perpendicular: perpendicularB };
 }
 
 function calculateDistance(pointOne, pointTwo) {
@@ -119,10 +117,7 @@ function findClosestPoint(floor, givenPoint) {
 
     for (let j = 0.0; j <= 1.0; j += 0.01) {
       const newPoint = getQuadraticCurvePoint(sx, sy, cpx, cpy, x, y, j);
-      if (
-        calculateDistance(newPoint, givenPoint) <
-        calculateDistance(point, givenPoint)
-      ) {
+      if (calculateDistance(newPoint, givenPoint) < calculateDistance(point, givenPoint)) {
         point = newPoint;
       }
     }
@@ -136,17 +131,6 @@ function _getQBezierValue(t, p1, p2, p3) {
   return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
 }
 
-function getQuadraticCurvePoint(
-  startX,
-  startY,
-  cpX,
-  cpY,
-  endX,
-  endY,
-  position
-) {
-  return new Position2D(
-    _getQBezierValue(position, startX, cpX, endX),
-    _getQBezierValue(position, startY, cpY, endY)
-  );
+function getQuadraticCurvePoint(startX, startY, cpX, cpY, endX, endY, position) {
+  return new Position2D(_getQBezierValue(position, startX, cpX, endX), _getQBezierValue(position, startY, cpY, endY));
 }

@@ -8,15 +8,10 @@ class Terrain {
     this.terrain = [];
 
     for (let i = 0; i < this.terrainSettings.flatCount; i++) {
-      const position = new Position2D(
-        this.terrainSettings.segmentWidth * i,
-        this.terrainSettings.startingHeight
-      );
+      const position = new Position2D(this.terrainSettings.segmentWidth * i, this.terrainSettings.startingHeight);
       this.terrain.push(position);
     }
-    let lastPosition =
-      this.terrain.slice(-1)[0] ||
-      new Position2D(0, this.terrainSettings.startingHeight);
+    let lastPosition = this.terrain.slice(-1)[0] || new Position2D(0, this.terrainSettings.startingHeight);
     for (let i = 0; i < this.terrainSettings.curveCount; i++) {
       const nextHeight = this.calculateNextHeight(i, lastPosition.y);
       const nextPosition = this.calculateNextPosition(lastPosition, nextHeight);
@@ -35,23 +30,15 @@ class Terrain {
     const curveCount = this.terrainSettings.curveCount;
     const potentialMax = startMax - (maxDiff / curveCount) * index;
     const potentialMin = startMin + (minDiff / curveCount) * index;
-    const targetHeight =
-      potentialMax - Math.random() * (potentialMax - potentialMin);
+    const targetHeight = potentialMax - Math.random() * (potentialMax - potentialMin);
     const adjustment = targetHeight - lastHeight;
     const allowedAdjustment = minAdj + (maxAdj / curveCount) * index;
-    const limitedAdjustment = Math.max(
-      Math.min(adjustment, allowedAdjustment),
-      -allowedAdjustment
-    );
+    const limitedAdjustment = Math.max(Math.min(adjustment, allowedAdjustment), -allowedAdjustment);
     return lastHeight + limitedAdjustment;
   }
   calculateNextPosition(lastPosition, newHeight) {
-    lastPosition =
-      lastPosition || new Position2D(0, this.terrainSettings.startingHeight);
-    return new Position2D(
-      lastPosition.x + this.terrainSettings.segmentWidth,
-      newHeight
-    );
+    lastPosition = lastPosition || new Position2D(0, this.terrainSettings.startingHeight);
+    return new Position2D(lastPosition.x + this.terrainSettings.segmentWidth, newHeight);
   }
 }
 export default Terrain;
