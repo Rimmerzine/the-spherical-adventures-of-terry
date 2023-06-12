@@ -23,20 +23,10 @@
     <title>The Spherical Adventures of Terry</title>
   </head>
   <body>
-    <div
-      class="offcanvas offcanvas-end"
-      tabindex="-1"
-      id="statsOffcanvas"
-      aria-labelledby="statsOffcanvasLabel"
-    >
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="statsOffcanvas" aria-labelledby="statsOffcanvasLabel">
       <div class="offcanvas-header">
         <h2 class="offcanvas-title" id="statsOffcanvasLabel">Stats</h2>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
         <dl>
@@ -51,20 +41,10 @@
         </dl>
       </div>
     </div>
-    <div
-      class="offcanvas offcanvas-end"
-      tabindex="-1"
-      id="upgradesOffcanvas"
-      aria-labelledby="upgradesOffcanvasLabel"
-    >
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="upgradesOffcanvas" aria-labelledby="upgradesOffcanvasLabel">
       <div class="offcanvas-header">
         <h2 class="offcanvas-title" id="upgradesOffcanvasLabel">Upgrades</h2>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
         <p id="points-attribute">Total points: 0</p>
@@ -90,12 +70,7 @@
             </button>
           </div>
           <div class="col-4">
-            <button
-              title="Press space to jump"
-              id="upgrade-jump-button"
-              type="button"
-              class="btn btn-success"
-            >
+            <button title="Press space to jump" id="upgrade-jump-button" type="button" class="btn btn-success">
               Upgrade Jump<br />(1 point)
             </button>
           </div>
@@ -116,13 +91,21 @@
       <div class="container-fluid">
         <a class="navbar-brand"><h1>The Spherical Adventures of Terry</h1></a>
         <div class="d-flex">
-          <button
-            class="btn btn-primary me-4"
-            type="button"
-            id="reset-level-button"
-          >
-            Reset Level
-          </button>
+          <div class="dropdown">
+            <button
+              class="btn btn-primary dropdown-toggle me-4"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Reset Level
+            </button>
+            <ul class="dropdown-menu">
+              <li><button class="dropdown-item" id="reset-level-grasslands">Grasslands (Normal)</button></li>
+              <li><button class="dropdown-item" id="reset-level-tarmac">Tarmac (zero slip)</button></li>
+              <li><button class="dropdown-item" id="reset-level-ice">Ice (slippy)</button></li>
+            </ul>
+          </div>
           <button
             class="btn btn-primary me-4"
             type="button"

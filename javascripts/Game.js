@@ -17,7 +17,7 @@ class Game {
     this.canvas = canvas;
 
     const startingHeight = (canvas.offsetHeight * 2) / 3;
-    const tarmacTerrainSettings = new TerrainSettings(
+    this.tarmacTerrainSettings = new TerrainSettings(
       300,
       10,
       1000,
@@ -33,7 +33,7 @@ class Game {
       "rgb(20, 20, 20)"
     );
 
-    const iceTerrainSettings = new TerrainSettings(
+    this.iceTerrainSettings = new TerrainSettings(
       300,
       10,
       1000,
@@ -49,7 +49,7 @@ class Game {
       "rgb(50, 180, 255)"
     );
 
-    const grasslandsTerrainSettings = new TerrainSettings(
+    this.grasslandsTerrainSettings = new TerrainSettings(
       300,
       10,
       1000,
@@ -60,7 +60,7 @@ class Game {
       startingHeight - 1000,
       200,
       500,
-      0.8,
+      0.5,
       "green",
       "brown"
     );
@@ -68,7 +68,7 @@ class Game {
     this.renderer = new CanvasRenderer(canvas);
     this.inputManager = new InputManager(this);
     this.ball = null;
-    this.terrainManager = new TerrainManager(tarmacTerrainSettings);
+    this.terrainManager = new TerrainManager(this.grasslandsTerrainSettings);
     this.collisionDetection = new CollisionDetection();
     this.clouds = [];
     this.distanceReached = 0;
@@ -84,7 +84,11 @@ class Game {
     this.ball.attributes.startingPosition.y = canvasContainer.offsetHeight / (3 / 2) - 100;
   }
 
-  resetLevel() {
+  resetLevel(level) {
+    if (level == "grass") this.terrainManager.terrainSettings = this.grasslandsTerrainSettings;
+    else if (level == "tarmac") this.terrainManager.terrainSettings = this.tarmacTerrainSettings;
+    else this.terrainManager.terrainSettings = this.iceTerrainSettings;
+
     const newDistance = Math.max(0, this.ball.attributes.position.x - this.distanceReached);
     const pointsGained = Math.floor(newDistance / 5000);
 

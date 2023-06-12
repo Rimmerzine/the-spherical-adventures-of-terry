@@ -19,7 +19,9 @@ class InputManager {
       ["upgrade-grip-button", "upgradeGrip"],
       ["upgrade-jump-button", "upgradeJump"],
       ["upgrade-max-rpm-button", "upgradeMaxSpeed"],
-      ["reset-level-button", "resetLevel"],
+      ["reset-level-grasslands", "resetLevelGrass"],
+      ["reset-level-tarmac", "resetLevelTarmac"],
+      ["reset-level-ice", "resetLevelIce"],
     ];
     upgradeButtons.forEach(([id, method]) => {
       document.getElementById(id).addEventListener("click", this[method].bind(this));
@@ -114,8 +116,16 @@ class InputManager {
     this.rightScreenTouch = false;
   }
 
-  resetLevel() {
-    this.game.resetLevel();
+  resetLevelGrass() {
+    this.game.resetLevel("grass");
+  }
+
+  resetLevelTarmac() {
+    this.game.resetLevel("tarmac");
+  }
+
+  resetLevelIce() {
+    this.game.resetLevel("ice");
   }
 }
 

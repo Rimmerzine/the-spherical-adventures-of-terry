@@ -8,36 +8,15 @@ class CollisionDetection {
   constructor() {}
 
   // Reflect the ball's velocity based on the given reflection vector
-  reflect(ball, surfaceGripCoefficient, reflectionVector, deltaTime) {
-    // const circumferance = 2 * Math.PI * ball.attributes.radius;
-    // const potentialSpeed = circumferance * ball.attributes.rotationsPerSecond;
-    // const currentSpeed = ball.attributes.velocity.distance();
-    // const speedToAdd = potentialSpeed - currentSpeed;
-
-    // const perpendicularFaceVectorAddition = reflectionVector
-    //   .normalize()
-    //   .perpendicularDirection()
-    //   .multiply(speedToAdd)
-    //   .multiply(surfaceGripCoefficient);
-
-    // debugSettings.perpendicularFaceVectorAddition = perpendicularFaceVectorAddition;
-
-    // const currentRotation = ball.attributes.rotationsPerSecond;
-    // const rotationDifference = (currentRotation - currentSpeed / circumferance) * deltaTime;
-    // ball.attributes.rotationsPerSecond -= (rotationDifference * surfaceGripCoefficient) / 2;
-
-    // ball.attributes.rotationsPerSecond *= 0.975;
-
-    const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
+  reflect(ball, surfaceGripCoefficient, reflectionVector) {
     const { perpendicular } = calculateParallelAndPerpendicular(reflectionVector, ball.attributes.velocity);
-
     const circumferance = 2 * Math.PI * ball.attributes.radius;
     const potentialMovement =
       (circumferance * ball.attributes.rotationsPerSecond + Math.sign(perpendicular.x) * perpendicular.distance()) / 2;
     const movementGain = potentialMovement - Math.sign(perpendicular.x) * perpendicular.distance();
-    const rotationGain = potentialMovement / circumferance;
 
-    ball.attributes.rotationsPerSecond = rotationGain;
+    ball.attributes.rotationsPerSecond +=
+      (potentialMovement / circumferance - ball.attributes.rotationsPerSecond) * surfaceGripCoefficient;
 
     const perpendicularFaceVectorAddition = reflectionVector
       .normalize()
@@ -47,9 +26,10 @@ class CollisionDetection {
 
     debugSettings.perpendicularFaceVectorAddition = perpendicularFaceVectorAddition;
 
+    const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
     const reflection = new Vector2D(
-      reflectionVector.x * dotProduct * 2 * 1, // (1 - ball.stats.getStat("grip").currentValue)
-      reflectionVector.y * dotProduct * 2 * 1 // change back to 0.8 when finished testing
+      reflectionVector.x * dotProduct * 2 * 0.8, // (1 - ball.stats.getStat("grip").currentValue)
+      reflectionVector.y * dotProduct * 2 * 0.8 // change back to 0.8 when finished testing
     );
     if (debugSettings.drawReflectionVector) {
       debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
