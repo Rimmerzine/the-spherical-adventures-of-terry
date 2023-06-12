@@ -30,12 +30,15 @@ class Terrain {
     const curveCount = this.terrainSettings.curveCount;
     const potentialMax = startMax - (maxDiff / curveCount) * index;
     const potentialMin = startMin + (minDiff / curveCount) * index;
-    const targetHeight = potentialMax - Math.random() * (potentialMax - potentialMin);
-    const adjustment = targetHeight - lastHeight;
     const allowedAdjustment = minAdj + (maxAdj / curveCount) * index;
-    const limitedAdjustment = Math.max(Math.min(adjustment, allowedAdjustment), -allowedAdjustment);
-    return lastHeight + limitedAdjustment;
+    const targetHeight = Math.min(
+      potentialMin,
+      Math.max(potentialMax, lastHeight + allowedAdjustment - Math.random() * (allowedAdjustment + allowedAdjustment))
+    );
+
+    return targetHeight;
   }
+
   calculateNextPosition(lastPosition, newHeight) {
     lastPosition = lastPosition || new Position2D(0, this.terrainSettings.startingHeight);
     return new Position2D(lastPosition.x + this.terrainSettings.segmentWidth, newHeight);

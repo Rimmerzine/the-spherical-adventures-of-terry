@@ -21,5 +21,5 @@ export const debugSettings = {
   perpendicularFaceVectorAddition: null,
 };
 
-export const gravity = new Vector2D(0, 360);
+export const gravity = new Vector2D(0, 500);
 // export const gravity = new Vector2D(0, 0);

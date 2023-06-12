@@ -19,6 +19,7 @@ class Ball {
   updateRotation(deltaTime) {
     const rotationDelta = this.attributes.rotationsPerSecond * 360 * deltaTime;
     this.attributes.rotation += rotationDelta;
+    this.attributes.rotationsPerSecond -= this.attributes.rotationsPerSecond * 0.1 * deltaTime;
   }
   handleStartingPositionCollision(deltaTime) {
     const collided =

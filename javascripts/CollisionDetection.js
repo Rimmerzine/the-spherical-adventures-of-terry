@@ -28,7 +28,7 @@ class CollisionDetection {
 
     const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
     const reflection = new Vector2D(
-      reflectionVector.x * dotProduct * 2 * 0.8, // (1 - ball.stats.getStat("grip").currentValue)
+      reflectionVector.x * dotProduct * 2, // (1 - ball.stats.getStat("grip").currentValue)
       reflectionVector.y * dotProduct * 2 * 0.8 // change back to 0.8 when finished testing
     );
     if (debugSettings.drawReflectionVector) {
@@ -37,8 +37,6 @@ class CollisionDetection {
 
     const velocityChange = ball.attributes.velocity.add(perpendicularFaceVectorAddition).subtract(reflection);
     ball.attributes.velocity = velocityChange;
-
-    ball.attributes.rotationsPerSecond *= 0.98;
 
     ball.jumpsRemaining = ball.stats.getStat("jumps").currentValue;
   }
