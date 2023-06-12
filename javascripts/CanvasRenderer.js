@@ -180,8 +180,8 @@ class CanvasRenderer {
     this.drawNormalisedDisplacementVector(ball);
     this.drawBallVelocity(ball);
     this.drawReflectionVector(ball);
-    // this.drawCollisionFloors(ball);
-    // this.drawMovementLines(ball);
+    this.drawCollisionFloors(ball);
+    this.drawMovementLines(ball);
   }
 
   drawMovementLines(ball) {
@@ -226,7 +226,6 @@ class CanvasRenderer {
       const startPosition = debugSettings.closestPoint;
       const vector = debugSettings.normalisedDisplacementVector;
       const endPosition = startPosition.add(vector);
-      const endPosition2 = startPosition.add(debugSettings.perpendicularFaceVectorAddition.normalize().multiply(100));
       this.context.beginPath();
       this.context.moveTo(
         startPosition.x - ball.attributes.position.x + ball.attributes.startingPosition.x,
@@ -237,23 +236,12 @@ class CanvasRenderer {
         endPosition.y - ball.attributes.position.y + ball.attributes.startingPosition.y
       );
       this.context.stroke();
-
-      this.context.beginPath();
-      this.context.moveTo(
-        startPosition.x - ball.attributes.position.x + ball.attributes.startingPosition.x,
-        startPosition.y - ball.attributes.position.y + ball.attributes.startingPosition.y
-      );
-      this.context.lineTo(
-        endPosition2.x - ball.attributes.position.x + ball.attributes.startingPosition.x,
-        endPosition2.y - ball.attributes.position.y + ball.attributes.startingPosition.y
-      );
-      this.context.stroke();
     }
   }
 
   drawBallVelocity(ball) {
     const startPosition = ball.attributes.position;
-    const endPosition = ball.attributes.position.add(ball.attributes.velocity.multiply(5));
+    const endPosition = ball.attributes.position.add(ball.attributes.velocity.multiply(0.2));
 
     this.context.beginPath();
     this.context.moveTo(
@@ -271,7 +259,7 @@ class CanvasRenderer {
     if (debugSettings.closestPoint && debugSettings.reflectionVector) {
       const startPosition = debugSettings.closestPoint;
       const vector = debugSettings.reflectionVector;
-      const endPosition = debugSettings.closestPoint.add(vector.multiply(4));
+      const endPosition = debugSettings.closestPoint.add(vector.multiply(2));
 
       this.context.beginPath();
       this.context.moveTo(
