@@ -38,6 +38,8 @@ class CollisionDetection {
     const velocityChange = ball.attributes.velocity.add(perpendicularFaceVectorAddition).subtract(reflection);
     ball.attributes.velocity = velocityChange;
 
+    ball.attributes.rotationsPerSecond *= 0.98;
+
     ball.jumpsRemaining = ball.stats.getStat("jumps").currentValue;
   }
 
