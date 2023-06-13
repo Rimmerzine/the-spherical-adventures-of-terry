@@ -34,26 +34,24 @@ class Ball {
   move(deltaTime) {
     this.attributes.position = addVectors(this.attributes.position, this.attributes.velocity.multiply(deltaTime));
   }
-  pushLeft() {
-    this.adjustRotationsPerSecond(-1);
+  pushLeft(deltaTime) {
+    this.adjustRotationsPerSecond(-1, deltaTime);
   }
-  pushRight() {
-    this.adjustRotationsPerSecond(1);
+  pushRight(deltaTime) {
+    this.adjustRotationsPerSecond(1, deltaTime);
   }
-  adjustRotationsPerSecond(direction) {
+  adjustRotationsPerSecond(direction, deltaTime) {
     const acceleration = this.stats.getStat("acceleration").currentValue;
-    const maxRps = this.stats.getStat("max-rpm").currentValue;
-    const delta = acceleration * direction;
+    const maxRps = this.stats.getStat("max-rps").currentValue;
+    const delta = acceleration * direction * deltaTime;
     const newRps = this.attributes.rotationsPerSecond + delta;
     if (Math.abs(newRps) <= maxRps) {
       this.attributes.rotationsPerSecond = newRps;
-    } else {
-      this.attributes.rotationsPerSecond = direction * maxRps;
     }
   }
   jump() {
     if (this.jumpsRemaining > 0) {
-      this.attributes.velocity = addVectors(this.attributes.velocity, this.attributes.jumpVelocity);
+      this.attributes.velocity.y = this.attributes.jumpVelocity.y;
       this.jumpsRemaining--;
     }
   }

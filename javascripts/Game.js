@@ -29,6 +29,7 @@ class Game {
       200,
       500,
       1.0,
+      0.8,
       "rgb(50, 50, 50)",
       "rgb(20, 20, 20)"
     );
@@ -45,6 +46,7 @@ class Game {
       200,
       500,
       0.02,
+      0.8,
       "rgb(30, 130, 200)",
       "rgb(50, 180, 255)"
     );
@@ -61,6 +63,7 @@ class Game {
       200,
       1000,
       0.5,
+      0.8,
       "green",
       "brown"
     );
@@ -72,7 +75,7 @@ class Game {
     this.collisionDetection = new CollisionDetection();
     this.clouds = [];
     this.distanceReached = 0;
-    this.points = 0;
+    this.totalPoints = 0;
     this.requiredDelay = 0;
 
     this.lastTime = Date.now();
@@ -94,7 +97,7 @@ class Game {
 
     this.distanceReached = this.ball.attributes.position.x - this.ball.attributes.startingPosition.x;
     this.points += pointsGained;
-    document.getElementById("points-attribute").innerText = `Total points: ${this.points}`;
+    document.getElementById("total-points-attribute").innerText = this.totalPoints;
 
     this.initialise();
   }
@@ -105,14 +108,14 @@ class Game {
       new Position2D(canvasContainer.offsetWidth / 2, canvasContainer.offsetHeight / (3 / 2) - 100),
       100,
       "yellow",
-      new Vector2D(0, -200)
+      new Vector2D(0, -400)
     );
 
     const ballStats = new BallStats()
-      .add("max-rpm", new BallStat(1, 5, [1, 3, 7, 13, 21]))
-      .add("acceleration", new BallStat(0.01, 0.01, [1, 3, 7, 13, 21]))
-      .add("grip", new BallStat(0.1, 0.1, [2, 5, 11]))
-      .add("jumps", new BallStat(0, 1, [5, 20]));
+      .add("max-rps", new BallStat(0.5, 0.25, [4, 7, 13, 22, 43]))
+      .add("acceleration", new BallStat(0.25, 0.125, [4, 7, 13, 22, 43]))
+      .add("grip", new BallStat(0.1, 0.1, [8, 15, 29]))
+      .add("jumps", new BallStat(0, 1, [10, 40]));
 
     this.ball = new Ball(ballAttributes, ballStats);
   }
@@ -155,8 +158,8 @@ class Game {
     let deltaTime = Math.min(1 / 30, (currentTime - this.lastTime) / 1000); // convert to seconds
     this.lastTime = currentTime;
 
-    if (this.inputManager.isLeftPressed()) this.ball.pushLeft();
-    if (this.inputManager.isRightPressed()) this.ball.pushRight();
+    if (this.inputManager.isLeftPressed()) this.ball.pushLeft(deltaTime);
+    if (this.inputManager.isRightPressed()) this.ball.pushRight(deltaTime);
     if (this.inputManager.isJumpPressed()) this.ball.jump();
 
     this.ball.update(deltaTime);
@@ -178,7 +181,6 @@ class Game {
       this.update();
 
       this.gameLoop();
-      // }, 1000 / 60);
     });
   }
 

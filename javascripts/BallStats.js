@@ -1,4 +1,4 @@
-("use strict");
+"use strict";
 
 class BallStats {
   constructor() {
@@ -24,8 +24,7 @@ class BallStat {
   }
 
   nextUpgradeCost() {
-    if (this.upgradeCosts[this.numberOfUpgrades]) this.upgradeCosts[this.numberOfUpgrades];
-    else Infinity;
+    return this.upgradeCosts[this.numberOfUpgrades] || Infinity;
   }
 
   upgrade() {

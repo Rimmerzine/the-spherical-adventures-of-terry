@@ -8,7 +8,7 @@ class CollisionDetection {
   constructor() {}
 
   // Reflect the ball's velocity based on the given reflection vector
-  reflect(ball, surfaceGripCoefficient, reflectionVector) {
+  reflect(ball, surfaceGripCoefficient, surfaceElasticity, reflectionVector, deltaTime) {
     const { perpendicular } = calculateParallelAndPerpendicular(reflectionVector, ball.attributes.velocity);
     const circumferance = 2 * Math.PI * ball.attributes.radius;
     const potentialMovement =
@@ -28,8 +28,8 @@ class CollisionDetection {
 
     const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
     const reflection = new Vector2D(
-      reflectionVector.x * dotProduct * 2, // (1 - ball.stats.getStat("grip").currentValue)
-      reflectionVector.y * dotProduct * 2 * 0.8 // change back to 0.8 when finished testing
+      reflectionVector.x * dotProduct * 2 * surfaceElasticity, // (1 - ball.stats.getStat("grip").currentValue)
+      reflectionVector.y * dotProduct * 2 * surfaceElasticity // change back to 0.8 when finished testing
     );
     if (debugSettings.drawReflectionVector) {
       debugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
@@ -70,6 +70,7 @@ class CollisionDetection {
       this.reflect(
         ball,
         terrainManager.terrainSettings.surfaceGripCoefficient,
+        terrainManager.terrainSettings.surfaceElasticity,
         normalisedDisplacementVector,
         deltaTime
       );

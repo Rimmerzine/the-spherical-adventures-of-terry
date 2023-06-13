@@ -31,13 +31,13 @@
       <div class="offcanvas-body">
         <dl>
           <dt>Acceleration</dt>
-          <dd><span id="acceleration-attribute">1</span>m per second</dd>
+          <dd><span id="acceleration-attribute">0.25</span> revolutions per second</dd>
           <dt>Grip</dt>
-          <dd id="grip-attribute">Smooth</dd>
+          <dd id="grip-attribute">1</dd>
           <dt>Jumps</dt>
-          <dd id="jump-attribute">0</dd>
-          <dt>Max RPM</dt>
-          <dd id="max-rpm-attribute">5</dd>
+          <dd id="jumps-attribute">0</dd>
+          <dt>Max RPS</dt>
+          <dd id="max-rps-attribute">0.5</dd>
         </dl>
       </div>
     </div>
@@ -47,16 +47,16 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <p id="points-attribute">Total points: 0</p>
+        <p>Total points: <span id="total-points-attribute">0</span></p>
         <div class="row gy-4">
           <div class="col-4">
             <button
               title="The ball will reach it's top speed more quickly"
-              id="upgrade-speed-button"
+              id="upgrade-acceleration-button"
               type="button"
               class="btn btn-success"
             >
-              Upgrade acceleration<br />(1 point)
+              Upgrade acceleration<br />(<span id="upgrade-acceleration-cost">4</span> points)
             </button>
           </div>
           <div class="col-4">
@@ -66,22 +66,27 @@
               type="button"
               class="btn btn-success"
             >
-              Upgrade Grip<br />(1 point)
-            </button>
-          </div>
-          <div class="col-4">
-            <button title="Press space to jump" id="upgrade-jump-button" type="button" class="btn btn-success">
-              Upgrade Jump<br />(1 point)
+              Upgrade Grip<br />(<span id="upgrade-grip-cost">8</span> points)
             </button>
           </div>
           <div class="col-4">
             <button
-              title="Increase how fast your ball can move"
-              id="upgrade-max-rpm-button"
+              title="Increase how many times you can jump (space)"
+              id="upgrade-jumps-button"
               type="button"
               class="btn btn-success"
             >
-              Upgrade Max RPM<br />(1 point)
+              Upgrade Jumps<br />(<span id="upgrade-jumps-cost">10</span> points)
+            </button>
+          </div>
+          <div class="col-4">
+            <button
+              title="Increase how fast your ball can rotate in revolutions per second"
+              id="upgrade-max-rps-button"
+              type="button"
+              class="btn btn-success"
+            >
+              Upgrade Max RPS<br />(<span id="upgrade-max-rps-cost">4</span> points)
             </button>
           </div>
         </div>

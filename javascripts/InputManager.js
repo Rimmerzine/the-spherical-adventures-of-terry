@@ -1,6 +1,4 @@
-import { gravity } from "./Settings.js";
-
-("use strict");
+"use strict";
 
 class InputManager {
   constructor(game) {
@@ -15,16 +13,16 @@ class InputManager {
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("keyup", this.handleKeyUp);
     const upgradeButtons = [
-      ["upgrade-speed-button", "upgradeSpeed"],
-      ["upgrade-grip-button", "upgradeGrip"],
-      ["upgrade-jump-button", "upgradeJump"],
-      ["upgrade-max-rpm-button", "upgradeMaxSpeed"],
-      ["reset-level-grasslands", "resetLevelGrass"],
-      ["reset-level-tarmac", "resetLevelTarmac"],
-      ["reset-level-ice", "resetLevelIce"],
+      ["upgrade-acceleration-button", this.upgradeSpeed],
+      ["upgrade-grip-button", this.upgradeGrip],
+      ["upgrade-jumps-button", this.upgradeJump],
+      ["upgrade-max-rps-button", this.upgradeMaxSpeed],
+      ["reset-level-grasslands", this.resetLevelGrass],
+      ["reset-level-tarmac", this.resetLevelTarmac],
+      ["reset-level-ice", this.resetLevelIce],
     ];
     upgradeButtons.forEach(([id, method]) => {
-      document.getElementById(id).addEventListener("click", this[method].bind(this));
+      document.getElementById(id).addEventListener("click", method.bind(this));
     });
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("touchstart", this.touchStartHandler);
@@ -34,7 +32,7 @@ class InputManager {
   // current state: jump works ish... I can jump, cooldown isn't taken into account currently
   // jump should only reset after landing and assuming cooldown is complete
   handleKeyDown(event) {
-    if (!this.keys[event.key] || this.keys[event.key].cooldown <= new Date().getTime()) {
+    if (!this.keys[event.key] || this.keys[event.key].cooldown <= performance.now()) {
       this.keys[event.key] = {
         pressed: true,
         cooldown: 0,
@@ -68,7 +66,7 @@ class InputManager {
 
   isJumpPressed() {
     if (this.keys[" "] && this.keys[" "].pressed) {
-      const now = new Date().getTime();
+      const now = performance.now();
       const canJump = this.keys[" "].pressed && this.keys[" "].cooldown <= now; // if space is pressed and it isn't on cooldown
       this.keys[" "].cooldown = now + 100; // add a cooldown to the key
       return canJump;
@@ -78,25 +76,70 @@ class InputManager {
   }
 
   upgradeSpeed() {
-    this.game.ball.stats.getStat("acceleration").upgrade();
-    document.getElementById("acceleration-attribute").innerText =
-      Math.round(this.game.ball.stats.getStat("acceleration").currentValue * 2000) / 100;
+    if (this.game.totalPoints >= this.game.ball.stats.getStat("acceleration").nextUpgradeCost()) {
+      this.game.totalPoints -= this.game.ball.stats.getStat("acceleration").nextUpgradeCost();
+      this.game.ball.stats.getStat("acceleration").upgrade();
+
+      document.getElementById("acceleration-attribute").innerText =
+        this.game.ball.stats.getStat("acceleration").currentValue;
+
+      document.getElementById("upgrade-acceleration-cost").innerText = this.game.ball.stats
+        .getStat("acceleration")
+        .nextUpgradeCost();
+
+      if (this.game.ball.stats.getStat("acceleration").nextUpgradeCost() == Infinity) {
+        document.getElementById("upgrade-acceleration-button").setAttribute("disabled", "");
+      }
+    } else {
+      alert("Not enough points to upgrade acceleration!");
+    }
   }
 
   upgradeGrip() {
-    this.game.ball.stats.getStat("grip").upgrade();
-    document.getElementById("grip-attribute").innerText =
-      Math.round((1 - this.game.ball.stats.getStat("grip").currentValue) * 1000) / 100;
+    if (this.game.totalPoints >= this.game.ball.stats.getStat("grip").nextUpgradeCost()) {
+      this.game.totalPoints -= this.game.ball.stats.getStat("grip").nextUpgradeCost();
+      this.game.ball.stats.getStat("grip").upgrade();
+      // document.getElementById("grip-attribute").innerText =
+      //   Math.round((1 - this.game.ball.stats.getStat("grip").currentValue) * 1000) / 100;
+    } else {
+      alert("Not enough points to upgrade grip!");
+    }
   }
 
   upgradeJump() {
-    this.game.ball.stats.getStat("jumps").upgrade();
-    document.getElementById("jump-attribute").innerText = this.game.ball.stats.getStat("jumps").currentValue;
+    if (this.game.totalPoints >= this.game.ball.stats.getStat("jumps").nextUpgradeCost()) {
+      this.game.totalPoints -= this.game.ball.stats.getStat("jumps").nextUpgradeCost();
+      this.game.ball.stats.getStat("jumps").upgrade();
+
+      document.getElementById("jumps-attribute").innerText = this.game.ball.stats.getStat("jumps").currentValue;
+
+      document.getElementById("upgrade-jumps-cost").innerText = this.game.ball.stats.getStat("jumps").nextUpgradeCost();
+
+      if (this.game.ball.stats.getStat("jumps").nextUpgradeCost() == Infinity) {
+        document.getElementById("upgrade-jumps-button").setAttribute("disabled", "");
+      }
+    } else {
+      alert("Not enough points to upgrade jumps!");
+    }
   }
 
   upgradeMaxSpeed() {
-    this.game.ball.stats.getStat("max-rpm").upgrade();
-    document.getElementById("max-rpm-attribute").innerText = this.game.ball.stats.getStat("max-rpm").currentValue;
+    if (this.game.totalPoints >= this.game.ball.stats.getStat("max-rps").nextUpgradeCost()) {
+      this.game.totalPoints -= this.game.ball.stats.getStat("max-rps").nextUpgradeCost();
+      this.game.ball.stats.getStat("max-rps").upgrade();
+
+      document.getElementById("max-rps-attribute").innerText = this.game.ball.stats.getStat("max-rps").currentValue;
+
+      document.getElementById("upgrade-max-rps-cost").innerText = this.game.ball.stats
+        .getStat("max-rps")
+        .nextUpgradeCost();
+
+      if (this.game.ball.stats.getStat("max-rps").nextUpgradeCost() == Infinity) {
+        document.getElementById("upgrade-max-rps-button").setAttribute("disabled", "");
+      }
+    } else {
+      alert("Not enough points to upgrade max rps!");
+    }
   }
 
   touchStartHandler(event) {
