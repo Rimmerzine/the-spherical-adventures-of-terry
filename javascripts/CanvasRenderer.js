@@ -152,17 +152,19 @@ class CanvasRenderer {
     }
   }
 
-  drawClouds(clouds, ball) {
+  drawClouds(clouds, ball, segmentWidth) {
     const canvasMapLeft = ball.attributes.position.x - ball.attributes.startingPosition.x;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
 
-    const visibleClouds = clouds.filter((cloud) => cloud.x >= canvasMapLeft - 1000 && cloud.x <= canvasMapRight + 2000);
+    const visibleClouds = clouds.filter(
+      (cloud) => cloud.x >= canvasMapLeft - segmentWidth * 3 && cloud.x <= canvasMapRight + segmentWidth
+    );
 
     for (let i = 0; i < visibleClouds.length; i++) {
       const cloud = visibleClouds[i];
       this.drawCloud(
-        cloud.x - ball.attributes.position.x,
-        cloud.y - ball.attributes.position.y / 3,
+        cloud.x - ball.attributes.position.x + ball.attributes.startingPosition.x,
+        cloud.y - (ball.attributes.position.y + ball.attributes.startingPosition.y) / 3,
         cloud.size,
         cloud.density,
         cloud.seed

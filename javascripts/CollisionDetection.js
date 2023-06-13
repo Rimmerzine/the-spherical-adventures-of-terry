@@ -43,6 +43,7 @@ class CollisionDetection {
 
   ballFloorCollision(ball, terrainManager, deltaTime) {
     const ballNextPosition = ball.attributes.position.add(ball.attributes.velocity.multiply(deltaTime));
+
     const visibleFloor = terrainManager.terrain.filter(
       (floor) =>
         floor.x >= ballNextPosition.x - terrainManager.terrainSettings.segmentWidth * 3 &&
@@ -51,29 +52,47 @@ class CollisionDetection {
 
     debugSettings.collisionFloors = visibleFloor;
 
-    // get the closest point to the ball on the floor
-    const position = findClosestPoint(visibleFloor, ballNextPosition);
-    if (debugSettings.drawClosestCollisionPoint) {
-      debugSettings.closestPoint = position;
+    const numPositions = Math.ceil(240 / (1 / deltaTime));
+    let interPositions = [];
+
+    for (let i = 0; i <= 1; i += 1 / numPositions) {
+      interPositions.push(ball.attributes.position.add(ball.attributes.velocity.multiply(deltaTime).multiply(i)));
     }
 
-    // if the distance between the closest point and the ball is less than or equal to it's radius, collision
-    if (calculateDistance(position, ballNextPosition) <= ball.attributes.radius) {
-      const normalisedDisplacementVector = new Vector2D(
-        ballNextPosition.x - position.x,
-        ballNextPosition.y - position.y
-      ).normalize();
-      if (debugSettings.drawNormalisedDisplacementVector) {
-        debugSettings.normalisedDisplacementVector = normalisedDisplacementVector;
+    let collisionPosition = null;
+
+    for (let i = 0; i < interPositions.length; i++) {
+      const interPosition = interPositions[i];
+
+      // get the closest point to the ball on the floor
+      const position = findClosestPoint(visibleFloor, interPosition);
+      if (debugSettings.drawClosestCollisionPoint) {
+        debugSettings.closestPoint = position;
       }
 
-      this.reflect(
-        ball,
-        terrainManager.terrainSettings.surfaceGripCoefficient,
-        terrainManager.terrainSettings.surfaceElasticity,
-        normalisedDisplacementVector,
-        deltaTime
-      );
+      const distance = calculateDistance(interPosition, position);
+      if (distance <= ball.attributes.radius) {
+        collisionPosition = interPosition;
+
+        const normalisedDisplacementVector = new Vector2D(
+          interPosition.x - position.x,
+          interPosition.y - position.y
+        ).normalize();
+
+        if (debugSettings.drawNormalisedDisplacementVector) {
+          debugSettings.normalisedDisplacementVector = normalisedDisplacementVector;
+        }
+
+        this.reflect(
+          ball,
+          terrainManager.terrainSettings.surfaceGripCoefficient,
+          terrainManager.terrainSettings.surfaceElasticity,
+          normalisedDisplacementVector,
+          deltaTime
+        );
+
+        break;
+      }
     }
   }
 }

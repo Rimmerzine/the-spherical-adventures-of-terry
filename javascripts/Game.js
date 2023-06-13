@@ -64,8 +64,8 @@ class Game {
       1000,
       0.5,
       0.8,
-      "green",
-      "brown"
+      "rgb(0, 130, 0)",
+      "rgb(100, 50, 0)"
     );
 
     this.renderer = new CanvasRenderer(canvas);
@@ -124,12 +124,12 @@ class Game {
     this.clouds = [];
     const curveCount = this.terrainManager.terrainSettings.curveCount;
     const segmentWidth = this.terrainManager.terrainSettings.segmentWidth;
-    for (let i = 0; i <= curveCount * 2; i++) {
+    for (let i = 0; i <= curveCount * 50; i++) {
       const cloud = {
-        x: i * segmentWidth * 2 + Math.random() * 250,
-        y: Math.random() * 750,
+        x: i * segmentWidth + Math.random() * 500,
+        y: Math.random() * 1500,
         size: 100,
-        density: 30,
+        density: 25,
         seed: i + 1,
       };
       this.clouds.push(cloud);
@@ -144,7 +144,7 @@ class Game {
 
   draw() {
     this.renderer.clearCanvas();
-    this.renderer.drawClouds(this.clouds, this.ball);
+    this.renderer.drawClouds(this.clouds, this.ball, this.terrainManager.terrainSettings.segmentWidth);
     this.renderer.drawCurvedWalls(this.terrainManager, this.ball);
     this.renderer.drawBall(this.ball);
     this.renderer.drawFps(gameSettings.fps);
