@@ -1,16 +1,9 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.22.1",
-    "@babel/preset-env": "^7.22.4",
-    "babel-jest": "^29.5.0",
-    "jest": "^29.5.0"
+    "http-server": "^14.1.1",
+    "typescript": "^5.3.3"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    },
-    "testEnvironment": "node",
-    "testRunner": "jest-circus/runner"
-    
+  "scripts": {
+    "start": "http-server -c-1 -p 5407"
   }
 }
