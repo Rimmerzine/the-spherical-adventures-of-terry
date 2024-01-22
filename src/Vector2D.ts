@@ -72,4 +72,4 @@ export function addVectors(v1: Vector2D, v2: Vector2D): Vector2D {
   return new Vector2D(v1.x + v2.x, v1.y + v2.y);
 }
 
-export default Vector2D;
+export {Vector2D};

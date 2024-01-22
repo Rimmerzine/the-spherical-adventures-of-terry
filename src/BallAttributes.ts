@@ -1,9 +1,8 @@
-import Position2D from './Position2D.js';
-import Vector2D from './Vector2D.js';
+import {Position2D} from './Position2D.js';
+import {Vector2D} from './Vector2D.js';
 
 class BallAttributes {
   startingPosition: Position2D;
-  position: Position2D;
   radius: number;
   colour: string;
   velocity: Vector2D = new Vector2D(0, 0);
@@ -19,7 +18,6 @@ class BallAttributes {
     jumpVelocity: Vector2D
   ) {
     this.startingPosition = position;
-    this.position = position;
     this.radius = radius;
     this.colour = colour;
 

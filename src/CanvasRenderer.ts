@@ -2,14 +2,17 @@ import Ball from './Ball.js';
 import {Cloud} from './Cloud.js';
 import {DebugSettings} from './Settings.js';
 import TerrainManager from './TerrainManager.js';
+import {Camera} from './Camera.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+  camera: Camera;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, camera: Camera) {
     this.canvas = canvas;
     this.context = canvas.getContext('2d', {alpha: false});
+    this.camera = camera;
   }
 
   drawFps(fps: number): void {
@@ -17,15 +20,30 @@ class CanvasRenderer {
     this.context.strokeText(`${fps} fps`, 10, 20);
   }
 
-  drawBall(ball: Ball) {
-    const x = ball.attributes.startingPosition.x;
-    const y = ball.attributes.startingPosition.y;
-    const radius = ball.attributes.radius;
-    const scale = 0.8 * radius;
+  drawNewBall(ball: Ball): void {
+    const drawPositionX: number = 0;
+    const drawPositionY: number = 0;
+    const ballRadius: number = ball.attributes.radius;
 
     // Draw the gray background
     this.context.beginPath();
-    this.context.arc(x, y, radius, 0, 2 * Math.PI);
+    this.context.arc(drawPositionX, drawPositionY, ballRadius, 0, 2 * Math.PI)
+    this.context.fillStyle = 'gray';
+    this.context.fill();
+    this.context.strokeStyle = 'black';
+    this.context.lineWidth = 3;
+    this.context.stroke();
+  }
+
+  drawBall(ball: Ball) {
+    const drawPositionX: number = (this.canvas.width / 2) + (ball.getPosition().x - this.camera.attachedObject.getPosition().x);
+    const drawPositionY: number = (this.canvas.height / 2) + (ball.getPosition().y - this.camera.attachedObject.getPosition().y);
+    const ballRadius: number = ball.attributes.radius;
+    const scale = 0.8 * ballRadius;
+
+    // Draw the gray background
+    this.context.beginPath();
+    this.context.arc(drawPositionX, drawPositionY, ballRadius, 0, 2 * Math.PI)
     this.context.fillStyle = 'gray';
     this.context.fill();
     this.context.strokeStyle = 'black';
@@ -36,19 +54,19 @@ class CanvasRenderer {
     const angleStep = (2 * Math.PI) / 8;
     for (let i = 0; i < 8; i++) {
       const angle = i * angleStep + (ball.attributes.rotation * Math.PI) / 180;
-      const lineEndX = x + radius * Math.cos(angle);
-      const lineEndY = y + radius * Math.sin(angle);
+      const lineEndX = drawPositionX + ballRadius * Math.cos(angle);
+      const lineEndY = drawPositionY + ballRadius * Math.sin(angle);
 
       // Draw the line
       this.context.beginPath();
-      this.context.moveTo(x, y);
+      this.context.moveTo(drawPositionX, drawPositionY);
       this.context.lineTo(lineEndX, lineEndY);
       this.context.stroke();
     }
 
     // Draw the yellow ball
     this.context.beginPath();
-    this.context.arc(x, y, scale, 0, 2 * Math.PI);
+    this.context.arc(drawPositionX, drawPositionY, scale, 0, 2 * Math.PI);
     this.context.fillStyle = ball.attributes.colour;
     this.context.fill();
     this.context.stroke();
@@ -64,13 +82,13 @@ class CanvasRenderer {
 
     // Draw the mouth
     this.context.beginPath();
-    this.context.arc(x + mouthOffsetX, y, mouthRadius, 1.3, Math.PI - 0.8);
+    this.context.arc(drawPositionX + mouthOffsetX, drawPositionY, mouthRadius, 1.3, Math.PI - 0.8);
     this.context.lineWidth = 2;
     this.context.stroke();
 
     // Draw the eye white
     this.context.beginPath();
-    this.context.arc(x + eyeOffsetX, y - eyeOffsetY, eyeRadius, 0, 2 * Math.PI);
+    this.context.arc(drawPositionX + eyeOffsetX, drawPositionY - eyeOffsetY, eyeRadius, 0, 2 * Math.PI);
     this.context.fillStyle = 'white';
     this.context.fill();
     this.context.lineWidth = 2;
@@ -79,8 +97,8 @@ class CanvasRenderer {
     // Draw the pupil
     this.context.beginPath();
     this.context.arc(
-      x + eyeOffsetX + pupilOffsetX,
-      y - eyeOffsetY,
+      drawPositionX + eyeOffsetX + pupilOffsetX,
+      drawPositionY - eyeOffsetY,
       pupilRadius,
       0,
       2 * Math.PI
@@ -91,7 +109,7 @@ class CanvasRenderer {
 
   drawCurvedWalls(terrainManager: TerrainManager, ball: Ball): void {
     const canvasMapLeft =
-      ball.attributes.position.x - ball.attributes.startingPosition.x;
+      ball.getPosition().x - ball.attributes.startingPosition.x;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
     const visibleTerrain = terrainManager.terrain.filter(
       floor =>
@@ -107,10 +125,10 @@ class CanvasRenderer {
     this.context.moveTo(0, this.canvas.height);
     this.context.lineTo(
       visibleTerrain[0].x -
-        ball.attributes.position.x +
+        ball.getPosition().x +
         ball.attributes.startingPosition.x,
       visibleTerrain[0].y -
-        ball.attributes.position.y +
+        ball.getPosition().y +
         ball.attributes.startingPosition.y +
         10
     );
@@ -118,24 +136,24 @@ class CanvasRenderer {
     for (let i = 1; i < visibleTerrain.length - 1; i++) {
       const cpx =
         visibleTerrain[i].x -
-        ball.attributes.position.x +
+        ball.getPosition().x +
         ball.attributes.startingPosition.x;
       const cpy =
         visibleTerrain[i].y -
-        ball.attributes.position.y +
+        ball.getPosition().y +
         ball.attributes.startingPosition.y +
         10;
       const x =
         (visibleTerrain[i].x + visibleTerrain[i + 1].x) / 2 -
-        ball.attributes.position.x +
+        ball.getPosition().x +
         ball.attributes.startingPosition.x;
       const y =
         (visibleTerrain[i].y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y +
           10 +
           visibleTerrain[i + 1].y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y +
           10) /
         2;
@@ -179,7 +197,7 @@ class CanvasRenderer {
 
   drawClouds(clouds: Array<Cloud>, ball: Ball, segmentWidth: number) {
     const canvasMapLeft =
-      ball.attributes.position.x - ball.attributes.startingPosition.x;
+      ball.getPosition().x - ball.attributes.startingPosition.x;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
 
     const visibleClouds = clouds.filter(
@@ -192,10 +210,10 @@ class CanvasRenderer {
       const cloud = visibleClouds[i];
       this.drawCloud(
         cloud.x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         cloud.y -
-          (ball.attributes.position.y + ball.attributes.startingPosition.y) / 3,
+          (ball.getPosition().y + ball.attributes.startingPosition.y) / 3,
         cloud.size,
         cloud.density,
         cloud.seed
@@ -222,10 +240,10 @@ class CanvasRenderer {
       for (
         let i =
           ball.attributes.startingPosition.x -
-          (ball.attributes.position.x - ball.attributes.startingPosition.x);
+          (ball.getPosition().x - ball.attributes.startingPosition.x);
         i <=
         ball.attributes.startingPosition.x -
-          (ball.attributes.position.x - ball.attributes.startingPosition.x) +
+          (ball.getPosition().x - ball.attributes.startingPosition.x) +
           1000;
         i += (2 * Math.PI * ball.attributes.radius) / 8
       ) {
@@ -246,10 +264,10 @@ class CanvasRenderer {
       this.context.beginPath();
       this.context.arc(
         position.x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         position.y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y,
         10,
         0,
@@ -274,18 +292,18 @@ class CanvasRenderer {
       this.context.strokeStyle = 'red';
       this.context.moveTo(
         startPosition.x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         startPosition.y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y
       );
       this.context.lineTo(
         endPosition.x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         endPosition.y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y
       );
       this.context.stroke();
@@ -294,8 +312,8 @@ class CanvasRenderer {
   }
 
   drawBallVelocity(ball: Ball) {
-    const startPosition = ball.attributes.position;
-    const endPosition = ball.attributes.position.add(
+    const startPosition = ball.getPosition();
+    const endPosition = ball.getPosition().add(
       ball.attributes.velocity.multiply(0.2)
     );
 
@@ -303,18 +321,18 @@ class CanvasRenderer {
     this.context.strokeStyle = 'green';
     this.context.moveTo(
       startPosition.x -
-        ball.attributes.position.x +
+        ball.getPosition().x +
         ball.attributes.startingPosition.x,
       startPosition.y -
-        ball.attributes.position.y +
+        ball.getPosition().y +
         ball.attributes.startingPosition.y
     );
     this.context.lineTo(
       endPosition.x -
-        ball.attributes.position.x +
+        ball.getPosition().x +
         ball.attributes.startingPosition.x,
       endPosition.y -
-        ball.attributes.position.y +
+        ball.getPosition().y +
         ball.attributes.startingPosition.y
     );
     this.context.stroke();
@@ -331,18 +349,18 @@ class CanvasRenderer {
       this.context.strokeStyle = 'purple';
       this.context.moveTo(
         startPosition.x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         startPosition.y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y
       );
       this.context.lineTo(
         endPosition.x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         endPosition.y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y
       );
       this.context.stroke();
@@ -357,34 +375,34 @@ class CanvasRenderer {
       this.context.strokeStyle = 'yellow';
       this.context.moveTo(
         DebugSettings.collisionFloors[0].x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x,
         DebugSettings.collisionFloors[0].y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y
       );
 
       for (let i = 1; i < DebugSettings.collisionFloors.length - 1; i++) {
         const cpx =
           DebugSettings.collisionFloors[i].x -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x;
         const cpy =
           DebugSettings.collisionFloors[i].y -
-          ball.attributes.position.y +
+          ball.getPosition().y +
           ball.attributes.startingPosition.y;
         const x =
           (DebugSettings.collisionFloors[i].x +
             DebugSettings.collisionFloors[i + 1].x) /
             2 -
-          ball.attributes.position.x +
+          ball.getPosition().x +
           ball.attributes.startingPosition.x;
         const y =
           (DebugSettings.collisionFloors[i].y -
-            ball.attributes.position.y +
+            ball.getPosition().y +
             ball.attributes.startingPosition.y +
             DebugSettings.collisionFloors[i + 1].y -
-            ball.attributes.position.y +
+            ball.getPosition().y +
             ball.attributes.startingPosition.y) /
           2;
 

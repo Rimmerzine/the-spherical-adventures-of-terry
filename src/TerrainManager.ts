@@ -1,4 +1,4 @@
-import Position2D from './Position2D.js';
+import {Position2D} from './Position2D.js';
 import TerrainSettings from './TerrainSettings.js';
 
 class TerrainManager {

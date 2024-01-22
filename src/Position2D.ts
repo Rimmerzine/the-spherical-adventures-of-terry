@@ -1,4 +1,16 @@
-import Vector2D from './Vector2D.js';
+import {Vector2D} from './Vector2D.js';
+
+abstract class PositionedObject {
+  protected position: Position2D;
+
+  constructor(position2D: Position2D) {
+    this.position = position2D;
+  }
+
+  getPosition(): Position2D {
+    return this.position;
+  }
+}
 
 class Position2D {
   x: number;
@@ -14,4 +26,4 @@ class Position2D {
   }
 }
 
-export default Position2D;
+export {PositionedObject, Position2D}
