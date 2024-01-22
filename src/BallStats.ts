@@ -1,33 +1,41 @@
-"use strict";
-
 class BallStats {
+  stats: Map<string, BallStat>;
   constructor() {
     this.stats = new Map();
   }
 
-  add(name, stat) {
+  add(name: string, stat: BallStat): BallStats {
     this.stats.set(name, stat);
     return this;
   }
 
-  getStat(name) {
+  getStat(name: string): BallStat {
     return this.stats.get(name);
   }
 }
 
 class BallStat {
-  constructor(startingValue, upgradeIncrement, upgradeCosts) {
+  currentValue: number;
+  upgradeIncrement: number;
+  upgradeCosts: Array<number>;
+  numberOfUpgrades = 0;
+
+  constructor(
+    startingValue: number,
+    upgradeIncrement: number,
+    upgradeCosts: Array<number>
+  ) {
     this.currentValue = startingValue;
     this.upgradeIncrement = upgradeIncrement;
     this.upgradeCosts = upgradeCosts;
     this.numberOfUpgrades = 0;
   }
 
-  nextUpgradeCost() {
+  nextUpgradeCost(): number {
     return this.upgradeCosts[this.numberOfUpgrades] || Infinity;
   }
 
-  upgrade() {
+  upgrade(): void {
     if (this.numberOfUpgrades < this.upgradeCosts.length) {
       this.numberOfUpgrades++;
       this.currentValue = this.currentValue + this.upgradeIncrement;
@@ -35,4 +43,4 @@ class BallStat {
   }
 }
 
-export { BallStats, BallStat };
+export {BallStats, BallStat};

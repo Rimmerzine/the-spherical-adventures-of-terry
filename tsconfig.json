@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "ESNext",
+    "module": "ESNext",
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": false,
+    "strict": true
+  },
+  "include": ["./src/**/*"]
+}
