@@ -12,16 +12,24 @@ class TerrainManager {
   generateTerrain(): void {
     this.terrain = [];
 
+    for(let i = 20; i > 0; i--) {
+      const position = new Position2D(
+        -this.terrainSettings.segmentWidth * i,
+        0
+      )
+      this.terrain.push(position);
+    }
+
     for (let i = 0; i < this.terrainSettings.flatCount; i++) {
       const position = new Position2D(
         this.terrainSettings.segmentWidth * i,
-        this.terrainSettings.startingHeight
+        0
       );
       this.terrain.push(position);
     }
     let lastPosition =
       this.terrain.slice(-1)[0] ||
-      new Position2D(0, this.terrainSettings.startingHeight);
+      new Position2D(0, 0);
     for (let i = 0; i < this.terrainSettings.curveCount; i++) {
       const nextHeight = this.calculateNextHeight(i, lastPosition.y);
       const nextPosition = this.calculateNextPosition(lastPosition, nextHeight);
@@ -56,7 +64,7 @@ class TerrainManager {
 
   calculateNextPosition(lastPosition: Position2D, newHeight: number) {
     lastPosition =
-      lastPosition || new Position2D(0, this.terrainSettings.startingHeight);
+      lastPosition || new Position2D(0, 0);
     return new Position2D(
       lastPosition.x + this.terrainSettings.segmentWidth,
       newHeight

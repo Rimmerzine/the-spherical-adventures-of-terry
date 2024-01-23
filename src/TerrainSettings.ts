@@ -2,7 +2,6 @@ class TerrainSettings {
   segmentWidth: number;
   flatCount: number;
   curveCount: number;
-  startingHeight: number;
   startingMinHeight: number;
   startingMaxHeight: number;
   endMinHeight: number;
@@ -20,7 +19,6 @@ class TerrainSettings {
     segmentWidth: number, // width of each terrain segment
     flatCount: number, // number of flat segments
     curveCount: number, // number of curved segments
-    startingHeight: number, // starting height of the terrain
     startMinHeight: number, // minimum height at the start
     startMaxHeight: number, // maximum height at the start
     endMinHeight: number, // minimum height at the end
@@ -36,7 +34,6 @@ class TerrainSettings {
     this.segmentWidth = segmentWidth;
     this.flatCount = flatCount;
     this.curveCount = curveCount;
-    this.startingHeight = startingHeight;
     this.startingMinHeight = startMinHeight;
     this.startingMaxHeight = startMaxHeight;
     this.endMinHeight = endMinHeight;

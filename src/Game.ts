@@ -32,17 +32,14 @@ class Game {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
 
-    const startingHeight = (canvas.offsetHeight * 2) / 3;
-
     this.tarmacTerrainSettings = new TerrainSettings(
       300,
       10,
       1000,
-      startingHeight,
-      startingHeight + 100,
-      startingHeight - 100,
-      startingHeight + 1000,
-      startingHeight - 1000,
+      100,
+      -100,
+      1000,
+      -1000,
       200,
       500,
       1.0,
@@ -55,11 +52,10 @@ class Game {
       300,
       10,
       1000,
-      startingHeight,
-      startingHeight + 100,
-      startingHeight - 100,
-      startingHeight + 1000,
-      startingHeight - 1000,
+      100,
+      -100,
+      1000,
+      -1000,
       200,
       500,
       0.02,
@@ -70,13 +66,12 @@ class Game {
 
     this.grasslandsTerrainSettings = new TerrainSettings(
       300,
-      10,
+      5,
       1000,
-      startingHeight,
-      startingHeight + 1000,
-      startingHeight - 1000,
-      startingHeight + 10000,
-      startingHeight - 10000,
+      1000,
+      -1000,
+      10000,
+      -10000,
       200,
       1000,
       0.4,
@@ -124,13 +119,12 @@ class Game {
   }
 
   createBall() {
-    const canvasContainer = document.getElementById('canvas-container');
+    const ballRadius: number = 100;
     const ballAttributes = new BallAttributes(
       new Position2D(
-        canvasContainer.offsetWidth / 2,
-        canvasContainer.offsetHeight / (3 / 2) - 100
+       0, -ballRadius
       ),
-      100,
+      ballRadius,
       'yellow',
       new Vector2D(0, -400)
     );
@@ -172,15 +166,14 @@ class Game {
     this.renderer.clearCanvas();
     this.renderer.drawClouds(
       this.clouds,
-      this.ball,
       this.terrainManager.terrainSettings.segmentWidth
     );
-    this.renderer.drawCurvedWalls(this.terrainManager, this.ball);
+    this.renderer.drawCurvedWalls(this.terrainManager);
     this.renderer.drawBall(this.ball);
     this.renderer.drawFps(GameSettings.fps);
-    if (DebugSettings.debugMode) {
-      this.renderer.drawDebugInformation(this.ball);
-    }
+    // if (DebugSettings.debugMode) {
+    //   this.renderer.drawDebugInformation(this.ball);
+    // }
   }
 
   update(): void {

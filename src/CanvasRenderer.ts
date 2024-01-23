@@ -3,6 +3,7 @@ import {Cloud} from './Cloud.js';
 import {DebugSettings} from './Settings.js';
 import TerrainManager from './TerrainManager.js';
 import {Camera} from './Camera.js';
+import { Position2D } from './Position2D.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -20,24 +21,9 @@ class CanvasRenderer {
     this.context.strokeText(`${fps} fps`, 10, 20);
   }
 
-  drawNewBall(ball: Ball): void {
-    const drawPositionX: number = 0;
-    const drawPositionY: number = 0;
-    const ballRadius: number = ball.attributes.radius;
-
-    // Draw the gray background
-    this.context.beginPath();
-    this.context.arc(drawPositionX, drawPositionY, ballRadius, 0, 2 * Math.PI)
-    this.context.fillStyle = 'gray';
-    this.context.fill();
-    this.context.strokeStyle = 'black';
-    this.context.lineWidth = 3;
-    this.context.stroke();
-  }
-
   drawBall(ball: Ball) {
-    const drawPositionX: number = (this.canvas.width / 2) + (ball.getPosition().x - this.camera.attachedObject.getPosition().x);
-    const drawPositionY: number = (this.canvas.height / 2) + (ball.getPosition().y - this.camera.attachedObject.getPosition().y);
+    const drawPositionX: number = (this.canvas.width / 2) + (ball.getPosition().x - this.camera.getPosition().x);
+    const drawPositionY: number = (this.canvas.height / 2) + (ball.getPosition().y - this.camera.getPosition().y);
     const ballRadius: number = ball.attributes.radius;
     const scale = 0.8 * ballRadius;
 
@@ -107,16 +93,21 @@ class CanvasRenderer {
     this.context.fill();
   }
 
-  drawCurvedWalls(terrainManager: TerrainManager, ball: Ball): void {
-    const canvasMapLeft =
-      ball.getPosition().x - ball.attributes.startingPosition.x;
-    const canvasMapRight = canvasMapLeft + this.canvas.width;
+  drawCurvedWalls(terrainManager: TerrainManager): void {
+    const cameraPosition: Position2D = this.camera.getPosition();
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const canvasMapLeft: number = cameraPosition.x - canvasWidth / 2;
+    const canvasMapRight: number = canvasMapLeft + canvasWidth;
+    const cameraCanvasOffsetX: number = this.camera.getPosition().x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = this.camera.getPosition().y - canvasHeight / 2;
+    
     const visibleTerrain = terrainManager.terrain.filter(
-      floor =>
-        floor.x >=
-          canvasMapLeft - terrainManager.terrainSettings.segmentWidth * 3 &&
-        floor.x <=
-          canvasMapRight + terrainManager.terrainSettings.segmentWidth * 3
+      floor => {
+        const floorX: number = floor.x;
+        const segmentWidth: number = terrainManager.terrainSettings.segmentWidth;
+        return floorX >= canvasMapLeft - segmentWidth * 3 && floorX <= canvasMapRight + segmentWidth * 2
+      }
     );
     this.context.beginPath();
     this.context.lineWidth = 21;
@@ -124,43 +115,18 @@ class CanvasRenderer {
     this.context.fillStyle = terrainManager.terrainSettings.subsurfaceColour;
     this.context.moveTo(0, this.canvas.height);
     this.context.lineTo(
-      visibleTerrain[0].x -
-        ball.getPosition().x +
-        ball.attributes.startingPosition.x,
-      visibleTerrain[0].y -
-        ball.getPosition().y +
-        ball.attributes.startingPosition.y +
-        10
+      visibleTerrain[0].x - cameraCanvasOffsetX,
+      visibleTerrain[0].y - cameraCanvasOffsetY
     );
 
     for (let i = 1; i < visibleTerrain.length - 1; i++) {
-      const cpx =
-        visibleTerrain[i].x -
-        ball.getPosition().x +
-        ball.attributes.startingPosition.x;
-      const cpy =
-        visibleTerrain[i].y -
-        ball.getPosition().y +
-        ball.attributes.startingPosition.y +
-        10;
-      const x =
-        (visibleTerrain[i].x + visibleTerrain[i + 1].x) / 2 -
-        ball.getPosition().x +
-        ball.attributes.startingPosition.x;
-      const y =
-        (visibleTerrain[i].y -
-          ball.getPosition().y +
-          ball.attributes.startingPosition.y +
-          10 +
-          visibleTerrain[i + 1].y -
-          ball.getPosition().y +
-          ball.attributes.startingPosition.y +
-          10) /
-        2;
-
+      const cpx = visibleTerrain[i].x - cameraCanvasOffsetX;
+      const cpy = visibleTerrain[i].y - cameraCanvasOffsetY;
+      const x = (visibleTerrain[i].x + visibleTerrain[i + 1].x) / 2 - cameraCanvasOffsetX;
+      const y = (visibleTerrain[i].y - cameraCanvasOffsetY + visibleTerrain[i + 1].y - cameraCanvasOffsetY) / 2;
       this.context.quadraticCurveTo(cpx, cpy, x, y);
     }
-    this.context.lineTo(this.canvas.width, this.canvas.height);
+    this.context.lineTo(canvasWidth, canvasHeight);
     this.context.stroke();
     this.context.fill();
   }
@@ -195,25 +161,26 @@ class CanvasRenderer {
     }
   }
 
-  drawClouds(clouds: Array<Cloud>, ball: Ball, segmentWidth: number) {
-    const canvasMapLeft =
-      ball.getPosition().x - ball.attributes.startingPosition.x;
+  drawClouds(clouds: Array<Cloud>, segmentWidth: number) {
+    const canvasMapLeft = this.camera.getPosition().x - this.canvas.width / 2;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = this.camera.getPosition().x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = this.camera.getPosition().y - canvasHeight / 2;
 
     const visibleClouds = clouds.filter(
-      cloud =>
-        cloud.x >= canvasMapLeft - segmentWidth * 3 &&
-        cloud.x <= canvasMapRight + segmentWidth
+      cloud => {
+        const cloudPositionX: number = cloud.position.x;
+        return cloudPositionX >= canvasMapLeft - segmentWidth * 3 && cloudPositionX <= canvasMapRight + segmentWidth
+      }
     );
 
     for (let i = 0; i < visibleClouds.length; i++) {
       const cloud = visibleClouds[i];
       this.drawCloud(
-        cloud.x -
-          ball.getPosition().x +
-          ball.attributes.startingPosition.x,
-        cloud.y -
-          (ball.getPosition().y + ball.attributes.startingPosition.y) / 3,
+        cloud.position.x - cameraCanvasOffsetX,
+        cloud.position.y - cameraCanvasOffsetY / 3,
         cloud.size,
         cloud.density,
         cloud.seed

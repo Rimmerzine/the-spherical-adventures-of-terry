@@ -1,6 +1,7 @@
+import { Position2D } from "./Position2D.js";
+
 class Cloud {
-  x: number;
-  y: number;
+  position: Position2D
   size: number;
   density: number;
   seed: number;
@@ -12,8 +13,7 @@ class Cloud {
     density: number,
     seed: number
   ) {
-    this.x = x;
-    this.y = y;
+    this.position = new Position2D(x, y);
     this.size = size;
     this.density = density;
     this.seed = seed;

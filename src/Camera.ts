@@ -14,6 +14,11 @@ class Camera {
   attach(positionObject: PositionedObject): void {
     this.attachedObject = positionObject;
   }
+
+  getPosition(): Position2D {
+    return this.attachedObject.getPosition();
+  }
+
 }
 
 export {Camera};
