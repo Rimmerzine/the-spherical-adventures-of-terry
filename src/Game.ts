@@ -9,7 +9,7 @@ import TerrainSettings from './TerrainSettings.js';
 import {BallAttributes} from './BallAttributes.js';
 import {BallStat, BallStats} from './BallStats.js';
 import {Vector2D} from './Vector2D.js';
-import {Cloud} from './Cloud.js';
+import {Cloud, CloudParticle} from './Cloud.js';
 import {Camera} from './Camera.js';
 
 class Game {
@@ -144,14 +144,31 @@ class Game {
     this.clouds = [];
     const curveCount = this.terrainManager.terrainSettings.curveCount;
     const segmentWidth = this.terrainManager.terrainSettings.segmentWidth;
-    for (let i = 0; i <= curveCount * 50; i++) {
-      const cloud = new Cloud(
+
+    for (let i = -20; i <= curveCount + 20; i++) {
+      const cloudPosition = new Position2D(
         i * segmentWidth + Math.random() * 500,
-        Math.random() * 1500,
-        100,
-        25,
-        i + 1
+        Math.random() * 1500 - 750
+      )
+      const cloud = new Cloud(
+        cloudPosition
       );
+      for (let j = 0; j <= 15; j++) {
+        const cloudParticle = new CloudParticle(
+          new Position2D(
+            Math.random() * 500 - 250,
+            Math.random() * 300 - 150
+          ),
+          100
+        );
+        if (Math.floor(Math.random() * 2) === 0) {
+          cloudParticle.colour = "#ffffffaa"
+        } else {
+          cloudParticle.colour = "#f5f5f5aa"
+        }
+        cloud.addParticle(cloudParticle);
+      }
+
       this.clouds.push(cloud);
     }
   }

@@ -3,21 +3,33 @@ import { Position2D } from "./Position2D.js";
 class Cloud {
   position: Position2D
   size: number;
-  density: number;
-  seed: number;
+  particles: Array<CloudParticle>
 
   constructor(
-    x: number,
-    y: number,
-    size: number,
-    density: number,
-    seed: number
+    position: Position2D,
   ) {
-    this.position = new Position2D(x, y);
-    this.size = size;
-    this.density = density;
-    this.seed = seed;
+    this.position = position;
+    this.particles = [];
+  }
+
+  addParticle(particle: CloudParticle) {
+    this.particles.push(particle);
   }
 }
 
-export {Cloud};
+class CloudParticle {
+  relativePosition: Position2D;
+  radius: number;
+  colour: string
+
+  constructor(
+    relativePosition: Position2D,
+    radius: number
+  ) {
+    this.relativePosition = relativePosition;
+    this.radius = radius;
+    this.colour = '#ffffffaa';
+  }
+}
+
+export {Cloud, CloudParticle};
