@@ -36,7 +36,6 @@ class TerrainManager {
       this.terrain.push(nextPosition);
       lastPosition = nextPosition;
     }
-    console.log(this.terrain);
   }
   calculateNextHeight(index: number, lastHeight: number): number {
     const maxDiff = this.terrainSettings.differenceMaxHeight;
