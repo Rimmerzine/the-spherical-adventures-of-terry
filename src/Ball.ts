@@ -15,6 +15,15 @@ class Ball extends PositionedObject {
     this.stats = stats;
     this.jumpsRemaining = stats.getStat('jumps').currentValue;
   }
+
+  resetPosition(): void {
+    this.position.x = 0;
+    this.position.y = -this.attributes.radius;
+    this.attributes.velocity.x = 0;
+    this.attributes.velocity.y = 0;
+    this.attributes.rotation = 0;
+    this.attributes.rotationsPerSecond = 0;
+  }
   
   update(deltaTime: number): void {
     this.applyGravity(deltaTime);
