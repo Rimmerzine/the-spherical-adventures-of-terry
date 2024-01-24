@@ -29,7 +29,7 @@ class InputManager {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
 
-    const statNames: Array<string> = ["acceleration", "max-rps", "grip", "jumps"]
+    const statNames: Array<string> = ["acceleration", "max-rps", "jumps"]
     statNames.forEach(key =>
       document.getElementById(`upgrade-${key}-button`).addEventListener('click', this.upgradeStat.bind(this, key))
     );
