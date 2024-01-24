@@ -1,13 +1,11 @@
 import {Game} from './Game.js';
 
-const canvas: HTMLCanvasElement = document.getElementById(
-  'canvas'
-) as HTMLCanvasElement;
+const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 
-const canvasParent: HTMLElement = canvas.parentElement as HTMLElement;
+const nav: HTMLElement = document.getElementById('navbar') as HTMLElement;
 
-canvas.width = canvasParent.offsetWidth;
-canvas.height = canvasParent.offsetHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - nav.offsetHeight;
 
 const game: Game = new Game(canvas);
 game.initialise();
@@ -16,6 +14,6 @@ game.start();
 window.addEventListener('resize', resize);
 
 function resize(): void {
-  canvas.width = canvasParent.offsetWidth;
-  canvas.height = canvasParent.offsetHeight;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight - nav.offsetHeight;
 }

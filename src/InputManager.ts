@@ -48,9 +48,9 @@ class InputManager {
     document
       .getElementById('reset-level-ice')
       .addEventListener('click', this.resetLevelIce.bind(this));
-    const canvasContainer = document.getElementById('canvas-container');
-    canvasContainer.addEventListener('touchstart', this.touchStartHandler);
-    canvasContainer.addEventListener('touchend', this.touchEndHandler);
+    // const canvasContainer = document.getElementById('canvas-container');
+    // canvasContainer.addEventListener('touchstart', this.touchStartHandler);
+    // canvasContainer.addEventListener('touchend', this.touchEndHandler);
   }
 
   handleKeyDown(event: KeyboardEvent): void {
