@@ -1,5 +1,5 @@
 import Ball from './Ball.js';
-import {Cloud} from './Cloud.js';
+import {Cloud, CloudParticle} from './Cloud.js';
 import {DebugSettings} from './Settings.js';
 import TerrainManager from './TerrainManager.js';
 import {Camera} from './Camera.js';
@@ -12,7 +12,7 @@ class CanvasRenderer {
 
   constructor(canvas: HTMLCanvasElement, camera: Camera) {
     this.canvas = canvas;
-    this.context = canvas.getContext('2d', {alpha: false});
+    this.context = canvas.getContext('2d');
     this.camera = camera;
   }
 
@@ -131,43 +131,30 @@ class CanvasRenderer {
     this.context.fill();
   }
 
-  drawCloud(x: number, y: number, size: number, density: number, seed: number) {
-    // Set cloud color
-    this.context.fillStyle = '#ffffff'; // Set the color to white (change it as desired)
+  drawCloud(cloud: Cloud): void {
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = this.camera.getPosition().x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = this.camera.getPosition().y - canvasHeight / 2;
 
-    // Calculate the maximum and minimum circle radii
-    const maxRadius = size / 2;
-    const minRadius = maxRadius / 3;
+    for(let i = 0; i < cloud.particles.length; i++) {
+      const cloudParticle: CloudParticle = cloud.particles[i];
 
-    // Calculate the maximum and minimum circle positions
-    const maxX = x + size;
-    const minX = x - size;
-    const maxY = y + size / 2;
-    const minY = y - size / 2;
+      this.context.fillStyle = cloudParticle.colour;
 
-    const random = seededRandom(seed);
-
-    // Draw random circles to create a fluffy cloud effect
-    for (let i = 0; i < density; i++) {
-      const radius = random() * (maxRadius - minRadius) + minRadius;
-      const posX = random() * (maxX - minX) + minX;
-      const posY = random() * (maxY - minY) + minY;
-
-      // Draw the circle
+      const particlePositionX: number = cloud.position.x + cloudParticle.relativePosition.x - cameraCanvasOffsetX;
+      const particlePositionY: number = cloud.position.y + cloudParticle.relativePosition.y - cameraCanvasOffsetY / 2;
       this.context.beginPath();
-      this.context.arc(posX, posY, radius, 0, 2 * Math.PI);
+      this.context.arc(particlePositionX, particlePositionY, cloudParticle.radius, 0, 2 * Math.PI);
       this.context.closePath();
       this.context.fill();
     }
+
   }
 
   drawClouds(clouds: Array<Cloud>, segmentWidth: number) {
     const canvasMapLeft = this.camera.getPosition().x - this.canvas.width / 2;
     const canvasMapRight = canvasMapLeft + this.canvas.width;
-    const canvasWidth: number = this.canvas.width;
-    const canvasHeight: number = this.canvas.height;
-    const cameraCanvasOffsetX: number = this.camera.getPosition().x - canvasWidth / 2;
-    const cameraCanvasOffsetY: number = this.camera.getPosition().y - canvasHeight / 2;
 
     const visibleClouds = clouds.filter(
       cloud => {
@@ -178,13 +165,7 @@ class CanvasRenderer {
 
     for (let i = 0; i < visibleClouds.length; i++) {
       const cloud = visibleClouds[i];
-      this.drawCloud(
-        cloud.position.x - cameraCanvasOffsetX,
-        cloud.position.y - cameraCanvasOffsetY / 3,
-        cloud.size,
-        cloud.density,
-        cloud.seed
-      );
+      this.drawCloud(cloud);
     }
   }
 
