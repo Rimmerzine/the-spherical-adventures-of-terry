@@ -103,19 +103,18 @@ class Game {
       this.terrainManager.terrainSettings = this.iceTerrainSettings;
     }
 
-    const newDistance = Math.max(
-      0,
-      this.ball.getPosition().x - this.distanceReached
-    );
+    const newDistance = Math.max(0, this.ball.getPosition().x - this.distanceReached);
     const pointsGained = Math.floor(newDistance / 5000);
 
-    this.distanceReached =
-      this.ball.getPosition().x - this.ball.attributes.startingPosition.x;
+    this.distanceReached = this.ball.getPosition().x;
     this.totalPoints += pointsGained;
     document.getElementById('total-points-attribute').innerText =
       this.totalPoints.toString();
 
-    this.initialise();
+    this.ball.resetPosition();
+
+    this.terrainManager.generateTerrain();
+    this.generateClouds();
   }
 
   createBall() {

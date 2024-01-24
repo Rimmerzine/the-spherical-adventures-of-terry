@@ -1,3 +1,4 @@
+import { BallStat } from './BallStats.js';
 import {Game} from './Game.js';
 
 class PressEvent {
@@ -27,18 +28,11 @@ class InputManager {
     this.touchEndHandler = this.touchEndHandler.bind(this);
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
-    document
-      .getElementById('upgrade-acceleration-button')
-      .addEventListener('click', this.upgradeSpeed.bind(this));
-    document
-      .getElementById('upgrade-grip-button')
-      .addEventListener('click', this.upgradeGrip.bind(this));
-    document
-      .getElementById('upgrade-jumps-button')
-      .addEventListener('click', this.upgradeJump.bind(this));
-    document
-      .getElementById('upgrade-max-rps-button')
-      .addEventListener('click', this.upgradeMaxSpeed.bind(this));
+
+    const statNames: Array<string> = ["acceleration", "max-rps", "grip", "jumps"]
+    statNames.forEach(key =>
+      document.getElementById(`upgrade-${key}-button`).addEventListener('click', this.upgradeStat.bind(this, key))
+    );
     document
       .getElementById('reset-level-grasslands')
       .addEventListener('click', this.resetLevelGrass.bind(this));
@@ -103,110 +97,26 @@ class InputManager {
     }
   }
 
-  upgradeSpeed(): void {
-    if (
-      this.game.totalPoints >=
-      this.game.ball.stats.getStat('acceleration').nextUpgradeCost()
-    ) {
-      this.game.totalPoints -= this.game.ball.stats
-        .getStat('acceleration')
-        .nextUpgradeCost();
-      this.game.ball.stats.getStat('acceleration').upgrade();
+  upgradeStat(statValue: string): void {
+    const stat: BallStat = this.game.ball.stats.getStat(statValue)
+    const nextUpgradeCost: number = stat.nextUpgradeCost();
 
-      document.getElementById('acceleration-attribute').innerText =
-        this.game.ball.stats.getStat('acceleration').currentValue.toString();
+    if(this.game.totalPoints >= nextUpgradeCost) {
+      this.game.totalPoints -= nextUpgradeCost;
+      stat.upgrade();
 
-      document.getElementById('upgrade-acceleration-cost').innerText =
-        this.game.ball.stats
-          .getStat('acceleration')
-          .nextUpgradeCost()
-          .toString();
+      document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
+      document.getElementById(`${statValue}-attribute`).innerText = stat.currentValue.toString();
+      document.getElementById(`upgrade-${statValue}-cost`).innerText = stat.nextUpgradeCost().toString();
 
-      if (
-        this.game.ball.stats.getStat('acceleration').nextUpgradeCost() ===
-        Infinity
-      ) {
-        document
-          .getElementById('upgrade-acceleration-button')
-          .setAttribute('disabled', '');
+      if(stat.nextUpgradeCost() === Infinity) {
+        document.getElementById(`upgrade-${statValue}-button`).setAttribute('disabled', '');
       }
     } else {
-      alert('Not enough points to upgrade acceleration!');
+      alert(`Not enough points to upgrade ${statValue}!`);
     }
   }
-
-  upgradeGrip() {
-    if (
-      this.game.totalPoints >=
-      this.game.ball.stats.getStat('grip').nextUpgradeCost()
-    ) {
-      this.game.totalPoints -= this.game.ball.stats
-        .getStat('grip')
-        .nextUpgradeCost();
-      this.game.ball.stats.getStat('grip').upgrade();
-      // document.getElementById("grip-attribute").innerText =
-      //   Math.round((1 - this.game.ball.stats.getStat("grip").currentValue) * 1000) / 100;
-    } else {
-      alert('Not enough points to upgrade grip!');
-    }
-  }
-
-  upgradeJump() {
-    if (
-      this.game.totalPoints >=
-      this.game.ball.stats.getStat('jumps').nextUpgradeCost()
-    ) {
-      this.game.totalPoints -= this.game.ball.stats
-        .getStat('jumps')
-        .nextUpgradeCost();
-      this.game.ball.stats.getStat('jumps').upgrade();
-
-      document.getElementById('jumps-attribute').innerText =
-        this.game.ball.stats.getStat('jumps').currentValue.toString();
-
-      document.getElementById('upgrade-jumps-cost').innerText =
-        this.game.ball.stats.getStat('jumps').nextUpgradeCost().toString();
-
-      if (
-        this.game.ball.stats.getStat('jumps').nextUpgradeCost() === Infinity
-      ) {
-        document
-          .getElementById('upgrade-jumps-button')
-          .setAttribute('disabled', '');
-      }
-    } else {
-      alert('Not enough points to upgrade jumps!');
-    }
-  }
-
-  upgradeMaxSpeed() {
-    if (
-      this.game.totalPoints >=
-      this.game.ball.stats.getStat('max-rps').nextUpgradeCost()
-    ) {
-      this.game.totalPoints -= this.game.ball.stats
-        .getStat('max-rps')
-        .nextUpgradeCost();
-      this.game.ball.stats.getStat('max-rps').upgrade();
-
-      document.getElementById('max-rps-attribute').innerText =
-        this.game.ball.stats.getStat('max-rps').currentValue.toString();
-
-      document.getElementById('upgrade-max-rps-cost').innerText =
-        this.game.ball.stats.getStat('max-rps').nextUpgradeCost().toString();
-
-      if (
-        this.game.ball.stats.getStat('max-rps').nextUpgradeCost() === Infinity
-      ) {
-        document
-          .getElementById('upgrade-max-rps-button')
-          .setAttribute('disabled', '');
-      }
-    } else {
-      alert('Not enough points to upgrade max rps!');
-    }
-  }
-
+  
   touchStartHandler(event: TouchEvent) {
     const touchX = event.touches[0].clientX;
     const canvasWidth = document.getElementById('canvas').clientWidth;
