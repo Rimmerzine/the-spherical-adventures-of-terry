@@ -48,9 +48,9 @@ class InputManager {
     document
       .getElementById('reset-level-ice')
       .addEventListener('click', this.resetLevelIce.bind(this));
-    // const canvasContainer = document.getElementById('canvas-container');
-    // canvasContainer.addEventListener('touchstart', this.touchStartHandler);
-    // canvasContainer.addEventListener('touchend', this.touchEndHandler);
+    const canvasContainer = document.getElementById('canvas');
+    canvasContainer.addEventListener('touchstart', this.touchStartHandler);
+    canvasContainer.addEventListener('touchend', this.touchEndHandler);
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -207,15 +207,15 @@ class InputManager {
     }
   }
 
-  touchStartHandler() {
-    // const {clientX, target} = event.touches[0];
-    // const {left, width} = target.getBoundingClientRect();
-    // const touchX = clientX - left;
-    // if (touchX < width / 2) {
-    //   this.leftScreenTouch = true;
-    // } else {
-    //   this.rightScreenTouch = true;
-    // }
+  touchStartHandler(event: TouchEvent) {
+    const touchX = event.touches[0].clientX;
+    const canvasWidth = document.getElementById('canvas').clientWidth;
+    
+    if (touchX < canvasWidth / 2) {
+      this.leftScreenTouch = true;
+    } else {
+      this.rightScreenTouch = true;
+    }
   }
 
   touchEndHandler() {
