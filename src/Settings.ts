@@ -1,5 +1,5 @@
-import Position2D from './Position2D.js';
-import Vector2D from './Vector2D.js';
+import {Position2D} from './Position2D.js';
+import {Vector2D} from './Vector2D.js';
 
 export class GameSettings {
   static times: Array<number> = [];

@@ -1,18 +1,21 @@
 import {BallAttributes} from './BallAttributes.js';
 import {BallStats} from './BallStats.js';
+import {Position2D, PositionedObject} from './Position2D.js';
 import {Gravity} from './Settings.js';
 import {addVectors} from './Vector2D.js';
 
-class Ball {
+class Ball extends PositionedObject {
   attributes: BallAttributes;
   stats: BallStats;
   jumpsRemaining: number;
 
   constructor(attributes: BallAttributes, stats: BallStats) {
+    super(attributes.startingPosition);
     this.attributes = attributes;
     this.stats = stats;
     this.jumpsRemaining = stats.getStat('jumps').currentValue;
   }
+  
   update(deltaTime: number): void {
     this.applyGravity(deltaTime);
     this.updateRotation(deltaTime);
@@ -33,17 +36,17 @@ class Ball {
   }
   handleStartingPositionCollision(deltaTime: number): void {
     const collided =
-      this.attributes.position.x + this.attributes.velocity.x * deltaTime <
+      this.position.x + this.attributes.velocity.x * deltaTime <
       this.attributes.startingPosition.x - 1;
     if (collided) {
       this.attributes.velocity.x = 0;
       this.attributes.velocity.y = 0;
       this.attributes.rotationsPerSecond = 0;
-      this.attributes.position.x = this.attributes.startingPosition.x + 1;
+      this.position.x = this.attributes.startingPosition.x + 1;
     }
   }
   move(deltaTime: number): void {
-    this.attributes.position = this.attributes.position.add(
+    this.position = this.position.add(
       this.attributes.velocity.multiply(deltaTime)
     );
   }

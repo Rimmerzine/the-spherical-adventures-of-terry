@@ -2,14 +2,15 @@ import CanvasRenderer from './CanvasRenderer.js';
 import CollisionDetection from './CollisionDetection.js';
 import {GameSettings, DebugSettings} from './Settings.js';
 import Ball from './Ball.js';
-import Position2D from './Position2D.js';
+import {Position2D} from './Position2D.js';
 import InputManager from './InputManager.js';
 import TerrainManager from './TerrainManager.js';
 import TerrainSettings from './TerrainSettings.js';
 import {BallAttributes} from './BallAttributes.js';
 import {BallStat, BallStats} from './BallStats.js';
-import Vector2D from './Vector2D.js';
+import {Vector2D} from './Vector2D.js';
 import {Cloud} from './Cloud.js';
+import {Camera} from './Camera.js';
 
 class Game {
   canvas: HTMLCanvasElement;
@@ -26,21 +27,19 @@ class Game {
   requiredDelay: number;
   lastTime: number;
   ball: Ball;
+  camera: Camera;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-
-    const startingHeight = (canvas.offsetHeight * 2) / 3;
 
     this.tarmacTerrainSettings = new TerrainSettings(
       300,
       10,
       1000,
-      startingHeight,
-      startingHeight + 100,
-      startingHeight - 100,
-      startingHeight + 1000,
-      startingHeight - 1000,
+      100,
+      -100,
+      1000,
+      -1000,
       200,
       500,
       1.0,
@@ -53,11 +52,10 @@ class Game {
       300,
       10,
       1000,
-      startingHeight,
-      startingHeight + 100,
-      startingHeight - 100,
-      startingHeight + 1000,
-      startingHeight - 1000,
+      100,
+      -100,
+      1000,
+      -1000,
       200,
       500,
       0.02,
@@ -68,13 +66,12 @@ class Game {
 
     this.grasslandsTerrainSettings = new TerrainSettings(
       300,
-      10,
+      5,
       1000,
-      startingHeight,
-      startingHeight + 1000,
-      startingHeight - 1000,
-      startingHeight + 10000,
-      startingHeight - 10000,
+      1000,
+      -1000,
+      10000,
+      -10000,
       200,
       1000,
       0.4,
@@ -83,7 +80,9 @@ class Game {
       'rgb(100, 50, 0)'
     );
 
-    this.renderer = new CanvasRenderer(canvas);
+    this.camera = new Camera(canvas.width, canvas.height);
+
+    this.renderer = new CanvasRenderer(this.canvas, this.camera);
     this.inputManager = new InputManager(this);
     this.terrainManager = new TerrainManager(this.grasslandsTerrainSettings);
     this.collisionDetection = new CollisionDetection();
@@ -93,13 +92,6 @@ class Game {
     this.requiredDelay = 0;
 
     this.lastTime = Date.now();
-  }
-
-  resize(): void {
-    const canvasContainer = document.getElementById('canvas-container');
-    this.ball.attributes.startingPosition.x = canvasContainer.offsetWidth / 2;
-    this.ball.attributes.startingPosition.y =
-      canvasContainer.offsetHeight / (3 / 2) - 100;
   }
 
   resetLevel(level: string) {
@@ -113,12 +105,12 @@ class Game {
 
     const newDistance = Math.max(
       0,
-      this.ball.attributes.position.x - this.distanceReached
+      this.ball.getPosition().x - this.distanceReached
     );
     const pointsGained = Math.floor(newDistance / 5000);
 
     this.distanceReached =
-      this.ball.attributes.position.x - this.ball.attributes.startingPosition.x;
+      this.ball.getPosition().x - this.ball.attributes.startingPosition.x;
     this.totalPoints += pointsGained;
     document.getElementById('total-points-attribute').innerText =
       this.totalPoints.toString();
@@ -127,13 +119,12 @@ class Game {
   }
 
   createBall() {
-    const canvasContainer = document.getElementById('canvas-container');
+    const ballRadius: number = 100;
     const ballAttributes = new BallAttributes(
       new Position2D(
-        canvasContainer.offsetWidth / 2,
-        canvasContainer.offsetHeight / (3 / 2) - 100
+       0, -ballRadius
       ),
-      100,
+      ballRadius,
       'yellow',
       new Vector2D(0, -400)
     );
@@ -145,6 +136,8 @@ class Game {
       .add('jumps', new BallStat(0, 1, [10, 40]));
 
     this.ball = new Ball(ballAttributes, ballStats);
+
+    this.camera.attach(this.ball);
   }
 
   generateClouds() {
@@ -163,28 +156,27 @@ class Game {
     }
   }
 
-  initialise() {
+  initialise(): void {
     this.createBall();
     this.terrainManager.generateTerrain();
     this.generateClouds();
   }
 
-  draw() {
+  draw(): void {
     this.renderer.clearCanvas();
     this.renderer.drawClouds(
       this.clouds,
-      this.ball,
       this.terrainManager.terrainSettings.segmentWidth
     );
-    this.renderer.drawCurvedWalls(this.terrainManager, this.ball);
+    this.renderer.drawCurvedWalls(this.terrainManager);
     this.renderer.drawBall(this.ball);
     this.renderer.drawFps(GameSettings.fps);
-    if (DebugSettings.debugMode) {
-      this.renderer.drawDebugInformation(this.ball);
-    }
+    // if (DebugSettings.debugMode) {
+    //   this.renderer.drawDebugInformation(this.ball);
+    // }
   }
 
-  update() {
+  update(): void {
     const currentTime: number = Date.now();
     const deltaTime: number = Math.min(
       1 / 30,

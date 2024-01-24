@@ -1,6 +1,6 @@
 import {DebugSettings} from './Settings.js';
-import Vector2D from './Vector2D.js';
-import Position2D from './Position2D.js';
+import {Vector2D} from './Vector2D.js';
+import {Position2D} from './Position2D.js';
 import Ball from './Ball.js';
 import TerrainManager from './TerrainManager.js';
 
@@ -61,7 +61,7 @@ class CollisionDetection {
     terrainManager: TerrainManager,
     deltaTime: number
   ) {
-    const ballNextPosition = ball.attributes.position.add(
+    const ballNextPosition = ball.getPosition().add(
       ball.attributes.velocity.multiply(deltaTime)
     );
 
@@ -81,7 +81,7 @@ class CollisionDetection {
 
     for (let i = 0; i <= 1; i += 1 / numPositions) {
       interPositions.push(
-        ball.attributes.position.add(
+        ball.getPosition().add(
           ball.attributes.velocity.multiply(deltaTime).multiply(i)
         )
       );
