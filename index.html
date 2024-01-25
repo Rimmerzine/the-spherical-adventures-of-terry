@@ -15,11 +15,11 @@
       dt:not(:first-child) {
         margin-top: 1em;
         padding-top: 1em;
-        border-top: 1px black solid;
+        border-top: 1px gray solid;
       }
     </style>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.75, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=no" />
     <title>The Spherical Adventures of Terry</title>
   </head>
   <body>
@@ -29,6 +29,32 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
+        <dl>
+          <dt>Furthest distance reached</dt>
+          <dd><span id="furthest-distance-reached-stat">0</span> meters</dd>
+          <dt>Total distance travelled</dt>
+          <dd><span id="total-distance-travelled-stat">0</span> meters</dd>
+          <dt>Total number of jumps</dt>
+          <dd><span id="total-jumps-stat">0</span> jumps</dd>
+          <dt>Total points earnt</dt>
+          <dd><span id="total-points-earned-stat">0</span> points</dd>
+          <dt>Total points spent</dt>
+          <dd><span id="total-points-spent-stat">0</span> points</dd>
+          <dt>Total max RPS upgrades bought</dt>
+          <dd><span id="total-max-rps-upgrades-stat">0</span> upgrades</dd>
+          <dt>Total acceleration upgrades bought</dt>
+          <dd><span id="total-acceleration-upgrades-stat">0</span> upgrades</dd>
+          <dt>Total jump upgrades bought</dt>
+          <dd><span id="total-jump-upgrades-stat">0</span> upgrades</dd>
+          <dt>Fastest speed achieved</dt>
+          <dd><span id="fastest-speed-achieved-stat">0</span> meters per second</dd>
+          <dt>Furthest jump achieved</dt>
+          <dd><span id="furthest-jump-achieved-stat">0</span> meters</dd>
+          <dt>Longest time spent mid-air</dt>
+          <dd><span id="longest-time-midair-stat">0</span> seconds</dd>
+          <dt>Total number of level resets</dt>
+          <dd><span id="total-level-resets-stat">0</span> resets</dd>
+        </dl>
       </div>
     </div>
     <div class="offcanvas offcanvas-end" tabindex="-1" id="upgradesOffcanvas" aria-labelledby="upgradesOffcanvasLabel">
@@ -38,6 +64,7 @@
       </div>
       <div class="offcanvas-body">
         <h3>Total points: <span id="total-points-attribute">0</span></h3>
+        <p class="text-secondary">Maximize your points by advancing as far as you can in each level, and then strategically reset. You'll earn points based on the distance you surpass from your previous attempt.</p>
         <dl>
           <dt>Acceleration</dt>
           <dd class="text-secondary">How fast you can increase or decrease your speed.</dd>
@@ -45,7 +72,7 @@
             <span id="acceleration-attribute">1</span> Revolutions per second
           </dd>
           <dd class="d-grid">
-            <button title="The ball will reach it's top speed more quickly" id="upgrade-acceleration-button" type="button" class="btn btn-success">
+            <button id="upgrade-acceleration-button" type="button" class="btn btn-success">
               Upgrade acceleration (<span id="upgrade-acceleration-cost">4</span> points)
             </button>
           </dd>
@@ -55,7 +82,7 @@
             <span id="max-rps-attribute">1</span> Revolutions per second
           </dd>
           <dd class="d-grid">
-            <button title="Increase how fast your ball can rotate in revolutions per second" id="upgrade-max-rps-button" type="button" class="btn btn-success">
+            <button id="upgrade-max-rps-button" type="button" class="btn btn-success">
               Upgrade maximum RPS (<span id="upgrade-max-rps-cost">4</span> points)
             </button>
           </dd>
@@ -65,7 +92,7 @@
             <span id="jumps-attribute">0</span> Jumps
           </dd>
           <dd class="d-grid">
-            <button title="Increase how many times you can jump (space)" id="upgrade-jumps-button" type="button" class="btn btn-success">
+            <button id="upgrade-jumps-button" type="button" class="btn btn-success">
               Upgrade Jumps (<span id="upgrade-jumps-cost">10</span> points)
             </button>
           </dd>
@@ -76,7 +103,10 @@
       <div class="container-fluid">
         <span class="navbar-text"><h1>The Spherical Adventures of Terry</h1></span>
         <div class="d-flex">
-          <div class="dropdown">
+          <button class="btn btn-primary me-4" type="button" id="reset-level-grasslands">
+            Reset Level
+          </button>
+          <div class="dropdown visually-hidden">
             <button class="btn btn-primary dropdown-toggle me-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               Reset Level
             </button>

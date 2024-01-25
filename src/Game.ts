@@ -11,6 +11,7 @@ import {BallStat, BallStats} from './BallStats.js';
 import {Vector2D} from './Vector2D.js';
 import {Cloud, CloudParticle} from './Cloud.js';
 import {Camera} from './Camera.js';
+import { playerStats } from './PlayerStats.js';
 
 class Game {
   canvas: HTMLCanvasElement;
@@ -108,6 +109,10 @@ class Game {
 
     this.distanceReached = this.ball.getPosition().x;
     this.totalPoints += pointsGained;
+
+    playerStats.addDistanceTravelled(this.distanceReached);
+    playerStats.addPointsEarned(pointsGained);
+
     document.getElementById('total-points-attribute').innerText =
       this.totalPoints.toString();
 
@@ -115,6 +120,8 @@ class Game {
 
     this.terrainManager.generateTerrain();
     this.generateClouds();
+
+    playerStats.addNumberOfResets();
   }
 
   createBall() {
@@ -125,7 +132,7 @@ class Game {
       ),
       ballRadius,
       'yellow',
-      new Vector2D(0, -400)
+      new Vector2D(0, -800)
     );
 
     const ballStats = new BallStats()
@@ -186,7 +193,7 @@ class Game {
     );
     this.renderer.drawCurvedWalls(this.terrainManager);
     this.renderer.drawBall(this.ball);
-    this.renderer.drawFps(GameSettings.fps);
+    // this.renderer.drawFps(GameSettings.fps);
     // if (DebugSettings.debugMode) {
     //   this.renderer.drawDebugInformation(this.ball);
     // }
@@ -211,6 +218,8 @@ class Game {
       deltaTime
     );
     this.ball.move(deltaTime);
+
+    playerStats.trackRelevantStats(this.ball);
   }
 
   gameLoop() {
