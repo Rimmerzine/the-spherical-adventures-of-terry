@@ -3,6 +3,7 @@ import {Vector2D} from './Vector2D.js';
 import {Position2D} from './Position2D.js';
 import Ball from './Ball.js';
 import TerrainManager from './TerrainManager.js';
+import { playerStats } from './PlayerStats.js';
 
 class CollisionDetection {
   constructor() {}
@@ -115,6 +116,8 @@ class CollisionDetection {
           normalisedDisplacementVector
         );
 
+        playerStats.updateCollided(ball);
+
         break;
       }
     }
@@ -152,19 +155,20 @@ function findClosestPoint(floor: Array<Position2D>, givenPoint: Position2D) {
   let point = null;
 
   for (let i = 1; i < floor.length - 1; i++) {
-    const sx = (floor[i - 1].x + floor[i].x) / 2;
-    const sy = (floor[i - 1].y + floor[i].y) / 2;
-    const cpx = floor[i].x;
-    const cpy = floor[i].y;
-    const x = (floor[i].x + floor[i + 1].x) / 2;
-    const y = (floor[i].y + floor[i + 1].y) / 2;
+    const initialFloor = floor[i];
+    const previousFloor = floor[i - 1];
+    const nextFloor = floor[i + 1];
+
+    const sx = (previousFloor.x + initialFloor.x) / 2;
+    const sy = (previousFloor.y + initialFloor.y) / 2;
+    const cpx = initialFloor.x;
+    const cpy = initialFloor.y;
+    const x = (initialFloor.x + nextFloor.x) / 2;
+    const y = (initialFloor.y + nextFloor.y) / 2;
 
     for (let j = 0.0; j <= 1.0; j += 0.01) {
       const newPoint = getQuadraticCurvePoint(sx, sy, cpx, cpy, x, y, j);
-      if (
-        calculateDistance(newPoint, givenPoint) <
-        calculateDistance(point, givenPoint)
-      ) {
+      if (calculateDistance(newPoint, givenPoint) < calculateDistance(point, givenPoint)) {
         point = newPoint;
       }
     }

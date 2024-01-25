@@ -1,6 +1,7 @@
 import {BallAttributes} from './BallAttributes.js';
 import {BallStats} from './BallStats.js';
-import {Position2D, PositionedObject} from './Position2D.js';
+import { playerStats } from './PlayerStats.js';
+import {PositionedObject} from './Position2D.js';
 import {Gravity} from './Settings.js';
 import {addVectors} from './Vector2D.js';
 
@@ -32,10 +33,7 @@ class Ball extends PositionedObject {
   }
   applyGravity(deltaTime: number): void {
     const gravityForce = Gravity.multiply(deltaTime);
-    this.attributes.velocity = addVectors(
-      this.attributes.velocity,
-      gravityForce
-    );
+    this.attributes.velocity = addVectors(this.attributes.velocity, gravityForce);
   }
   updateRotation(deltaTime: number): void {
     const rotationDelta = this.attributes.rotationsPerSecond * 360 * deltaTime;
@@ -44,9 +42,7 @@ class Ball extends PositionedObject {
       this.attributes.rotationsPerSecond * 0.1 * deltaTime;
   }
   handleStartingPositionCollision(deltaTime: number): void {
-    const collided =
-      this.position.x + this.attributes.velocity.x * deltaTime <
-      this.attributes.startingPosition.x - 1;
+    const collided = this.position.x + this.attributes.velocity.x * deltaTime < this.attributes.startingPosition.x - 1;
     if (collided) {
       this.attributes.velocity.x = 0;
       this.attributes.velocity.y = 0;
@@ -78,6 +74,7 @@ class Ball extends PositionedObject {
     if (this.jumpsRemaining > 0) {
       this.attributes.velocity.y = this.attributes.jumpVelocity.y;
       this.jumpsRemaining--;
+      playerStats.addJump();
     }
   }
 }

@@ -1,5 +1,6 @@
 import { BallStat } from './BallStats.js';
 import {Game} from './Game.js';
+import { playerStats } from './PlayerStats.js';
 
 class PressEvent {
   pressed: boolean;
@@ -108,6 +109,8 @@ class InputManager {
       document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
       document.getElementById(`${statValue}-attribute`).innerText = stat.currentValue.toString();
       document.getElementById(`upgrade-${statValue}-cost`).innerText = stat.nextUpgradeCost().toString();
+
+      playerStats.addUpgradeBought(statValue, nextUpgradeCost);
 
       if(stat.nextUpgradeCost() === Infinity) {
         document.getElementById(`upgrade-${statValue}-button`).setAttribute('disabled', '');
