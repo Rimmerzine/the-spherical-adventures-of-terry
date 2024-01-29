@@ -1,5 +1,5 @@
 import { BallStat } from './BallStats.js';
-import {Game} from './Game.js';
+import {GameManager} from './GameManager.js';
 import { playerStats } from './PlayerStats.js';
 
 class PressEvent {
@@ -14,11 +14,11 @@ class PressEvent {
 
 class InputManager {
   keys: Map<string, PressEvent>;
-  game: Game;
+  game: GameManager;
   leftScreenTouch: boolean;
   rightScreenTouch: boolean;
 
-  constructor(game: Game) {
+  constructor(game: GameManager) {
     this.keys = new Map();
     this.game = game;
     this.leftScreenTouch = false;
@@ -49,6 +49,7 @@ class InputManager {
   }
 
   handleKeyDown(event: KeyboardEvent): void {
+    event.preventDefault();
     if (
       !this.keys.get(event.key) ||
       this.keys.get(event.key).cooldown <= performance.now()

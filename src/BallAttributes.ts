@@ -6,7 +6,6 @@ class BallAttributes {
   radius: number;
   colour: string;
   velocity: Vector2D = new Vector2D(0, 0);
-  jumpCount = 0;
   jumpVelocity: Vector2D;
   rotation = 0;
   rotationsPerSecond = 0;
@@ -22,7 +21,6 @@ class BallAttributes {
     this.colour = colour;
 
     this.velocity = new Vector2D(0, 0);
-    this.jumpCount = 0;
     this.jumpVelocity = jumpVelocity;
     this.rotation = 0;
     this.rotationsPerSecond = 0;

@@ -1,4 +1,4 @@
-import {Game} from './Game.js';
+import {GameManager} from './GameManager.js';
 
 const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 
@@ -7,7 +7,7 @@ const nav: HTMLElement = document.getElementById('navbar') as HTMLElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - nav.offsetHeight;
 
-const game: Game = new Game(canvas);
+const game: GameManager = new GameManager(canvas);
 game.initialise();
 game.start();
 
