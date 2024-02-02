@@ -1,20 +1,20 @@
 import CanvasRenderer from './CanvasRenderer.js';
 import CollisionDetection from './CollisionDetection.js';
-import {GameSettings, DebugSettings} from './Settings.js';
-import Ball from './Ball.js';
-import {Position2D} from './Position2D.js';
+import {GameSettings} from './Settings.js';
+import Ball from './ball/Ball.js';
+import {Position2D} from './utils/Position2D.js';
 import InputManager from './InputManager.js';
-import TerrainManager from './TerrainManager.js';
-import TerrainSettings from './TerrainSettings.js';
-import {BallAttributes} from './BallAttributes.js';
-import {BallStat, BallStats} from './BallStats.js';
-import {Vector2D} from './Vector2D.js';
-import {Cloud, CloudParticle} from './Cloud.js';
+import TerrainManager from './terrain/TerrainManager.js';
+import TerrainSettings from './terrain/TerrainSettings.js';
+import {BallAttributes} from './ball/BallAttributes.js';
+import {BallStat, BallStats} from './ball/BallStats.js';
+import {Vector2D} from './utils/Vector2D.js';
+import {Cloud, CloudParticle} from './cloud/Cloud.js';
 import {Camera} from './Camera.js';
 import { playerStats } from './PlayerStats.js';
+import { BackgroundObject } from './utils/BackgroundObject.js';
 
-class Game {
-  canvas: HTMLCanvasElement;
+class GameManager {
   tarmacTerrainSettings: TerrainSettings;
   iceTerrainSettings: TerrainSettings;
   grasslandsTerrainSettings: TerrainSettings;
@@ -22,7 +22,7 @@ class Game {
   inputManager: InputManager;
   terrainManager: TerrainManager;
   collisionDetection: CollisionDetection;
-  clouds: Array<Cloud>;
+  backgroundObjects: Array<BackgroundObject>;
   distanceReached: number;
   totalPoints: number;
   requiredDelay: number;
@@ -31,7 +31,6 @@ class Game {
   camera: Camera;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
 
     this.tarmacTerrainSettings = new TerrainSettings(
       300,
@@ -81,13 +80,13 @@ class Game {
       'rgb(100, 50, 0)'
     );
 
-    this.camera = new Camera(canvas.width, canvas.height);
+    this.camera = new Camera();
 
-    this.renderer = new CanvasRenderer(this.canvas, this.camera);
+    this.renderer = new CanvasRenderer(canvas, this.camera);
     this.inputManager = new InputManager(this);
     this.terrainManager = new TerrainManager(this.grasslandsTerrainSettings);
     this.collisionDetection = new CollisionDetection();
-    this.clouds = [];
+    this.backgroundObjects = [];
     this.distanceReached = 0;
     this.totalPoints = 0;
     this.requiredDelay = 0;
@@ -104,10 +103,10 @@ class Game {
       this.terrainManager.terrainSettings = this.iceTerrainSettings;
     }
 
-    const newDistance = Math.max(0, this.ball.getPosition().x - this.distanceReached);
+    const newDistance = Math.max(0, this.ball.position.x - this.distanceReached);
     const pointsGained = Math.floor(newDistance / 5000);
 
-    this.distanceReached = this.ball.getPosition().x;
+    this.distanceReached = this.ball.position.x;
     this.totalPoints += pointsGained;
 
     playerStats.addDistanceTravelled(this.distanceReached);
@@ -147,7 +146,7 @@ class Game {
   }
 
   generateClouds() {
-    this.clouds = [];
+    this.backgroundObjects = [];
     const curveCount = this.terrainManager.terrainSettings.curveCount;
     const segmentWidth = this.terrainManager.terrainSettings.segmentWidth;
 
@@ -167,15 +166,10 @@ class Game {
           ),
           100
         );
-        if (Math.floor(Math.random() * 2) === 0) {
-          cloudParticle.colour = "#ffffffaa"
-        } else {
-          cloudParticle.colour = "#f5f5f5aa"
-        }
         cloud.addParticle(cloudParticle);
       }
 
-      this.clouds.push(cloud);
+      this.backgroundObjects.push(cloud);
     }
   }
 
@@ -187,13 +181,14 @@ class Game {
 
   draw(): void {
     this.renderer.clearCanvas();
-    this.renderer.drawClouds(
-      this.clouds,
-      this.terrainManager.terrainSettings.segmentWidth
+    this.renderer.drawBackgroundObjects(
+      this.backgroundObjects
     );
-    this.renderer.drawCurvedWalls(this.terrainManager);
+    this.renderer.drawQuadraticFloor(this.terrainManager);
+
     this.renderer.drawBall(this.ball);
-    // this.renderer.drawFps(GameSettings.fps);
+
+    this.renderer.drawFps(GameSettings.fps);
     // if (DebugSettings.debugMode) {
     //   this.renderer.drawDebugInformation(this.ball);
     // }
@@ -247,4 +242,4 @@ class Game {
   }
 }
 
-export {Game};
+export {GameManager};

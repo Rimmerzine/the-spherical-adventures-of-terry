@@ -1,5 +1,5 @@
-import { BallStat } from './BallStats.js';
-import {Game} from './Game.js';
+import { BallStat } from './ball/BallStats.js';
+import {GameManager} from './GameManager.js';
 import { playerStats } from './PlayerStats.js';
 
 class PressEvent {
@@ -14,11 +14,11 @@ class PressEvent {
 
 class InputManager {
   keys: Map<string, PressEvent>;
-  game: Game;
+  game: GameManager;
   leftScreenTouch: boolean;
   rightScreenTouch: boolean;
 
-  constructor(game: Game) {
+  constructor(game: GameManager) {
     this.keys = new Map();
     this.game = game;
     this.leftScreenTouch = false;
@@ -34,6 +34,8 @@ class InputManager {
     statNames.forEach(key =>
       document.getElementById(`upgrade-${key}-button`).addEventListener('click', this.upgradeStat.bind(this, key))
     );
+    document.getElementById('upgrade-feed-button').addEventListener('click', this.feedTerry.bind(this));
+    document.getElementById('upgrade-burp-button').addEventListener('click', this.burpTerry.bind(this));
     document
       .getElementById('reset-level-grasslands')
       .addEventListener('click', this.resetLevelGrass.bind(this));
@@ -49,6 +51,7 @@ class InputManager {
   }
 
   handleKeyDown(event: KeyboardEvent): void {
+    event.preventDefault();
     if (
       !this.keys.get(event.key) ||
       this.keys.get(event.key).cooldown <= performance.now()
@@ -117,6 +120,20 @@ class InputManager {
       }
     } else {
       alert(`Not enough points to upgrade ${statValue}!`);
+    }
+  }
+
+  feedTerry(): void {
+    if(this.game.ball.attributes.radius < 200) {
+      this.game.ball.attributes.radius += 10;
+      this.game.ball.position.y -= 10;
+    }
+  }
+  
+  burpTerry(): void {
+    if(this.game.ball.attributes.radius > 10) {
+      this.game.ball.attributes.radius -= 10;
+      this.game.ball.position.y += 10;
     }
   }
   

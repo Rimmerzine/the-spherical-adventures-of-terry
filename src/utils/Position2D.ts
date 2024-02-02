@@ -1,15 +1,7 @@
 import {Vector2D} from './Vector2D.js';
 
-abstract class PositionedObject {
-  protected position: Position2D;
-
-  constructor(position2D: Position2D) {
-    this.position = position2D;
-  }
-
-  getPosition(): Position2D {
-    return this.position;
-  }
+interface PositionedObject {
+  position: Position2D;
 }
 
 class Position2D {

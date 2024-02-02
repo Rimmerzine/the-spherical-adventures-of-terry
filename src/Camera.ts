@@ -1,13 +1,9 @@
-import {Position2D, PositionedObject} from "./Position2D";
+import {Position2D, PositionedObject} from "./utils/Position2D";
 
 class Camera {
   attachedObject: PositionedObject;
-  width: number;
-  height: number;
 
-  constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+  constructor() {
     this.attachedObject = null;
   }
 
@@ -16,7 +12,7 @@ class Camera {
   }
 
   getPosition(): Position2D {
-    return this.attachedObject.getPosition();
+    return this.attachedObject.position;
   }
 
 }

@@ -1,4 +1,4 @@
-import {Position2D} from './Position2D.js';
+import {Position2D} from '../utils/Position2D.js';
 import TerrainSettings from './TerrainSettings.js';
 
 class TerrainManager {
@@ -9,6 +9,7 @@ class TerrainManager {
     this.terrain = [];
     this.terrainSettings = terrainSettings;
   }
+
   generateTerrain(): void {
     this.terrain = [];
 
