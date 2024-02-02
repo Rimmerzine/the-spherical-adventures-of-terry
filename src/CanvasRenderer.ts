@@ -91,7 +91,7 @@ class CanvasRenderer {
     const visibleBackgroundObjects = backgroundObjects.filter(
       backgroundObject => {
         const backgroundObjectPositionX: number = backgroundObject.position.x;
-        return backgroundObjectPositionX + 300 >= canvasMapLeft && backgroundObjectPositionX - 300 <= canvasMapRight
+        return backgroundObjectPositionX + backgroundObject.width / 2 >= canvasMapLeft && backgroundObjectPositionX - backgroundObject.width <= canvasMapRight
       }
     );
 
