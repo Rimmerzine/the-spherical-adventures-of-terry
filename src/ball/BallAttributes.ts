@@ -1,5 +1,5 @@
-import {Position2D} from './Position2D.js';
-import {Vector2D} from './Vector2D.js';
+import {Position2D} from '../utils/Position2D.js';
+import {Vector2D} from '../utils/Vector2D.js';
 
 class BallAttributes {
   startingPosition: Position2D;

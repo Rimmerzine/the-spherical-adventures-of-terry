@@ -14,6 +14,8 @@ game.start();
 window.addEventListener('resize', resize);
 
 function resize(): void {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight - nav.offsetHeight;
+  if(window.innerHeight < 2048) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - nav.offsetHeight;
+  }
 }

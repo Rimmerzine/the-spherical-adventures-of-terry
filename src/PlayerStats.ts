@@ -1,4 +1,4 @@
-import Ball from "./Ball.js";
+import Ball from "./ball/Ball.js";
 
 class PlayerStats {
   furthestDistanceReached: number;
@@ -56,27 +56,27 @@ class PlayerStats {
     }
 
     if(this.lastBounceX === null) {
-        this.lastBounceX = ball.getPosition().x / 200;
+        this.lastBounceX = ball.position.x / 200;
     } else {
-        const distanceJumped = Math.abs(ball.getPosition().x / 200 - this.lastBounceX / 200);
+        const distanceJumped = Math.abs(ball.position.x / 200 - this.lastBounceX / 200);
         if(this.furthestJump < distanceJumped) {
             this.furthestJump = distanceJumped;
             if(this.furthestJump >= 1) {
                 this.updateStat("furthest-jump-achieved", this.furthestJump);
             }
-            this.lastBounceX = ball.getPosition().x;
+            this.lastBounceX = ball.position.x;
         } else {
-            this.lastBounceX = ball.getPosition().x;
+            this.lastBounceX = ball.position.x;
         }
     }
   }
 
   trackRelevantStats(ball: Ball): void {
-    this.totalDistanceTravelled = this.totalResetDistance + ball.getPosition().x / 200;
+    this.totalDistanceTravelled = this.totalResetDistance + ball.position.x / 200;
     this.updateStat("total-distance-travelled", this.totalDistanceTravelled);
 
-    if(this.furthestDistanceReached < ball.getPosition().x / 200) {
-        this.furthestDistanceReached = ball.getPosition().x / 200;
+    if(this.furthestDistanceReached < ball.position.x / 200) {
+        this.furthestDistanceReached = ball.position.x / 200;
         this.updateStat("furthest-distance-reached", this.furthestDistanceReached);
     }
 

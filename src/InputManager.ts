@@ -1,4 +1,4 @@
-import { BallStat } from './BallStats.js';
+import { BallStat } from './ball/BallStats.js';
 import {GameManager} from './GameManager.js';
 import { playerStats } from './PlayerStats.js';
 
@@ -34,6 +34,8 @@ class InputManager {
     statNames.forEach(key =>
       document.getElementById(`upgrade-${key}-button`).addEventListener('click', this.upgradeStat.bind(this, key))
     );
+    document.getElementById('upgrade-feed-button').addEventListener('click', this.feedTerry.bind(this));
+    document.getElementById('upgrade-burp-button').addEventListener('click', this.burpTerry.bind(this));
     document
       .getElementById('reset-level-grasslands')
       .addEventListener('click', this.resetLevelGrass.bind(this));
@@ -118,6 +120,20 @@ class InputManager {
       }
     } else {
       alert(`Not enough points to upgrade ${statValue}!`);
+    }
+  }
+
+  feedTerry(): void {
+    if(this.game.ball.attributes.radius < 200) {
+      this.game.ball.attributes.radius += 10;
+      this.game.ball.position.y -= 10;
+    }
+  }
+  
+  burpTerry(): void {
+    if(this.game.ball.attributes.radius > 10) {
+      this.game.ball.attributes.radius -= 10;
+      this.game.ball.position.y += 10;
     }
   }
   
