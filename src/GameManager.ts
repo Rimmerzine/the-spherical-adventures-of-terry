@@ -1,6 +1,6 @@
 import CanvasRenderer from './CanvasRenderer.js';
 import CollisionDetection from './CollisionDetection.js';
-import {GameSettings} from './Settings.js';
+import {DebugSettings, GameSettings} from './Settings.js';
 import Ball from './ball/Ball.js';
 import {Position2D} from './utils/Position2D.js';
 import InputManager from './InputManager.js';
@@ -65,15 +65,15 @@ class GameManager {
     );
 
     this.grasslandsTerrainSettings = new TerrainSettings(
-      300,
+      400,
       5,
       1000,
-      1000,
-      -1000,
-      10000,
-      -10000,
-      200,
-      1000,
+      0,
+      -2000,
+      0,
+      -20000,
+      150,
+      800,
       0.4,
       0.8,
       'rgb(0, 130, 0)',
@@ -88,7 +88,7 @@ class GameManager {
     this.collisionDetection = new CollisionDetection();
     this.backgroundObjects = [];
     this.distanceReached = 0;
-    this.totalPoints = 0;
+    this.totalPoints = 200;
     this.requiredDelay = 0;
 
     this.lastTime = Date.now();
@@ -158,16 +158,6 @@ class GameManager {
       const cloud = new Cloud(
         cloudPosition
       );
-      for (let j = 0; j <= 15; j++) {
-        const cloudParticle = new CloudParticle(
-          new Position2D(
-            Math.random() * 500 - 250,
-            Math.random() * 300 - 150
-          ),
-          100
-        );
-        cloud.addParticle(cloudParticle);
-      }
 
       this.backgroundObjects.push(cloud);
     }
@@ -189,9 +179,9 @@ class GameManager {
     this.renderer.drawBall(this.ball);
 
     this.renderer.drawFps(GameSettings.fps);
-    // if (DebugSettings.debugMode) {
-    //   this.renderer.drawDebugInformation(this.ball);
-    // }
+    if (DebugSettings.debugMode) {
+      this.renderer.drawDebugInformation(this.ball);
+    }
   }
 
   update(): void {

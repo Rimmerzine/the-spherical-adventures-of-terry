@@ -43,7 +43,7 @@ class CollisionDetection {
     const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
     const reflection = new Vector2D(
       reflectionVector.x * dotProduct * 2 * surfaceElasticity, // (1 - ball.stats.getStat("grip").currentValue)
-      reflectionVector.y * dotProduct * 2 * surfaceElasticity // change back to 0.8 when finished testing
+      reflectionVector.y * -Math.abs(dotProduct) * 2 * surfaceElasticity // change back to 0.8 when finished testing
     );
     if (DebugSettings.drawReflectionVector) {
       DebugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
@@ -62,20 +62,14 @@ class CollisionDetection {
     terrainManager: TerrainManager,
     deltaTime: number
   ) {
-    const ballNextPosition = ball.position.add(
-      ball.attributes.velocity.multiply(deltaTime)
-    );
 
-    const visibleFloor = terrainManager.terrain.filter(
-      floor =>
-        floor.x >=
-          ballNextPosition.x -
-            terrainManager.terrainSettings.segmentWidth * 3 &&
-        floor.x <=
-          ballNextPosition.x + terrainManager.terrainSettings.segmentWidth * 3
-    );
+    const ballNextPosition = ball.getNextPosition(deltaTime);
 
-    DebugSettings.collisionFloors = visibleFloor;
+    const x: number = Math.floor(ballNextPosition.x / terrainManager.terrainSettings.segmentWidth) + 21 //todo: update 21 to become dynamic
+
+    const collidableFloor: Array<Position2D> = terrainManager.terrain.slice(x - 5, x + 5);
+    
+    DebugSettings.collisionFloors = collidableFloor;
 
     const numPositions = Math.ceil(240 / (1 / deltaTime));
     const interPositions = [];
@@ -92,13 +86,15 @@ class CollisionDetection {
       const interPosition = interPositions[i];
 
       // get the closest point to the ball on the floor
-      const position = findClosestPoint(visibleFloor, interPosition);
+      const position = findClosestPoint(collidableFloor, interPosition, terrainManager.terrainSettings.segmentWidth);
+      const currentPositionDistance = calculateDistance(ball.position, position);
+
       if (DebugSettings.drawClosestCollisionPoint) {
         DebugSettings.closestPoint = position;
       }
 
       const distance = calculateDistance(interPosition, position);
-      if (distance <= ball.attributes.radius) {
+      if (distance <= ball.attributes.radius && distance < currentPositionDistance) {
         const normalisedDisplacementVector = new Vector2D(
           interPosition.x - position.x,
           interPosition.y - position.y
@@ -151,7 +147,7 @@ function calculateDistance(pointOne: Position2D, pointTwo: Position2D) {
   return distance;
 }
 
-function findClosestPoint(floor: Array<Position2D>, givenPoint: Position2D) {
+function findClosestPoint(floor: Array<Position2D>, givenPoint: Position2D, segmentWidth: number) {
   let point = null;
 
   for (let i = 1; i < floor.length - 1; i++) {
@@ -166,7 +162,7 @@ function findClosestPoint(floor: Array<Position2D>, givenPoint: Position2D) {
     const x = (initialFloor.x + nextFloor.x) / 2;
     const y = (initialFloor.y + nextFloor.y) / 2;
 
-    for (let j = 0.0; j <= 1.0; j += 0.01) {
+    for (let j = 0.0; j <= 1.0; j += 1 / segmentWidth) {
       const newPoint = getQuadraticCurvePoint(sx, sy, cpx, cpy, x, y, j);
       if (calculateDistance(newPoint, givenPoint) < calculateDistance(point, givenPoint)) {
         point = newPoint;

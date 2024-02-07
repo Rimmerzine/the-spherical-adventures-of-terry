@@ -1,5 +1,0 @@
-class Terrain {
-
-}
-
-export {Terrain};

@@ -3,6 +3,7 @@ import TerrainManager from './terrain/TerrainManager.js';
 import {Camera} from './Camera.js';
 import { Position2D } from './utils/Position2D.js';
 import { BackgroundObject } from './utils/BackgroundObject.js';
+import { DebugSettings } from './Settings.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -66,7 +67,7 @@ class CanvasRenderer {
       const cpx = currentVisible.x - cameraCanvasOffsetX;
       const cpy = currentVisible.y - cameraCanvasOffsetY;
       const x = (currentVisible.x + nextVisible.x) / 2 - cameraCanvasOffsetX;
-      const y = (currentVisible.y - cameraCanvasOffsetY + visibleTerrain[i + 1].y - cameraCanvasOffsetY) / 2;
+      const y = (currentVisible.y - cameraCanvasOffsetY + nextVisible.y - cameraCanvasOffsetY) / 2;
       this.context.quadraticCurveTo(cpx, cpy, x, y);
     }
     this.context.lineTo(canvasWidth, lowestVisible - cameraCanvasOffsetY);
@@ -106,193 +107,137 @@ class CanvasRenderer {
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  // drawDebugInformation(ball: Ball) {
-  //   this.drawClosestPositionOnFloor(ball);
-  //   this.drawNormalisedDisplacementVector(ball);
-  //   this.drawBallVelocity(ball);
-  //   this.drawReflectionVector(ball);
-  //   this.drawCollisionFloors(ball);
-  //   this.drawMovementLines(ball);
-  // }
+  drawDebugInformation(ball: Ball) {
+    this.drawClosestPositionOnFloor(ball);
+    this.drawNormalisedDisplacementVector(ball);
+    this.drawBallVelocity(ball);
+    this.drawReflectionVector(ball);
+    this.drawCollisionFloors(ball);
+    this.drawMovementLines(ball);
+  }
 
-  // drawMovementLines(ball: Ball) {
-  //   if (DebugSettings.drawMovementLines) {
-  //     for (
-  //       let i =
-  //         ball.attributes.startingPosition.x -
-  //         (ball.getPosition().x - ball.attributes.startingPosition.x);
-  //       i <=
-  //       ball.attributes.startingPosition.x -
-  //         (ball.getPosition().x - ball.attributes.startingPosition.x) +
-  //         1000;
-  //       i += (2 * Math.PI * ball.attributes.radius) / 8
-  //     ) {
-  //       this.context.beginPath();
-  //       this.context.moveTo(i, this.canvas.height);
-  //       this.context.lineTo(i, 0);
-  //       this.context.lineWidth = 1;
-  //       this.context.stroke();
-  //       this.context.closePath();
-  //     }
-  //   }
-  // }
+  drawMovementLines(ball: Ball) {
+    const canvasWidth: number = this.canvas.width;
+    const multiplier: number = 2 * Math.PI * ball.attributes.radius / 8
 
-  // drawClosestPositionOnFloor(ball: Ball) {
-  //   if (DebugSettings.closestPoint) {
-  //     const position = DebugSettings.closestPoint;
+    if (DebugSettings.drawMovementLines) {
+      for (let i = -3; i <= 3; i++) {
+        const x: number = (i * multiplier);
 
-  //     this.context.beginPath();
-  //     this.context.arc(
-  //       position.x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x,
-  //       position.y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y,
-  //       10,
-  //       0,
-  //       2 * Math.PI
-  //     );
-  //     this.context.strokeStyle = 'black';
-  //     this.context.lineWidth = 3;
-  //     this.context.stroke();
-  //     this.context.closePath();
-  //   }
-  // }
+        this.context.beginPath();
+        this.context.moveTo(x + canvasWidth / 2 - (ball.position.x % multiplier), this.canvas.height);
+        this.context.lineTo(x + canvasWidth / 2 - (ball.position.x % multiplier), 0);
+        this.context.lineWidth = 1;
+        this.context.stroke();
+      }
+    }
+  }
 
-  // drawNormalisedDisplacementVector(ball: Ball) {
-  //   if (
-  //     DebugSettings.closestPoint &&
-  //     DebugSettings.normalisedDisplacementVector
-  //   ) {
-  //     const startPosition = DebugSettings.closestPoint;
-  //     const vector = DebugSettings.normalisedDisplacementVector;
-  //     const endPosition = startPosition.add(vector);
-  //     this.context.beginPath();
-  //     this.context.strokeStyle = 'red';
-  //     this.context.moveTo(
-  //       startPosition.x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x,
-  //       startPosition.y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y
-  //     );
-  //     this.context.lineTo(
-  //       endPosition.x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x,
-  //       endPosition.y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y
-  //     );
-  //     this.context.stroke();
-  //     this.context.closePath();
-  //   }
-  // }
+  drawClosestPositionOnFloor(ball: Ball) {
+    const ballPosition = ball.position;
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = ballPosition.x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = ballPosition.y - canvasHeight / 2;
 
-  // drawBallVelocity(ball: Ball) {
-  //   const startPosition = ball.getPosition();
-  //   const endPosition = ball.getPosition().add(
-  //     ball.attributes.velocity.multiply(0.2)
-  //   );
+    if (DebugSettings.closestPoint) {
+      const position = DebugSettings.closestPoint;
 
-  //   this.context.beginPath();
-  //   this.context.strokeStyle = 'green';
-  //   this.context.moveTo(
-  //     startPosition.x -
-  //       ball.getPosition().x +
-  //       ball.attributes.startingPosition.x,
-  //     startPosition.y -
-  //       ball.getPosition().y +
-  //       ball.attributes.startingPosition.y
-  //   );
-  //   this.context.lineTo(
-  //     endPosition.x -
-  //       ball.getPosition().x +
-  //       ball.attributes.startingPosition.x,
-  //     endPosition.y -
-  //       ball.getPosition().y +
-  //       ball.attributes.startingPosition.y
-  //   );
-  //   this.context.stroke();
-  //   this.context.closePath();
-  // }
+      this.context.strokeStyle = 'black';
+      this.context.fillStyle = 'purple';
+      this.context.lineWidth = 3;
+      this.context.beginPath();
+      this.context.arc(position.x - cameraCanvasOffsetX, position.y - cameraCanvasOffsetY, 5, 0, 2 * Math.PI);
+      this.context.stroke();
+      this.context.fill();
+    }
+  }
 
-  // drawReflectionVector(ball: Ball) {
-  //   if (DebugSettings.closestPoint && DebugSettings.reflectionVector) {
-  //     const startPosition = DebugSettings.closestPoint;
-  //     const vector = DebugSettings.reflectionVector;
-  //     const endPosition = DebugSettings.closestPoint.add(vector.multiply(2));
+  drawNormalisedDisplacementVector(ball: Ball) {
+    const ballPosition = ball.position;
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = ballPosition.x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = ballPosition.y - canvasHeight / 2;
 
-  //     this.context.beginPath();
-  //     this.context.strokeStyle = 'purple';
-  //     this.context.moveTo(
-  //       startPosition.x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x,
-  //       startPosition.y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y
-  //     );
-  //     this.context.lineTo(
-  //       endPosition.x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x,
-  //       endPosition.y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y
-  //     );
-  //     this.context.stroke();
-  //     this.context.closePath();
-  //   }
-  // }
+    if (DebugSettings.closestPoint && DebugSettings.normalisedDisplacementVector) {
+      const startPosition = DebugSettings.closestPoint;
+      const vector = DebugSettings.normalisedDisplacementVector.multiply(50);
+      const endPosition = startPosition.add(vector);
+      this.context.beginPath();
+      this.context.strokeStyle = 'red';
+      this.context.moveTo(startPosition.x - cameraCanvasOffsetX, startPosition.y - cameraCanvasOffsetY);
+      this.context.lineTo(endPosition.x - cameraCanvasOffsetX, endPosition.y - cameraCanvasOffsetY
+      );
+      this.context.stroke();
+    }
+  }
 
-  // drawCollisionFloors(ball: Ball) {
-  //   if (DebugSettings.collisionFloors) {
-  //     this.context.beginPath();
-  //     this.context.lineWidth = 3;
-  //     this.context.strokeStyle = 'yellow';
-  //     this.context.moveTo(
-  //       DebugSettings.collisionFloors[0].x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x,
-  //       DebugSettings.collisionFloors[0].y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y
-  //     );
+  drawBallVelocity(ball: Ball) {
+    const startPosition = ball.position;
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = startPosition.x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = startPosition.y - canvasHeight / 2;
 
-  //     for (let i = 1; i < DebugSettings.collisionFloors.length - 1; i++) {
-  //       const cpx =
-  //         DebugSettings.collisionFloors[i].x -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x;
-  //       const cpy =
-  //         DebugSettings.collisionFloors[i].y -
-  //         ball.getPosition().y +
-  //         ball.attributes.startingPosition.y;
-  //       const x =
-  //         (DebugSettings.collisionFloors[i].x +
-  //           DebugSettings.collisionFloors[i + 1].x) /
-  //           2 -
-  //         ball.getPosition().x +
-  //         ball.attributes.startingPosition.x;
-  //       const y =
-  //         (DebugSettings.collisionFloors[i].y -
-  //           ball.getPosition().y +
-  //           ball.attributes.startingPosition.y +
-  //           DebugSettings.collisionFloors[i + 1].y -
-  //           ball.getPosition().y +
-  //           ball.attributes.startingPosition.y) /
-  //         2;
+    const endPosition = ball.position.add(ball.attributes.velocity.multiply(0.2));
 
-  //       this.context.quadraticCurveTo(cpx, cpy, x, y);
-  //     }
+    this.context.beginPath();
+    this.context.strokeStyle = 'green';
+    this.context.moveTo(startPosition.x - cameraCanvasOffsetX, startPosition.y - cameraCanvasOffsetY);
+    this.context.lineTo(endPosition.x - cameraCanvasOffsetX, endPosition.y - cameraCanvasOffsetY);
+    this.context.stroke();
+  }
 
-  //     this.context.stroke();
-  //     this.context.closePath();
-  //   }
-  // }
+  drawReflectionVector(ball: Ball) {
+    const ballPosition = ball.position;
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = ballPosition.x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = ballPosition.y - canvasHeight / 2;
+
+    if (DebugSettings.closestPoint && DebugSettings.reflectionVector) {
+      const startPosition = DebugSettings.closestPoint;
+      const vector = DebugSettings.reflectionVector;
+      const endPosition = DebugSettings.closestPoint.add(vector.multiply(2));
+
+      this.context.beginPath();
+      this.context.strokeStyle = 'purple';
+      this.context.moveTo(startPosition.x - cameraCanvasOffsetX, startPosition.y - cameraCanvasOffsetY);
+      this.context.lineTo(endPosition.x - cameraCanvasOffsetX, endPosition.y - cameraCanvasOffsetY);
+      this.context.stroke();
+      this.context.closePath();
+    }
+  }
+
+  drawCollisionFloors(ball: Ball) {
+    const ballPosition = ball.position;
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+    const cameraCanvasOffsetX: number = ballPosition.x - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = ballPosition.y - canvasHeight / 2;
+
+    if (DebugSettings.collisionFloors) {
+      this.context.beginPath();
+      this.context.lineWidth = 3;
+      this.context.strokeStyle = 'yellow';
+      this.context.moveTo(DebugSettings.collisionFloors[0].x - cameraCanvasOffsetX, DebugSettings.collisionFloors[0].y - cameraCanvasOffsetY);
+
+      for (let i = 1; i < DebugSettings.collisionFloors.length - 1; i++) {
+        const currentVisible: Position2D = DebugSettings.collisionFloors[i];
+        const nextVisible: Position2D = DebugSettings.collisionFloors[i + 1];
+  
+        const cpx = currentVisible.x - cameraCanvasOffsetX;
+        const cpy = currentVisible.y - cameraCanvasOffsetY;
+        const x = (currentVisible.x + nextVisible.x) / 2 - cameraCanvasOffsetX;
+        const y = (currentVisible.y - cameraCanvasOffsetY + nextVisible.y - cameraCanvasOffsetY) / 2;
+
+        this.context.quadraticCurveTo(cpx, cpy, x, y);
+      }
+
+      this.context.stroke();
+    }
+  }
 }
 
 export default CanvasRenderer;

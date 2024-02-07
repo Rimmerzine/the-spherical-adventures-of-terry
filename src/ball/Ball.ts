@@ -148,10 +148,14 @@ class Ball implements PositionedObject {
   }
   jump(): void {
     if (this.jumpsRemaining > 0) {
-      this.attributes.velocity.y = this.attributes.jumpVelocity.y;
+      this.attributes.velocity.y += this.attributes.jumpVelocity.y;
       this.jumpsRemaining--;
       playerStats.addJump();
     }
+  }
+
+  getNextPosition(deltaTime: number): Position2D {
+    return this.position.add(this.attributes.velocity.multiply(deltaTime));
   }
 }
 
