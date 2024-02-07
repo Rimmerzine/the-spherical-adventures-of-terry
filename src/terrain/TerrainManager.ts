@@ -1,51 +1,48 @@
 import {Position2D} from '../utils/Position2D.js';
+import { Terrain } from './Terrain.js';
 import TerrainSettings from './TerrainSettings.js';
 
 class TerrainManager {
-  terrain: Array<Position2D>;
-  terrainSettings: TerrainSettings;
-
-  constructor(terrainSettings: TerrainSettings) {
-    this.terrain = [];
-    this.terrainSettings = terrainSettings;
-  }
+  constructor() {}
   
-  generateTerrain(): void {
-    this.terrain = [];
+  generateTerrain(terrainSettings: TerrainSettings): Terrain {
+    const terrain: Array<Position2D> = [];
 
     for(let i = 20; i > 0; i--) {
       const position = new Position2D(
-        -this.terrainSettings.segmentWidth * i,
+        -terrainSettings.segmentWidth * i,
         0
       )
-      this.terrain.push(position);
+      terrain.push(position);
     }
 
-    for (let i = 0; i < this.terrainSettings.flatCount; i++) {
+    for (let i = 0; i < terrainSettings.flatCount; i++) {
       const position = new Position2D(
-        this.terrainSettings.segmentWidth * i,
+        terrainSettings.segmentWidth * i,
         0
       );
-      this.terrain.push(position);
+      terrain.push(position);
     }
     let lastPosition =
-      this.terrain.slice(-1)[0] ||
+      terrain.slice(-1)[0] ||
       new Position2D(0, 0);
-    for (let i = 0; i < this.terrainSettings.curveCount; i++) {
-      const nextHeight = this.calculateNextHeight(i, lastPosition.y);
-      const nextPosition = this.calculateNextPosition(lastPosition, nextHeight);
-      this.terrain.push(nextPosition);
+    for (let i = 0; i < terrainSettings.curveCount; i++) {
+      const nextHeight = this.calculateNextHeight(terrainSettings, i, lastPosition.y);
+      const nextPosition = this.calculateNextPosition(terrainSettings.segmentWidth, lastPosition, nextHeight);
+      terrain.push(nextPosition);
       lastPosition = nextPosition;
     }
+
+    return new Terrain(terrain, terrainSettings);
   }
-  calculateNextHeight(index: number, lastHeight: number): number {
-    const maxDiff = this.terrainSettings.differenceMaxHeight;
-    const minDiff = this.terrainSettings.differenceMinHeight;
-    const maxAdj = this.terrainSettings.maxHeightAdjustment;
-    const minAdj = this.terrainSettings.minHeightAdjustment;
-    const startMax = this.terrainSettings.startingMaxHeight;
-    const startMin = this.terrainSettings.startingMinHeight;
-    const curveCount = this.terrainSettings.curveCount;
+  calculateNextHeight(terrainSettings: TerrainSettings, index: number, lastHeight: number): number {
+    const maxDiff = terrainSettings.differenceMaxHeight;
+    const minDiff = terrainSettings.differenceMinHeight;
+    const maxAdj = terrainSettings.maxHeightAdjustment;
+    const minAdj = terrainSettings.minHeightAdjustment;
+    const startMax = terrainSettings.startingMaxHeight;
+    const startMin = terrainSettings.startingMinHeight;
+    const curveCount = terrainSettings.curveCount;
     const potentialMax = startMax - (maxDiff / curveCount) * index;
     const potentialMin = startMin + (minDiff / curveCount) * index;
     const allowedAdjustment = minAdj + (maxAdj / curveCount) * index;
@@ -62,11 +59,11 @@ class TerrainManager {
     return targetHeight;
   }
 
-  calculateNextPosition(lastPosition: Position2D, newHeight: number) {
+  calculateNextPosition(segmentWidth: number, lastPosition: Position2D, newHeight: number) {
     lastPosition =
       lastPosition || new Position2D(0, 0);
     return new Position2D(
-      lastPosition.x + this.terrainSettings.segmentWidth,
+      lastPosition.x + segmentWidth,
       newHeight
     );
   }

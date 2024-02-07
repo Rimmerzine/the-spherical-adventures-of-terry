@@ -13,11 +13,10 @@ import {Cloud, CloudParticle} from './cloud/Cloud.js';
 import {Camera} from './Camera.js';
 import { playerStats } from './PlayerStats.js';
 import { BackgroundObject } from './utils/BackgroundObject.js';
+import { Level } from './Level.js';
+import { Terrain } from './terrain/Terrain.js';
 
 class GameManager {
-  tarmacTerrainSettings: TerrainSettings;
-  iceTerrainSettings: TerrainSettings;
-  grasslandsTerrainSettings: TerrainSettings;
   renderer: CanvasRenderer;
   inputManager: InputManager;
   terrainManager: TerrainManager;
@@ -29,79 +28,38 @@ class GameManager {
   lastTime: number;
   ball: Ball;
   camera: Camera;
+  currentLevel: Level;
+  terrainSettings: Map<string, TerrainSettings>;
 
   constructor(canvas: HTMLCanvasElement) {
 
-    this.tarmacTerrainSettings = new TerrainSettings(
-      300,
-      10,
-      1000,
-      100,
-      -100,
-      1000,
-      -1000,
-      200,
-      500,
-      1.0,
-      0.8,
-      'rgb(50, 50, 50)',
-      'rgb(20, 20, 20)'
-    );
-
-    this.iceTerrainSettings = new TerrainSettings(
-      300,
-      10,
-      1000,
-      100,
-      -100,
-      1000,
-      -1000,
-      200,
-      500,
-      0.02,
-      0.8,
-      'rgb(30, 130, 200)',
-      'rgb(50, 180, 255)'
-    );
-
-    this.grasslandsTerrainSettings = new TerrainSettings(
-      400,
-      5,
-      1000,
-      0,
-      -2000,
-      0,
-      -20000,
-      150,
-      800,
-      0.4,
-      0.8,
-      'rgb(0, 130, 0)',
-      'rgb(100, 50, 0)'
-    );
+    const grasslandsSettings: TerrainSettings = new TerrainSettings(400, 5, 1000, 0, -2000, 0, -20000, 150, 800, 0.4, 0.8, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)');
 
     this.camera = new Camera();
-
     this.renderer = new CanvasRenderer(canvas, this.camera);
     this.inputManager = new InputManager(this);
-    this.terrainManager = new TerrainManager(this.grasslandsTerrainSettings);
+    this.terrainManager = new TerrainManager();
     this.collisionDetection = new CollisionDetection();
     this.backgroundObjects = [];
     this.distanceReached = 0;
     this.totalPoints = 200;
     this.requiredDelay = 0;
-
     this.lastTime = Date.now();
+
+    const tarmacSettings: TerrainSettings = new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.8, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)');
+    const iceSettings: TerrainSettings = new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.8, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)');
+
+    this.terrainSettings = new Map<string, TerrainSettings>(
+      [
+        ["grass", grasslandsSettings],
+        ["tarmac", tarmacSettings],
+        ["ice", iceSettings]
+      ]
+    )
   }
 
   resetLevel(level: string) {
-    if (level === 'grass') {
-      this.terrainManager.terrainSettings = this.grasslandsTerrainSettings;
-    } else if (level === 'tarmac') {
-      this.terrainManager.terrainSettings = this.tarmacTerrainSettings;
-    } else {
-      this.terrainManager.terrainSettings = this.iceTerrainSettings;
-    }
+    const terrainSettings: TerrainSettings = this.terrainSettings.get(level);
 
     const newDistance = Math.max(0, this.ball.position.x - this.distanceReached);
     const pointsGained = Math.floor(newDistance / 5000);
@@ -117,8 +75,10 @@ class GameManager {
 
     this.ball.resetPosition();
 
-    this.terrainManager.generateTerrain();
-    this.generateClouds();
+    const terrain: Terrain = this.terrainManager.generateTerrain(terrainSettings);
+    const backgroundObjects: Array<BackgroundObject> = this.generateClouds(terrainSettings);
+    const backgroundColour: string = "rgb(150, 210, 255)";
+    this.currentLevel = new Level(terrain, backgroundObjects, backgroundColour)
 
     playerStats.addNumberOfResets();
   }
@@ -145,10 +105,10 @@ class GameManager {
     this.camera.attach(this.ball);
   }
 
-  generateClouds() {
+  generateClouds(terrainSettings: TerrainSettings): Array<BackgroundObject> {
     this.backgroundObjects = [];
-    const curveCount = this.terrainManager.terrainSettings.curveCount;
-    const segmentWidth = this.terrainManager.terrainSettings.segmentWidth;
+    const curveCount = terrainSettings.curveCount;
+    const segmentWidth = terrainSettings.segmentWidth;
 
     for (let i = -20; i <= curveCount + 20; i++) {
       const cloudPosition = new Position2D(
@@ -161,20 +121,25 @@ class GameManager {
 
       this.backgroundObjects.push(cloud);
     }
+
+    return this.backgroundObjects;
   }
 
   initialise(): void {
+    const terrainSettings: TerrainSettings = this.terrainSettings.get("grass");
+    const terrain: Terrain = this.terrainManager.generateTerrain(terrainSettings);
+    const backgroundObjects: Array<BackgroundObject> = this.generateClouds(terrainSettings);
+    const backgroundColour: string = "rgb(150, 210, 255)";
+    this.currentLevel = new Level(terrain, backgroundObjects, backgroundColour)
     this.createBall();
-    this.terrainManager.generateTerrain();
-    this.generateClouds();
   }
 
   draw(): void {
-    this.renderer.clearCanvas();
+    this.renderer.clearCanvas(this.currentLevel.skyColour);
     this.renderer.drawBackgroundObjects(
-      this.backgroundObjects
+      this.currentLevel.backgroundObjects
     );
-    this.renderer.drawQuadraticFloor(this.terrainManager);
+    this.renderer.drawQuadraticFloor(this.currentLevel.terrain);
 
     this.renderer.drawBall(this.ball);
 
@@ -199,7 +164,7 @@ class GameManager {
     this.ball.update(deltaTime);
     this.collisionDetection.ballFloorCollision(
       this.ball,
-      this.terrainManager,
+      this.currentLevel.terrain,
       deltaTime
     );
     this.ball.move(deltaTime);

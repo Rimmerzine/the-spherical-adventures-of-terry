@@ -4,6 +4,7 @@ import {Position2D} from './utils/Position2D.js';
 import Ball from './ball/Ball.js';
 import TerrainManager from './terrain/TerrainManager.js';
 import { playerStats } from './PlayerStats.js';
+import { Terrain } from './terrain/Terrain.js';
 
 class CollisionDetection {
   constructor() {}
@@ -59,16 +60,16 @@ class CollisionDetection {
 
   ballFloorCollision(
     ball: Ball,
-    terrainManager: TerrainManager,
+    terrain: Terrain,
     deltaTime: number
   ) {
 
     const ballNextPosition = ball.getNextPosition(deltaTime);
 
-    const x: number = Math.floor(ballNextPosition.x / terrainManager.terrainSettings.segmentWidth) + 21 //todo: update 21 to become dynamic
+    const x: number = Math.floor(ballNextPosition.x / terrain.settings.segmentWidth) + 21 //todo: update 21 to become dynamic
 
-    const collidableFloor: Array<Position2D> = terrainManager.terrain.slice(x - 5, x + 5);
-    
+    const collidableFloor: Array<Position2D> = terrain.segments.slice(x - 5, x + 5);
+
     DebugSettings.collisionFloors = collidableFloor;
 
     const numPositions = Math.ceil(240 / (1 / deltaTime));
@@ -86,7 +87,7 @@ class CollisionDetection {
       const interPosition = interPositions[i];
 
       // get the closest point to the ball on the floor
-      const position = findClosestPoint(collidableFloor, interPosition, terrainManager.terrainSettings.segmentWidth);
+      const position = findClosestPoint(collidableFloor, interPosition, terrain.settings.segmentWidth);
       const currentPositionDistance = calculateDistance(ball.position, position);
 
       if (DebugSettings.drawClosestCollisionPoint) {
@@ -107,8 +108,8 @@ class CollisionDetection {
 
         this.reflect(
           ball,
-          terrainManager.terrainSettings.surfaceGripCoefficient,
-          terrainManager.terrainSettings.surfaceElasticity,
+          terrain.settings.surfaceGripCoefficient,
+          terrain.settings.surfaceElasticity,
           normalisedDisplacementVector
         );
 
