@@ -1,4 +1,5 @@
 class TerrainSettings {
+
   segmentWidth: number;
   flatCount: number;
   curveCount: number;

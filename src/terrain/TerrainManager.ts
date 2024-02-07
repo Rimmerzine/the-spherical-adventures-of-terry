@@ -9,7 +9,7 @@ class TerrainManager {
     this.terrain = [];
     this.terrainSettings = terrainSettings;
   }
-
+  
   generateTerrain(): void {
     this.terrain = [];
 
