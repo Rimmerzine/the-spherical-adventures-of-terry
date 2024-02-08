@@ -1,0 +1,19 @@
+{
+    "name": "The Spherical Adventures Of Terry",
+    "short_name": "TSAOT",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#fdfdfd",
+    "theme_color": "#ffff00",
+    "orientation": "landscape",
+    "icons": [
+      {
+        "src": "/terry.png",
+        "type": "image/png", "sizes": "48x48"
+      },
+      {
+        "src": "/terry2.png",
+        "type": "image/png", "sizes": "200x200"
+      }
+    ]
+  }
