@@ -1,6 +1,5 @@
 import { BackgroundObject } from "../utils/BackgroundObject.js";
 import { Position2D } from "../utils/Position2D.js";
-import { CloudParticle } from "./CloudParticle.js";
 
 class Cloud implements BackgroundObject {
   particles: Array<CloudParticle>
@@ -34,8 +33,6 @@ class Cloud implements BackgroundObject {
       );
       this.addParticle(cloudParticle);
     }
-
-    this.context.beginPath();
   }
 
   draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {
@@ -49,6 +46,17 @@ class Cloud implements BackgroundObject {
   }
 }
 
-
+class CloudParticle {
+    relativePosition: Position2D;
+    radius: number;
+  
+    constructor(
+      relativePosition: Position2D,
+      radius: number
+    ) {
+      this.relativePosition = relativePosition;
+      this.radius = radius;
+    }
+}
 
 export {Cloud, CloudParticle};

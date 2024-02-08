@@ -4,6 +4,8 @@ import {Camera} from './Camera.js';
 import { Position2D } from './utils/Position2D.js';
 import { BackgroundObject } from './utils/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
+import TerrainSettings from './terrain/TerrainSettings.js';
+import { Terrain } from './terrain/Terrain.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -25,7 +27,12 @@ class CanvasRenderer {
     ball.draw(this.context, this.canvas.width, this.canvas.height);
   }
 
-  drawQuadraticFloor(terrainManager: TerrainManager): void {
+  drawSky(skyColour: string): void {
+    this.context.fillStyle = skyColour;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  drawQuadraticFloor(terrain: Terrain): void {
     const cameraPosition: Position2D = this.camera.getPosition();
     const canvasWidth: number = this.canvas.width;
     const canvasHeight: number = this.canvas.height;
@@ -34,10 +41,10 @@ class CanvasRenderer {
     const cameraCanvasOffsetX: number = this.camera.getPosition().x - canvasWidth / 2;
     const cameraCanvasOffsetY: number = this.camera.getPosition().y - canvasHeight / 2;
     
-    const visibleTerrain = terrainManager.terrain.filter(
+    const visibleTerrain = terrain.segments.filter(
       floor => {
         const floorX: number = floor.x;
-        const segmentWidth: number = terrainManager.terrainSettings.segmentWidth;
+        const segmentWidth: number = terrain.settings.segmentWidth;
         return floorX >= canvasMapLeft - segmentWidth * 3 && floorX <= canvasMapRight + segmentWidth * 2
       }
     );
@@ -52,8 +59,8 @@ class CanvasRenderer {
 
     this.context.beginPath();
     this.context.lineWidth = 21;
-    this.context.strokeStyle = terrainManager.terrainSettings.surfaceColour;
-    this.context.fillStyle = terrainManager.terrainSettings.subsurfaceColour;
+    this.context.strokeStyle = terrain.settings.surfaceColour;
+    this.context.fillStyle = terrain.settings.subsurfaceColour;
     this.context.moveTo(0, lowestVisible - cameraCanvasOffsetY);
     this.context.lineTo(
       visibleTerrain[0].x - cameraCanvasOffsetX,
@@ -102,8 +109,8 @@ class CanvasRenderer {
     }
   }
 
-  clearCanvas() {
-    this.context.fillStyle = 'rgb(150, 210, 255)';
+  clearCanvas(backgroundColour: string) {
+    this.context.fillStyle = backgroundColour;
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
