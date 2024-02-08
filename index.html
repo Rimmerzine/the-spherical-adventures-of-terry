@@ -111,6 +111,11 @@
               Burp Terry
             </button>
           </dd>
+          <dd class="d-grid">
+            <button id="add-free-points" type="button" class="btn btn-success">
+              Add 5 points
+            </button>
+          </dd>
         </dl>
       </div>
     </div>
@@ -118,10 +123,10 @@
       <div class="container-fluid">
         <span class="navbar-text"><h1>The Spherical Adventures of Terry</h1></span>
         <div class="d-flex">
-          <button class="btn btn-primary me-4" type="button" id="reset-level-grasslands">
+          <!-- <button class="btn btn-primary me-4" type="button" id="reset-level-grasslands">
             Reset Level
-          </button>
-          <div class="dropdown visually-hidden">
+          </button> -->
+          <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle me-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               Reset Level
             </button>
@@ -133,12 +138,17 @@
               </li>
               <li>
                 <button class="dropdown-item" id="reset-level-tarmac">
-                  Tarmac (zero slip)
+                  Tarmac (maximum surface grip)
                 </button>
               </li>
               <li>
                 <button class="dropdown-item" id="reset-level-ice">
-                  Ice (slippy)
+                  Ice (very low surface grip)
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item" id="reset-level-hell">
+                  Hell (experimental, zero bounce)
                 </button>
               </li>
             </ul>

@@ -36,15 +36,19 @@ class InputManager {
     );
     document.getElementById('upgrade-feed-button').addEventListener('click', this.feedTerry.bind(this));
     document.getElementById('upgrade-burp-button').addEventListener('click', this.burpTerry.bind(this));
+    document.getElementById('add-free-points').addEventListener('click', this.addFivePoints.bind(this));
     document
       .getElementById('reset-level-grasslands')
-      .addEventListener('click', this.resetLevelGrass.bind(this));
+      .addEventListener('click', this.resetLevelGrasslands.bind(this));
     document
       .getElementById('reset-level-tarmac')
       .addEventListener('click', this.resetLevelTarmac.bind(this));
     document
       .getElementById('reset-level-ice')
       .addEventListener('click', this.resetLevelIce.bind(this));
+    document
+      .getElementById('reset-level-hell')
+      .addEventListener('click', this.resetLevelHell.bind(this));
     const canvasContainer = document.getElementById('canvas');
     canvasContainer.addEventListener('touchstart', this.touchStartHandler);
     canvasContainer.addEventListener('touchend', this.touchEndHandler);
@@ -136,6 +140,11 @@ class InputManager {
       this.game.ball.position.y += 10;
     }
   }
+
+  addFivePoints(): void {
+    this.game.totalPoints += 5;
+    document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
+  }
   
   touchStartHandler(event: TouchEvent) {
     const touchX = event.touches[0].clientX;
@@ -153,8 +162,8 @@ class InputManager {
     this.rightScreenTouch = false;
   }
 
-  resetLevelGrass() {
-    this.game.resetLevel('grass');
+  resetLevelGrasslands() {
+    this.game.resetLevel('grasslands');
   }
 
   resetLevelTarmac() {
@@ -163,6 +172,10 @@ class InputManager {
 
   resetLevelIce() {
     this.game.resetLevel('ice');
+  }
+
+  resetLevelHell() {
+    this.game.resetLevel('hell');
   }
 }
 

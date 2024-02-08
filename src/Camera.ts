@@ -1,4 +1,4 @@
-import {Position2D, PositionedObject} from "./utils/Position2D";
+import {Position2D, PositionedObject} from "./utils/Position2D.js";
 
 class Camera {
   attachedObject: PositionedObject;

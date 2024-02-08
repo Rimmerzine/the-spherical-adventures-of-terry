@@ -2,7 +2,6 @@ import {DebugSettings} from './Settings.js';
 import {Vector2D} from './utils/Vector2D.js';
 import {Position2D} from './utils/Position2D.js';
 import Ball from './ball/Ball.js';
-import TerrainManager from './terrain/TerrainManager.js';
 import { playerStats } from './PlayerStats.js';
 import { Terrain } from './terrain/Terrain.js';
 

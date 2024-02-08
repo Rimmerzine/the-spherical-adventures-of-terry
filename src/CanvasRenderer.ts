@@ -1,10 +1,8 @@
 import Ball from './ball/Ball.js';
-import TerrainManager from './terrain/TerrainManager.js';
 import {Camera} from './Camera.js';
 import { Position2D } from './utils/Position2D.js';
 import { BackgroundObject } from './utils/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
-import TerrainSettings from './terrain/TerrainSettings.js';
 import { Terrain } from './terrain/Terrain.js';
 
 class CanvasRenderer {
@@ -87,19 +85,34 @@ class CanvasRenderer {
   }
 
   drawBackgroundObjects(backgroundObjects: Array<BackgroundObject>) {
-
     const cameraPosition = this.camera.getPosition();
+    const cameraPositionX = cameraPosition.x;
+    const cameraPositionY = cameraPosition.y;
+
     const canvasWidth: number = this.canvas.width;
     const canvasHeight: number = this.canvas.height;
-    const canvasMapLeft = cameraPosition.x - canvasWidth / 2;
+
+    const canvasMapLeft = cameraPositionX - canvasWidth / 2;
     const canvasMapRight = canvasMapLeft + canvasWidth;
-    const cameraCanvasOffsetX: number = cameraPosition.x - canvasWidth / 2;
-    const cameraCanvasOffsetY: number = cameraPosition.y - canvasHeight / 2;
+    const canvasMapTop = cameraPositionY - canvasHeight / 2;
+    const canvasMapBottom = canvasMapTop + canvasHeight;
+
+    const cameraCanvasOffsetX: number = cameraPositionX - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = cameraPositionY - canvasHeight / 2;
 
     const visibleBackgroundObjects = backgroundObjects.filter(
       backgroundObject => {
-        const backgroundObjectPositionX: number = backgroundObject.position.x;
-        return backgroundObjectPositionX + backgroundObject.width / 2 >= canvasMapLeft && backgroundObjectPositionX - backgroundObject.width <= canvasMapRight
+        const objectLeft: number = backgroundObject.position.x - backgroundObject.width / 2;
+        const objectUp: number = backgroundObject.position.y - backgroundObject.height / 2 + cameraCanvasOffsetY / 2;
+        const objectRight: number = objectLeft + backgroundObject.width;
+        const objectDown: number = objectUp + backgroundObject.height;
+
+        const isNotOffscreenToTheLeft = objectRight >= canvasMapLeft;
+        const isNotOffscreenToTheRight = objectLeft <= canvasMapRight;
+        const isNotOffscreenAbove = objectDown >= canvasMapTop;
+        const isNotOffscreenBelow = objectUp <= canvasMapBottom;
+
+        return isNotOffscreenToTheLeft && isNotOffscreenToTheRight && isNotOffscreenAbove && isNotOffscreenBelow;
       }
     );
 
