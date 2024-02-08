@@ -142,7 +142,7 @@ class Ball implements PositionedObject {
     const maxRps = this.stats.getStat('max-rps').currentValue;
     const delta = acceleration * direction * deltaTime;
     const newRps = this.attributes.rotationsPerSecond + delta;
-    if (Math.abs(newRps) <= maxRps) {
+    if (Math.abs(newRps) <= maxRps || Math.abs(newRps) < Math.abs(this.attributes.rotationsPerSecond)) {
       this.attributes.rotationsPerSecond = newRps;
     }
   }

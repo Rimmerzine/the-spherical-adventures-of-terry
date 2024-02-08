@@ -27,6 +27,11 @@ class CanvasRenderer {
     ball.draw(this.context, this.canvas.width, this.canvas.height);
   }
 
+  drawSky(skyColour: string): void {
+    this.context.fillStyle = skyColour;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
   drawQuadraticFloor(terrain: Terrain): void {
     const cameraPosition: Position2D = this.camera.getPosition();
     const canvasWidth: number = this.canvas.width;
