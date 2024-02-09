@@ -1,19 +1,33 @@
 {
-    "name": "The Spherical Adventures Of Terry",
-    "short_name": "TSAOT",
-    "start_url": "index.html",
-    "display": "standalone",
-    "background_color": "#fdfdfd",
-    "theme_color": "#ffff00",
-    "orientation": "landscape",
-    "icons": [
-      {
-        "src": "/terry.png",
-        "type": "image/png", "sizes": "48x48"
-      },
-      {
-        "src": "/terry2.png",
-        "type": "image/png", "sizes": "200x200"
-      }
-    ]
-  }
+  "name": "The Spherical Adventures of Terry",
+  "short_name": "Terry",
+  "description": "The spherical adventures of terry. Experience the magical world of terry and adventure forth to new heights.",
+  "icons": [
+    {
+      "src": "/terry.png",
+      "type": "image/png", "sizes": "48x48"
+    },
+    {
+      "src": "/terry_x200.png",
+      "type": "image/png", "sizes": "200x200"
+    },
+    {
+      "src": "/terry_x512.png",
+      "type": "image/png", "sizes": "512x512"
+    },
+    {
+      "src": "terry_maskable_x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdfdfd",
+  "theme_color": "#ffff00",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr"
+}

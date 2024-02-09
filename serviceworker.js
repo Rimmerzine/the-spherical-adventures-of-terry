@@ -1,10 +1,10 @@
-const terry = "terry"
-
-const assets = [
+const CACHE_NAME = 'the-spherical-adventures-of-terry';
+const ASSETS = [
   "/",
   "/index.html",
   "/build/background/Cloud.js",
   "/build/background/Eye.js",
+  "/build/background/Star.js",
   "/build/ball/Ball.js",
   "/build/ball/BallAttributes.js",
   "/build/ball/BallStats.js",
@@ -28,18 +28,40 @@ const assets = [
   "/favicon.ico"
 ]
 
-self.addEventListener("install", installEvent => {
-  installEvent.waitUntil(
-    caches.open(terry).then(cache => {
-      cache.addAll(assets)
-    })
-  )
-})
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+  );
+});
 
-self.addEventListener("fetch", fetchEvent => {
-  fetchEvent.respondWith(
-    caches.match(fetchEvent.request).then(res => {
-      return res || fetch(fetchEvent.request)
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.open(CACHE_NAME).then(async cache => {
+      try {
+        const response = await fetch(event.request);
+        if (response.ok) {
+          cache.put(event.request, response.clone());
+        }
+        return response;
+      } catch {
+        return await caches.match(event.request);
+      }
     })
-  )
-})
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+  );
+});
