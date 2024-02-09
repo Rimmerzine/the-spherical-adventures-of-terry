@@ -145,7 +145,7 @@ class GameManager {
 
     this.currentLevel.draw(this.renderer);
     this.renderer.drawBall(this.ball);
-    this.renderer.drawFps(GameSettings.fps);
+    // this.renderer.drawFps(GameSettings.fps);
     if (DebugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.ball);
     }
