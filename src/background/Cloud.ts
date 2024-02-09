@@ -9,30 +9,43 @@ class Cloud implements BackgroundObject {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
 
+  static collectionCount: number = 100;
+  static collection: Array<HTMLCanvasElement> = [];
+
   constructor(
     position: Position2D
   ) {
     this.position = position;
-    this.canvas = document.createElement('canvas');
-    this.width = 700;
-    this.height = 500;
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
-    this.context = this.canvas.getContext('2d');
-    this.context.fillStyle = "#ffffff88";
 
-    const cloudParticleRadius: number = 100;
+    if(Cloud.collection.length < Cloud.collectionCount) {
+      this.canvas = document.createElement('canvas');
+      this.width = 700;
+      this.height = 500;
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+      this.context = this.canvas.getContext('2d');
+      this.context.fillStyle = "#ffffff88";
+  
+      const cloudParticleRadius: number = 100;
+  
+      for (let j = 0; j <= 15; j++) {
+        const cloudParticle = new CloudParticle(
+          new Position2D(
+            Math.random() * 500 - 250,
+            Math.random() * 300 - 150
+          ),
+          cloudParticleRadius
+        );
+        this.addParticle(cloudParticle);
+      }
 
-    for (let j = 0; j <= 15; j++) {
-      const cloudParticle = new CloudParticle(
-        new Position2D(
-          Math.random() * 500 - 250,
-          Math.random() * 300 - 150
-        ),
-        cloudParticleRadius
-      );
-      this.addParticle(cloudParticle);
+      Cloud.collection.push(this.canvas);
+    } else {
+      this.canvas = Cloud.collection[Math.floor(Math.random() * Cloud.collectionCount)];
+      this.width = this.canvas.width;
+      this.height = this.canvas.height;
     }
+    
   }
 
   draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {

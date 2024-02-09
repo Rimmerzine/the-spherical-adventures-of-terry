@@ -3,7 +3,7 @@ import {BallStats} from './BallStats.js';
 import {playerStats} from '../PlayerStats.js';
 import {Position2D, PositionedObject} from '../utils/Position2D.js';
 import {Gravity} from '../Settings.js';
-import {addVectors} from '../utils/Vector2D.js';
+import {Vector2D, addVectors} from '../utils/Vector2D.js';
 
 class Ball implements PositionedObject {
   attributes: BallAttributes;
@@ -102,13 +102,12 @@ class Ball implements PositionedObject {
     this.attributes.rotationsPerSecond = 0;
   }
   
-  update(deltaTime: number): void {
-    this.applyGravity(deltaTime);
+  update(gravityForce: Vector2D, deltaTime: number): void {
+    this.applyGravity(gravityForce.multiply(deltaTime));
     this.updateRotation(deltaTime);
     this.handleStartingPositionCollision(deltaTime);
   }
-  applyGravity(deltaTime: number): void {
-    const gravityForce = Gravity.multiply(deltaTime);
+  applyGravity(gravityForce: Vector2D): void {
     this.attributes.velocity = addVectors(this.attributes.velocity, gravityForce);
   }
   updateRotation(deltaTime: number): void {

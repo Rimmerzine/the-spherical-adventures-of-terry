@@ -1,6 +1,6 @@
 import CanvasRenderer from './CanvasRenderer.js';
 import CollisionDetection from './CollisionDetection.js';
-import {DebugSettings, GameSettings} from './Settings.js';
+import {DebugSettings, GameSettings, Gravity} from './Settings.js';
 import Ball from './ball/Ball.js';
 import {Position2D} from './utils/Position2D.js';
 import InputManager from './InputManager.js';
@@ -13,6 +13,7 @@ import {Camera} from './Camera.js';
 import { playerStats } from './PlayerStats.js';
 import { Level, LevelGenerator, LevelSettings } from './Level.js';
 import { Eye } from './background/Eye.js';
+import { Star } from './background/Star.js';
 
 class GameManager {
   renderer: CanvasRenderer;
@@ -44,6 +45,7 @@ class GameManager {
       new TerrainSettings(400, 5, 1000, 0, -2000, 0, -20000, 150, 800, 0.4, 0.8, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
       1,
       "rgb(150, 210, 255)",
+      Gravity,
       (position: Position2D) => new Cloud(position)
     );
 
@@ -51,6 +53,7 @@ class GameManager {
       new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.8, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
       1,
       "rgb(150, 210, 255)",
+      Gravity,
       (position: Position2D) => new Cloud(position)
     );
 
@@ -58,6 +61,7 @@ class GameManager {
       new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.8, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
       1,
       "rgb(150, 210, 255)",
+      Gravity,
       (position: Position2D) => new Cloud(position)
     );
 
@@ -65,7 +69,16 @@ class GameManager {
       new TerrainSettings(300, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 1, 0.5, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
       5,
       "rgb(45, 0, 0)",
+      Gravity,
       (position: Position2D) => new Eye(position)
+    );
+
+    const moonLevelSettings: LevelSettings = new LevelSettings(
+      new TerrainSettings(400, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 0.2, 0.8, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
+      250,
+      "rgb(5, 5, 5)",
+      Gravity.multiply(0.2),
+      (position: Position2D) => new Star(position)
     );
 
     this.levelSettings = new Map<string, LevelSettings>(
@@ -73,7 +86,8 @@ class GameManager {
         ["grasslands", grasslandsLevelSettings],
         ["tarmac", tarmacLevelSettings],
         ["ice", iceLevelSettings],
-        ["hell", hellLevelSettings]
+        ["hell", hellLevelSettings],
+        ["moon", moonLevelSettings]
       ]
     );
 
@@ -123,7 +137,7 @@ class GameManager {
   }
 
   initialise(): void {
-    this.currentLevel = this.levelGenerator.generateLevel(this.levelSettings.get("grasslands"));
+    this.currentLevel = this.levelGenerator.generateLevel(this.levelSettings.get("moon"));
     this.createBall();
   }
 
@@ -150,7 +164,7 @@ class GameManager {
     if (this.inputManager.isRightPressed()) this.ball.pushRight(deltaTime);
     if (this.inputManager.isJumpPressed()) this.ball.jump();
 
-    this.ball.update(deltaTime);
+    this.ball.update(this.currentLevel.gravity, deltaTime);
     this.collisionDetection.ballFloorCollision(
       this.ball,
       this.currentLevel.terrain,
