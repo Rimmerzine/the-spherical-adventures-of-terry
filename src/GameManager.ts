@@ -43,7 +43,7 @@ class GameManager {
 
     const grasslandsLevelSettings: LevelSettings = new LevelSettings(
       new TerrainSettings(400, 5, 1000, 0, -2000, 0, -20000, 150, 800, 0.4, 0.8, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
-      1,
+      10,
       "rgb(150, 210, 255)",
       Gravity,
       (position: Position2D) => new Cloud(position)
@@ -51,7 +51,7 @@ class GameManager {
 
     const tarmacLevelSettings: LevelSettings = new LevelSettings(
       new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.8, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
-      1,
+      10,
       "rgb(150, 210, 255)",
       Gravity,
       (position: Position2D) => new Cloud(position)
@@ -59,7 +59,7 @@ class GameManager {
 
     const iceLevelSettings: LevelSettings = new LevelSettings(
       new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.8, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
-      1,
+      10,
       "rgb(150, 210, 255)",
       Gravity,
       (position: Position2D) => new Cloud(position)
@@ -67,7 +67,7 @@ class GameManager {
 
     const hellLevelSettings: LevelSettings = new LevelSettings(
       new TerrainSettings(300, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 1, 0.5, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
-      5,
+      50,
       "rgb(45, 0, 0)",
       Gravity,
       (position: Position2D) => new Eye(position)
