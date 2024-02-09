@@ -4,16 +4,19 @@ import TerrainManager from "./terrain/TerrainManager.js";
 import TerrainSettings from "./terrain/TerrainSettings.js";
 import { BackgroundObject } from "./utils/BackgroundObject.js";
 import { Position2D } from "./utils/Position2D.js";
+import { Vector2D } from "./utils/Vector2D.js";
 
 class Level {
     terrain: Terrain;
     backgroundObjects: Array<BackgroundObject>;
     skyColour: string;
+    gravity: Vector2D;
 
-    constructor(terrain: Terrain, backgroundObjects: Array<BackgroundObject>, skyColour: string) {
+    constructor(terrain: Terrain, backgroundObjects: Array<BackgroundObject>, skyColour: string, gravity: Vector2D) {
         this.terrain = terrain;
         this.backgroundObjects = backgroundObjects;
         this.skyColour = skyColour;
+        this.gravity = gravity;
     }
 
     draw(renderer: CanvasRenderer): void {
@@ -39,7 +42,8 @@ class LevelGenerator {
         return new Level(
             terrain,
             backgroundObjects,
-            levelSettings.skyColour
+            levelSettings.skyColour,
+            levelSettings.gravity
         )
     }
 
@@ -51,20 +55,13 @@ class LevelGenerator {
     
         for (let i = -20 * density; i <= curveCount * density + 20 * density; i++) {
           const xRange: number = Math.random() * 500 - 250;
-          const yRange: number = Math.random() * 1500 - 750;
+          const yRange: number = -Math.random() * 20000 + 1000;
 
           const position = new Position2D(i * segmentWidth / density + xRange, yRange)
           const backgroundObject = levelSettings.backgroundObjectCreation(position);
     
           backgroundObjects.push(backgroundObject);
         }
-    
-        // for(let i = -20; i <= curveCount * 5 + 20; i++) {
-        //   const eyePosition: Position2D = new Position2D(i * segmentWidth / 5, Math.random() * 5000 - 2500);
-        //   const eye: Eye = new Eye(eyePosition)
-    
-        //   backgroundObjects.push(eye);
-        // }
     
         return backgroundObjects;
       }
@@ -78,22 +75,20 @@ class LevelSettings {
     terrainSettings: TerrainSettings
     backgroundObjectDensity: number;
     skyColour: string;
+    gravity: Vector2D;
     backgroundObjectCreation: (position: Position2D) => BackgroundObject;
 
     constructor(
         terrainSettings: TerrainSettings,
         backgroundObjectDensity: number,
         skyColour: string,
+        gravity: Vector2D,
         backgroundObjectCreation: (position: Position2D) => BackgroundObject
     ) {
         this.terrainSettings = terrainSettings;
         this.backgroundObjectDensity = backgroundObjectDensity;
         this.skyColour = skyColour;
-        this.backgroundObjectCreation = backgroundObjectCreation
+        this.gravity = gravity;
+        this.backgroundObjectCreation = backgroundObjectCreation;
     }
 }
-
-
-// class BackgroundObjectSettings {
-//     backgroundObjectCreation: (position: Position2D) => BackgroundObject;
-// }

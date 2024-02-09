@@ -67,7 +67,7 @@ class CollisionDetection {
 
     const x: number = Math.floor(ballNextPosition.x / terrain.settings.segmentWidth) + 21 //todo: update 21 to become dynamic
 
-    const collidableFloor: Array<Position2D> = terrain.segments.slice(x - 5, x + 5);
+    const collidableFloor: Array<Position2D> = terrain.segments.slice(x - 3, x + 3);
 
     DebugSettings.collisionFloors = collidableFloor;
 
