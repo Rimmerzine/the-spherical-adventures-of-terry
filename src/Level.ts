@@ -55,7 +55,7 @@ class LevelGenerator {
     
         for (let i = -20 * density; i <= curveCount * density + 20 * density; i++) {
           const xRange: number = Math.random() * 500 - 250;
-          const yRange: number = -Math.random() * 20000 + 1000;
+          const yRange: number = -Math.random() * 10000 + 1000;
 
           const position = new Position2D(i * segmentWidth / density + xRange, yRange)
           const backgroundObject = levelSettings.backgroundObjectCreation(position);

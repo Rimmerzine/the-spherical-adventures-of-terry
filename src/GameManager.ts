@@ -75,7 +75,7 @@ class GameManager {
 
     const moonLevelSettings: LevelSettings = new LevelSettings(
       new TerrainSettings(400, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 0.2, 0.8, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
-      250,
+      150,
       "rgb(5, 5, 5)",
       Gravity.multiply(0.2),
       (position: Position2D) => new Star(position)
