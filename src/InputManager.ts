@@ -37,18 +37,11 @@ class InputManager {
     document.getElementById('upgrade-feed-button').addEventListener('click', this.feedTerry.bind(this));
     document.getElementById('upgrade-burp-button').addEventListener('click', this.burpTerry.bind(this));
     document.getElementById('add-free-points').addEventListener('click', this.addFivePoints.bind(this));
-    document
-      .getElementById('reset-level-grasslands')
-      .addEventListener('click', this.resetLevelGrasslands.bind(this));
-    document
-      .getElementById('reset-level-tarmac')
-      .addEventListener('click', this.resetLevelTarmac.bind(this));
-    document
-      .getElementById('reset-level-ice')
-      .addEventListener('click', this.resetLevelIce.bind(this));
-    document
-      .getElementById('reset-level-hell')
-      .addEventListener('click', this.resetLevelHell.bind(this));
+    document.getElementById('reset-level-grasslands').addEventListener('click', this.resetLevelGrasslands.bind(this));
+    document.getElementById('reset-level-tarmac').addEventListener('click', this.resetLevelTarmac.bind(this));
+    document.getElementById('reset-level-ice').addEventListener('click', this.resetLevelIce.bind(this));
+    document.getElementById('reset-level-hell').addEventListener('click', this.resetLevelHell.bind(this));
+    document.getElementById('reset-level-moon').addEventListener('click', this.resetLevelMoon.bind(this));
     const canvasContainer = document.getElementById('canvas');
     canvasContainer.addEventListener('touchstart', this.touchStartHandler);
     canvasContainer.addEventListener('touchend', this.touchEndHandler);
@@ -176,6 +169,10 @@ class InputManager {
 
   resetLevelHell() {
     this.game.resetLevel('hell');
+  }
+
+  resetLevelMoon() {
+    this.game.resetLevel('moon');
   }
 }
 

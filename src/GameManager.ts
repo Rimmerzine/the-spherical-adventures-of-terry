@@ -137,7 +137,7 @@ class GameManager {
   }
 
   initialise(): void {
-    this.currentLevel = this.levelGenerator.generateLevel(this.levelSettings.get("moon"));
+    this.currentLevel = this.levelGenerator.generateLevel(this.levelSettings.get("grasslands"));
     this.createBall();
   }
 
