@@ -27,23 +27,27 @@ class CollisionDetection {
     const movementGain =
       potentialMovement - Math.sign(perpendicular.x) * perpendicular.distance();
 
+    const gripFactor = (surfaceGripCoefficient + surfaceGripCoefficient + ball.skills.getSkill("grip").currentValue) / 3;
+
     ball.attributes.rotationsPerSecond +=
       (potentialMovement / circumferance - ball.attributes.rotationsPerSecond) *
-      surfaceGripCoefficient;
+      gripFactor;
 
     const perpendicularFaceVectorAddition = reflectionVector
       .normalize()
       .perpendicularDirection()
       .multiply(movementGain)
-      .multiply(surfaceGripCoefficient);
+      .multiply(gripFactor);
 
     DebugSettings.perpendicularFaceVectorAddition =
       perpendicularFaceVectorAddition;
 
     const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
+    const bounceFactor = (0.5 + ((surfaceElasticity + (1 - ball.skills.getSkill("shock-absorber").currentValue) + (1 - ball.skills.getSkill("shock-absorber").currentValue)) / 3) / 2)
+
     const reflection = new Vector2D(
-      reflectionVector.x * dotProduct * 2 * surfaceElasticity, // (1 - ball.stats.getStat("grip").currentValue)
-      reflectionVector.y * -Math.abs(dotProduct) * 2 * surfaceElasticity // change back to 0.8 when finished testing
+      reflectionVector.x * dotProduct * 2 * bounceFactor,
+      reflectionVector.y * -Math.abs(dotProduct) * 2 * bounceFactor
     );
     if (DebugSettings.drawReflectionVector) {
       DebugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
@@ -54,7 +58,7 @@ class CollisionDetection {
       .subtract(reflection);
     ball.attributes.velocity = velocityChange;
 
-    ball.jumpsRemaining = ball.skills.getStat('jumps').currentValue;
+    ball.jumpsRemaining = ball.skills.getSkill('jumps').currentValue;
   }
 
   ballFloorCollision(

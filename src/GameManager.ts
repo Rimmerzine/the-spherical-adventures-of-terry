@@ -13,6 +13,7 @@ import { Star } from './background/Star.js';
 import { Level } from './level/Level.js';
 import { LevelGenerator } from './level/LevelGenerator.js';
 import { LevelSettings } from './level/LevelSettings.js';
+import { Snow } from './background/Snow.js';
 
 class GameManager {
   renderer: CanvasRenderer;
@@ -41,7 +42,7 @@ class GameManager {
     this.lastTime = Date.now();
 
     const grasslandsLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(400, 5, 1000, 0, -2000, 0, -20000, 150, 800, 0.4, 0.8, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
+      new TerrainSettings(400, 5, 1000, 0, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
       10,
       "rgb(150, 210, 255)",
       Gravity,
@@ -49,7 +50,7 @@ class GameManager {
     );
 
     const tarmacLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.8, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
+      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.6, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
       10,
       "rgb(150, 210, 255)",
       Gravity,
@@ -57,15 +58,15 @@ class GameManager {
     );
 
     const iceLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.8, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
-      10,
-      "rgb(150, 210, 255)",
+      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.6, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
+      100,
+      "rgb(180, 225, 255)",
       Gravity,
-      (position: Position2D) => new Cloud(position)
+      (position: Position2D) => new Snow(position)
     );
 
     const hellLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(300, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 1, 0.5, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
+      new TerrainSettings(300, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 1, 0, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
       10,
       "rgb(45, 0, 0)",
       Gravity,
@@ -73,7 +74,7 @@ class GameManager {
     );
 
     const moonLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(400, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 0.2, 0.8, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
+      new TerrainSettings(400, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 0.2, 0.6, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
       100,
       "rgb(5, 5, 5)",
       Gravity.multiply(0.2),
@@ -134,11 +135,7 @@ class GameManager {
     if (this.inputManager.isJumpPressed()) this.ball.jump();
 
     this.ball.update(this.currentLevel.gravity, deltaTime);
-    this.collisionDetection.ballFloorCollision(
-      this.ball,
-      this.currentLevel.terrain,
-      deltaTime
-    );
+    this.collisionDetection.ballFloorCollision(this.ball, this.currentLevel.terrain, deltaTime);
     this.ball.move(deltaTime);
 
     playerStats.trackRelevantStats(this.ball);

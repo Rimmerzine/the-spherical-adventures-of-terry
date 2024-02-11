@@ -16,7 +16,7 @@ class Ball implements PositionedObject {
     this.attributes = new BallAttributes(new Position2D(0, -ballRadius), ballRadius, 'yellow', new Vector2D(0, -800));
     this.position = this.attributes.startingPosition;
     this.skills = new BallSkills();
-    this.jumpsRemaining = this.skills.getStat('jumps').currentValue;
+    this.jumpsRemaining = this.skills.getSkill('jumps').currentValue;
   }
 
   draw(context: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): void {
@@ -138,8 +138,8 @@ class Ball implements PositionedObject {
     this.adjustRotationsPerSecond(1, deltaTime);
   }
   adjustRotationsPerSecond(direction: number, deltaTime: number): void {
-    const acceleration = this.skills.getStat('acceleration').currentValue;
-    const maxRps = this.skills.getStat('max-rps').currentValue;
+    const acceleration = this.skills.getSkill('acceleration').currentValue;
+    const maxRps = this.skills.getSkill('max-rps').currentValue;
     const delta = acceleration * direction * deltaTime;
     const newRps = this.attributes.rotationsPerSecond + delta;
     if (Math.abs(newRps) <= maxRps || Math.abs(newRps) < Math.abs(this.attributes.rotationsPerSecond)) {
@@ -148,7 +148,7 @@ class Ball implements PositionedObject {
   }
   jump(): void {
     if (this.jumpsRemaining > 0) {
-      this.attributes.velocity.y += this.attributes.jumpVelocity.y;
+      this.attributes.velocity.y = this.attributes.jumpVelocity.y;
       this.jumpsRemaining--;
       playerStats.addJump();
     }
