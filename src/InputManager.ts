@@ -106,7 +106,7 @@ class InputManager {
       this.game.totalPoints -= nextUpgradeCost;
       stat.upgrade();
 
-      document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
+      document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toFixed(1).toString();
       document.getElementById(`${skillKey}-attribute`).innerText = stat.currentValue.toFixed(1).toString();
       document.getElementById(`upgrade-${skillKey}-cost`).innerText = stat.nextUpgradeCost().toString();
 
@@ -136,7 +136,7 @@ class InputManager {
 
   addFivePoints(): void {
     this.game.totalPoints += 5;
-    document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
+    document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toFixed(1).toString();
   }
   
   touchStartHandler(event: TouchEvent) {

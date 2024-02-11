@@ -4,6 +4,7 @@ import {Position2D} from './utils/Position2D.js';
 import Ball from './ball/Ball.js';
 import { playerStats } from './player/PlayerStats.js';
 import { Terrain } from './terrain/Terrain.js';
+import { CollectablePoint } from './level/Level.js';
 
 class CollisionDetection {
   constructor() {}

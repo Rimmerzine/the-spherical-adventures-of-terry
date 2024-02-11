@@ -1,7 +1,9 @@
 import { BackgroundObject } from "../background/BackgroundObject.js";
+import { Player } from "../player/Player.js";
 import TerrainManager from "../terrain/TerrainManager.js";
 import { Position2D } from "../utils/Position2D.js";
-import { Level } from "./Level.js";
+import { Vector2D } from "../utils/Vector2D.js";
+import { CollectablePoint, Level } from "./Level.js";
 import { LevelSettings } from "./LevelSettings.js";
 
 class LevelGenerator {
@@ -11,13 +13,26 @@ class LevelGenerator {
         this.terrainManager = new TerrainManager();
     }
 
-    generateLevel(levelSettings: LevelSettings): Level {
+    generateLevel(player: Player, levelSettings: LevelSettings): Level {
         const terrain = this.terrainManager.generateTerrain(levelSettings.terrainSettings);
         const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings)
+        const collectables = [];
+        for(let i = 21; i < terrain.segments.length; i+= 10) {
+            const segment: Position2D = terrain.segments[i];
+            const collectablePosition = segment.add(new Vector2D(0, -100));
+            
+            if(player.levelPointsCollected.has(levelSettings.name) && player.levelPointsCollected.get(levelSettings.name).find(p => p.x == collectablePosition.x)) {
+                collectables.push(new CollectablePoint(collectablePosition, true));
+            } else {
+                collectables.push(new CollectablePoint(collectablePosition, false));
+            }
+        }
 
         return new Level(
+            levelSettings.name,
             terrain,
             backgroundObjects,
+            collectables,
             levelSettings.skyColour,
             levelSettings.gravity
         )

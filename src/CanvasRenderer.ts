@@ -4,6 +4,7 @@ import { Position2D } from './utils/Position2D.js';
 import { BackgroundObject } from './background/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
 import { Terrain } from './terrain/Terrain.js';
+import { CollectablePoint } from './level/Level.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -119,6 +120,44 @@ class CanvasRenderer {
     for (let i = 0; i < visibleBackgroundObjects.length; i++) {
       const backgroundObject = visibleBackgroundObjects[i];
       backgroundObject.draw(this.context, cameraCanvasOffsetX, cameraCanvasOffsetY);
+    }
+  }
+
+  drawCollectables(collectables: Array<CollectablePoint>) {
+    const cameraPosition = this.camera.getPosition();
+    const cameraPositionX = cameraPosition.x;
+    const cameraPositionY = cameraPosition.y;
+
+    const canvasWidth: number = this.canvas.width;
+    const canvasHeight: number = this.canvas.height;
+
+    const canvasMapLeft = cameraPositionX - canvasWidth / 2;
+    const canvasMapRight = canvasMapLeft + canvasWidth;
+    const canvasMapTop = cameraPositionY - canvasHeight / 2;
+    const canvasMapBottom = canvasMapTop + canvasHeight;
+
+    const cameraCanvasOffsetX: number = cameraPositionX - canvasWidth / 2;
+    const cameraCanvasOffsetY: number = cameraPositionY - canvasHeight / 2;
+    
+    const visibleCollectables = collectables.filter(
+      collectable => {
+        const objectLeft: number = collectable.position.x - CollectablePoint.size / 2;
+        const objectUp: number = collectable.position.y - CollectablePoint.size / 2;
+        const objectRight: number = objectLeft + CollectablePoint.size;
+        const objectDown: number = objectUp + CollectablePoint.size;
+
+        const isNotOffscreenToTheLeft = objectRight >= canvasMapLeft;
+        const isNotOffscreenToTheRight = objectLeft <= canvasMapRight;
+        const isNotOffscreenAbove = objectDown >= canvasMapTop;
+        const isNotOffscreenBelow = objectUp <= canvasMapBottom;
+
+        return isNotOffscreenToTheLeft && isNotOffscreenToTheRight && isNotOffscreenAbove && isNotOffscreenBelow;
+      }
+    );
+
+    for (let i = 0; i < visibleCollectables.length; i++) {
+      const collectable = visibleCollectables[i];
+      collectable.draw(this.context, cameraCanvasOffsetX, cameraCanvasOffsetY);
     }
   }
 
