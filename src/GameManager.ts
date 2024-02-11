@@ -5,15 +5,16 @@ import Ball from './ball/Ball.js';
 import {Position2D} from './utils/Position2D.js';
 import InputManager from './InputManager.js';
 import TerrainSettings from './terrain/TerrainSettings.js';
-import {BallAttributes} from './ball/BallAttributes.js';
-import {BallStat, BallStats} from './ball/BallStats.js';
-import {Vector2D} from './utils/Vector2D.js';
 import {Cloud} from './background/Cloud.js';
 import {Camera} from './Camera.js';
-import { playerStats } from './PlayerStats.js';
-import { Level, LevelGenerator, LevelSettings } from './Level.js';
+import { playerStats } from './player/PlayerStats.js';
 import { Eye } from './background/Eye.js';
 import { Star } from './background/Star.js';
+import { CollectablePoint, Level } from './level/Level.js';
+import { LevelGenerator } from './level/LevelGenerator.js';
+import { LevelSettings } from './level/LevelSettings.js';
+import { Snow } from './background/Snow.js';
+import { Player } from './player/Player.js';
 
 class GameManager {
   renderer: CanvasRenderer;
@@ -26,12 +27,13 @@ class GameManager {
   lastTime: number;
   ball: Ball;
   camera: Camera;
-  currentLevel: Level;
   levelSettings: Map<string, LevelSettings>;
-  terrainSettings: Map<string, TerrainSettings>;
+  currentLevel: Level;
+  player: Player;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.camera = new Camera();
+    this.ball = new Ball();
+    this.camera = new Camera(this.ball);
     this.renderer = new CanvasRenderer(canvas, this.camera);
     this.inputManager = new InputManager(this);
     this.levelGenerator = new LevelGenerator();
@@ -40,9 +42,11 @@ class GameManager {
     this.totalPoints = 0;
     this.requiredDelay = 0;
     this.lastTime = Date.now();
+    this.player = new Player();
 
     const grasslandsLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(400, 5, 1000, 0, -2000, 0, -20000, 150, 800, 0.4, 0.8, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
+      "grasslands",
+      new TerrainSettings(400, 5, 1000, 1000, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
       10,
       "rgb(150, 210, 255)",
       Gravity,
@@ -50,7 +54,8 @@ class GameManager {
     );
 
     const tarmacLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.8, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
+      "tarmac",
+      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.6, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
       10,
       "rgb(150, 210, 255)",
       Gravity,
@@ -58,24 +63,27 @@ class GameManager {
     );
 
     const iceLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.8, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
-      10,
-      "rgb(150, 210, 255)",
+      "ice",
+      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.6, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
+      100,
+      "rgb(180, 225, 255)",
       Gravity,
-      (position: Position2D) => new Cloud(position)
+      (position: Position2D) => new Snow(position)
     );
 
     const hellLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(300, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 1, 0.5, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
-      50,
+      "hell",
+      new TerrainSettings(300, 10, 1000, 1000, -2000, 0, -20000, 250, 1000, 1, 0, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
+      10,
       "rgb(45, 0, 0)",
       Gravity,
       (position: Position2D) => new Eye(position)
     );
 
     const moonLevelSettings: LevelSettings = new LevelSettings(
-      new TerrainSettings(400, 10, 1000, 0, -2000, 0, -20000, 250, 1000, 0.2, 0.8, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
-      150,
+      "moon",
+      new TerrainSettings(400, 10, 1000, 1000, -2000, 0, -20000, 250, 1000, 0.2, 0.6, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
+      100,
       "rgb(5, 5, 5)",
       Gravity.multiply(0.2),
       (position: Position2D) => new Star(position)
@@ -91,7 +99,7 @@ class GameManager {
       ]
     );
 
-
+    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("grasslands"));
   }
 
   resetLevel(level: string) {
@@ -104,41 +112,13 @@ class GameManager {
     playerStats.addDistanceTravelled(this.distanceReached);
     playerStats.addPointsEarned(pointsGained);
 
-    document.getElementById('total-points-attribute').innerText =
-      this.totalPoints.toString();
+    document.getElementById('total-points-attribute').innerText = this.totalPoints.toFixed(1).toString();
 
     this.ball.resetPosition();
 
-    this.currentLevel = this.levelGenerator.generateLevel(this.levelSettings.get(level));
+    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get(level));
 
     playerStats.addNumberOfResets();
-  }
-
-  createBall() {
-    const ballRadius: number = 100;
-    const ballAttributes = new BallAttributes(
-      new Position2D(
-       0, -ballRadius
-      ),
-      ballRadius,
-      'yellow',
-      new Vector2D(0, -800)
-    );
-
-    const ballStats = new BallStats()
-      .add('max-rps', new BallStat(1, 0.25, [4, 7, 13, 22, 43]))
-      .add('acceleration', new BallStat(1, 0.5, [4, 7, 13, 22, 43]))
-      .add('grip', new BallStat(0.4, 0.1, [8, 15, 29]))
-      .add('jumps', new BallStat(0, 1, [10, 40]));
-
-    this.ball = new Ball(ballAttributes, ballStats);
-
-    this.camera.attach(this.ball);
-  }
-
-  initialise(): void {
-    this.currentLevel = this.levelGenerator.generateLevel(this.levelSettings.get("grasslands"));
-    this.createBall();
   }
 
   draw(): void {
@@ -154,10 +134,7 @@ class GameManager {
 
   update(): void {
     const currentTime: number = Date.now();
-    const deltaTime: number = Math.min(
-      1 / 30,
-      (currentTime - this.lastTime) / 1000
-    ); // convert to seconds
+    const deltaTime: number = Math.min(1 / 30, (currentTime - this.lastTime) / 1000); // convert to seconds
     this.lastTime = currentTime;
 
     if (this.inputManager.isLeftPressed()) this.ball.pushLeft(deltaTime);
@@ -165,38 +142,49 @@ class GameManager {
     if (this.inputManager.isJumpPressed()) this.ball.jump();
 
     this.ball.update(this.currentLevel.gravity, deltaTime);
-    this.collisionDetection.ballFloorCollision(
-      this.ball,
-      this.currentLevel.terrain,
-      deltaTime
-    );
+    this.collisionDetection.ballFloorCollision(this.ball, this.currentLevel.terrain, deltaTime);
     this.ball.move(deltaTime);
+
+    this.currentLevel.collectables.forEach(collectable => {
+      const diffXSquared = (this.ball.position.x - collectable.position.x) ** 2;
+      const diffYSquared = (this.ball.position.y - collectable.position.y) ** 2;
+      if(diffXSquared + diffYSquared <= (this.ball.attributes.radius + CollectablePoint.size / 2) ** 2) {
+        this.player.collectPoint(this.currentLevel.name, collectable.position);
+
+        this.currentLevel.collectables = this.currentLevel.collectables.filter(c => c != collectable);
+
+        if(!collectable.collected) {
+          this.totalPoints += 1;
+        } else {
+          this.totalPoints += 0.1;
+        }
+
+        document.getElementById('total-points-attribute').innerText = this.totalPoints.toFixed(1).toString();
+      }
+    });
 
     playerStats.trackRelevantStats(this.ball);
   }
 
-  gameLoop() {
-    window.requestAnimationFrame(() => {
-      const now = performance.now();
-      while (
-        GameSettings.times.length > 0 &&
-        GameSettings.times[0] <= now - 1000
-      ) {
-        GameSettings.times.shift();
-      }
-      GameSettings.times.push(now);
-      GameSettings.fps = GameSettings.times.length;
-
-      // setTimeout(() => {
-      this.draw();
-      this.update();
-
-      this.gameLoop();
-    });
+  manageFps(): void {
+    const now = performance.now();
+    while (
+      GameSettings.times.length > 0 &&
+      GameSettings.times[0] <= now - 1000
+    ) {
+      GameSettings.times.shift();
+    }
+    GameSettings.times.push(now);
+    GameSettings.fps = GameSettings.times.length;
   }
 
-  start() {
-    this.gameLoop();
+  play() {
+    window.requestAnimationFrame(() => {
+      this.manageFps();
+      this.draw();
+      this.update();
+      this.play();
+    });
   }
 }
 

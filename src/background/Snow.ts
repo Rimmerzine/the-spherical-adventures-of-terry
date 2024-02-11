@@ -1,7 +1,7 @@
 import { Position2D } from "../utils/Position2D";
 import { BackgroundObject } from "./BackgroundObject.js";
 
-class Star implements BackgroundObject {
+class Snow implements BackgroundObject {
     position: Position2D;
     width: number;
     height: number;
@@ -15,7 +15,7 @@ class Star implements BackgroundObject {
         position: Position2D
     ) {
         this.position = position;
-        if(Star.collection.length < Star.collectionCount) {
+        if(Snow.collection.length < Snow.collectionCount) {
             const sizeRand: number = Math.random() * 20 + 10
 
             this.width = sizeRand;
@@ -41,11 +41,17 @@ class Star implements BackgroundObject {
             this.context.lineTo(this.width / 2, this.height);
             this.context.moveTo(0, this.height / 2);
             this.context.lineTo(this.width, this.height / 2);
+
+            this.context.moveTo(this.width / 6, this.height / 6);
+            this.context.lineTo(this.width * 5 / 6, this.height * 5 / 6);
+            this.context.moveTo(this.width * 5 / 6, this.height / 6);
+            this.context.lineTo(this.width / 6, this.height * 5 / 6);
+            
             this.context.stroke();
 
-            Star.collection.push(this.canvas);
+            Snow.collection.push(this.canvas);
         } else {
-            this.canvas = Star.collection[Math.floor(Math.random() * Star.collectionCount)];
+            this.canvas = Snow.collection[Math.floor(Math.random() * Snow.collectionCount)];
             this.width = this.canvas.width;
             this.height = this.canvas.height;
         }
@@ -56,4 +62,4 @@ class Star implements BackgroundObject {
     }
 }
 
-export {Star}
+export {Snow}

@@ -3,8 +3,8 @@ import {Position2D, PositionedObject} from "./utils/Position2D.js";
 class Camera {
   attachedObject: PositionedObject;
 
-  constructor() {
-    this.attachedObject = null;
+  constructor(positionObject: PositionedObject) {
+    this.attachedObject = positionObject;
   }
 
   attach(positionObject: PositionedObject): void {

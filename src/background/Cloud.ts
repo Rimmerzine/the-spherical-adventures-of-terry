@@ -1,8 +1,7 @@
-import { BackgroundObject } from "../utils/BackgroundObject.js";
 import { Position2D } from "../utils/Position2D.js";
+import { BackgroundObject } from "./BackgroundObject.js";
 
 class Cloud implements BackgroundObject {
-  particles: Array<CloudParticle>
   position: Position2D;
   width: number;
   height: number;

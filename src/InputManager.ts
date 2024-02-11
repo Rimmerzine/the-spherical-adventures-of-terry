@@ -1,6 +1,6 @@
-import { BallStat } from './ball/BallStats.js';
+import { BallSkill } from './ball/BallSkills.js';
 import {GameManager} from './GameManager.js';
-import { playerStats } from './PlayerStats.js';
+import { playerStats } from './player/PlayerStats.js';
 
 class PressEvent {
   pressed: boolean;
@@ -30,7 +30,7 @@ class InputManager {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
 
-    const statNames: Array<string> = ["acceleration", "max-rps", "jumps"]
+    const statNames: Array<string> = ["acceleration", "max-rps", "jumps", "grip", "shock-absorber"]
     statNames.forEach(key =>
       document.getElementById(`upgrade-${key}-button`).addEventListener('click', this.upgradeStat.bind(this, key))
     );
@@ -98,25 +98,25 @@ class InputManager {
     }
   }
 
-  upgradeStat(statValue: string): void {
-    const stat: BallStat = this.game.ball.stats.getStat(statValue)
+  upgradeStat(skillKey: string): void {
+    const stat: BallSkill = this.game.ball.skills.getSkill(skillKey)
     const nextUpgradeCost: number = stat.nextUpgradeCost();
 
     if(this.game.totalPoints >= nextUpgradeCost) {
       this.game.totalPoints -= nextUpgradeCost;
       stat.upgrade();
 
-      document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
-      document.getElementById(`${statValue}-attribute`).innerText = stat.currentValue.toString();
-      document.getElementById(`upgrade-${statValue}-cost`).innerText = stat.nextUpgradeCost().toString();
+      document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toFixed(1).toString();
+      document.getElementById(`${skillKey}-attribute`).innerText = stat.currentValue.toFixed(1).toString();
+      document.getElementById(`upgrade-${skillKey}-cost`).innerText = stat.nextUpgradeCost().toString();
 
-      playerStats.addUpgradeBought(statValue, nextUpgradeCost);
+      playerStats.addUpgradeBought(skillKey, nextUpgradeCost);
 
       if(stat.nextUpgradeCost() === Infinity) {
-        document.getElementById(`upgrade-${statValue}-button`).setAttribute('disabled', '');
+        document.getElementById(`upgrade-${skillKey}-button`).setAttribute('disabled', '');
       }
     } else {
-      alert(`Not enough points to upgrade ${statValue}!`);
+      alert(`Not enough points to upgrade ${skillKey}!`);
     }
   }
 
@@ -136,7 +136,7 @@ class InputManager {
 
   addFivePoints(): void {
     this.game.totalPoints += 5;
-    document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toString();
+    document.getElementById('total-points-attribute').innerText = this.game.totalPoints.toFixed(1).toString();
   }
   
   touchStartHandler(event: TouchEvent) {
