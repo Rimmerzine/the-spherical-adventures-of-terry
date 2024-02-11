@@ -8,8 +8,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - nav.offsetHeight;
 
 const game: GameManager = new GameManager(canvas);
-game.initialise();
-game.start();
+game.play();
 
 window.addEventListener('resize', resize);
 

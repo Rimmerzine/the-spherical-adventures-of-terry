@@ -1,7 +1,7 @@
 import Ball from './ball/Ball.js';
 import {Camera} from './Camera.js';
 import { Position2D } from './utils/Position2D.js';
-import { BackgroundObject } from './utils/BackgroundObject.js';
+import { BackgroundObject } from './background/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
 import { Terrain } from './terrain/Terrain.js';
 
@@ -99,7 +99,7 @@ class CanvasRenderer {
 
     const cameraCanvasOffsetX: number = cameraPositionX - canvasWidth / 2;
     const cameraCanvasOffsetY: number = cameraPositionY - canvasHeight / 2;
-
+    
     const visibleBackgroundObjects = backgroundObjects.filter(
       backgroundObject => {
         const objectLeft: number = backgroundObject.position.x - backgroundObject.width / 2;

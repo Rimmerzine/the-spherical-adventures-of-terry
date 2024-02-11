@@ -2,7 +2,7 @@ import {DebugSettings} from './Settings.js';
 import {Vector2D} from './utils/Vector2D.js';
 import {Position2D} from './utils/Position2D.js';
 import Ball from './ball/Ball.js';
-import { playerStats } from './PlayerStats.js';
+import { playerStats } from './player/PlayerStats.js';
 import { Terrain } from './terrain/Terrain.js';
 
 class CollisionDetection {
@@ -54,7 +54,7 @@ class CollisionDetection {
       .subtract(reflection);
     ball.attributes.velocity = velocityChange;
 
-    ball.jumpsRemaining = ball.stats.getStat('jumps').currentValue;
+    ball.jumpsRemaining = ball.skills.getStat('jumps').currentValue;
   }
 
   ballFloorCollision(

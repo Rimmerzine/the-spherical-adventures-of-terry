@@ -1,21 +1,22 @@
 import {BallAttributes} from './BallAttributes.js';
-import {BallStats} from './BallStats.js';
-import {playerStats} from '../PlayerStats.js';
+import {BallSkills} from './BallSkills.js';
+import {playerStats} from '../player/PlayerStats.js';
 import {Position2D, PositionedObject} from '../utils/Position2D.js';
-import {Gravity} from '../Settings.js';
 import {Vector2D, addVectors} from '../utils/Vector2D.js';
 
 class Ball implements PositionedObject {
   attributes: BallAttributes;
-  stats: BallStats;
+  skills: BallSkills;
   jumpsRemaining: number;
   position: Position2D;
 
-  constructor(attributes: BallAttributes, stats: BallStats) {
-    this.position = attributes.startingPosition;
-    this.attributes = attributes;
-    this.stats = stats;
-    this.jumpsRemaining = stats.getStat('jumps').currentValue;
+  constructor() {
+    const ballRadius: number = 100;
+    
+    this.attributes = new BallAttributes(new Position2D(0, -ballRadius), ballRadius, 'yellow', new Vector2D(0, -800));
+    this.position = this.attributes.startingPosition;
+    this.skills = new BallSkills();
+    this.jumpsRemaining = this.skills.getStat('jumps').currentValue;
   }
 
   draw(context: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): void {
@@ -137,8 +138,8 @@ class Ball implements PositionedObject {
     this.adjustRotationsPerSecond(1, deltaTime);
   }
   adjustRotationsPerSecond(direction: number, deltaTime: number): void {
-    const acceleration = this.stats.getStat('acceleration').currentValue;
-    const maxRps = this.stats.getStat('max-rps').currentValue;
+    const acceleration = this.skills.getStat('acceleration').currentValue;
+    const maxRps = this.skills.getStat('max-rps').currentValue;
     const delta = acceleration * direction * deltaTime;
     const newRps = this.attributes.rotationsPerSecond + delta;
     if (Math.abs(newRps) <= maxRps || Math.abs(newRps) < Math.abs(this.attributes.rotationsPerSecond)) {

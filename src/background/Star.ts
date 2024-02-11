@@ -1,5 +1,5 @@
-import { BackgroundObject } from "../utils/BackgroundObject";
 import { Position2D } from "../utils/Position2D";
+import { BackgroundObject } from "./BackgroundObject.js";
 
 class Star implements BackgroundObject {
     position: Position2D;

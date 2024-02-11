@@ -1,20 +1,24 @@
-class BallStats {
-  stats: Map<string, BallStat>;
+class BallSkills {
+  stats: Map<string, BallSkill>;
+
   constructor() {
-    this.stats = new Map();
+    this.stats = new Map(
+      [
+        ["max-rps", new BallSkill(1, 0.25, [4, 7, 13, 22, 43])],
+        ["acceleration", new BallSkill(1, 0.5, [4, 7, 13, 22, 43])],
+        ["grip", new BallSkill(0.4, 0.1, [8, 15, 29])],
+        ["shock-absorbers", new BallSkill(0, 0.1, [1, 5, 15, 37])],
+        ["jumps", new BallSkill(0, 1, [10, 40])],
+      ]
+    );
   }
 
-  add(name: string, stat: BallStat): BallStats {
-    this.stats.set(name, stat);
-    return this;
-  }
-
-  getStat(name: string): BallStat {
+  getStat(name: string): BallSkill {
     return this.stats.get(name);
   }
 }
 
-class BallStat {
+class BallSkill {
   currentValue: number;
   upgradeIncrement: number;
   upgradeCosts: Array<number>;
@@ -43,4 +47,4 @@ class BallStat {
   }
 }
 
-export {BallStats, BallStat};
+export {BallSkills, BallSkill};

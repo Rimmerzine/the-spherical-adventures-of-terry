@@ -1,6 +1,6 @@
-import { BallStat } from './ball/BallStats.js';
+import { BallSkill } from './ball/BallSkills.js';
 import {GameManager} from './GameManager.js';
-import { playerStats } from './PlayerStats.js';
+import { playerStats } from './player/PlayerStats.js';
 
 class PressEvent {
   pressed: boolean;
@@ -99,7 +99,7 @@ class InputManager {
   }
 
   upgradeStat(statValue: string): void {
-    const stat: BallStat = this.game.ball.stats.getStat(statValue)
+    const stat: BallSkill = this.game.ball.skills.getStat(statValue)
     const nextUpgradeCost: number = stat.nextUpgradeCost();
 
     if(this.game.totalPoints >= nextUpgradeCost) {
