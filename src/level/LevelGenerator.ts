@@ -14,20 +14,12 @@ class LevelGenerator {
     }
 
     generateLevel(player: Player, levelSettings: LevelSettings): Level {
+
         const terrain = this.terrainManager.generateTerrain(levelSettings.terrainSettings);
         const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings)
-        const collectables = [];
-        for(let i = 21; i < terrain.segments.length; i+= 10) {
-            const segment: Position2D = terrain.segments[i];
-            const collectablePosition = segment.add(new Vector2D(0, -100));
-            
-            if(player.levelPointsCollected.has(levelSettings.name) && player.levelPointsCollected.get(levelSettings.name).find(p => p.x == collectablePosition.x)) {
-                collectables.push(new CollectablePoint(collectablePosition, true));
-            } else {
-                collectables.push(new CollectablePoint(collectablePosition, false));
-            }
-        }
-
+        const levelPointsCollected: Array<Position2D> = player.levelPointsCollected.get(levelSettings.name) || [];
+        const collectables = this.generateCollectablePoints(terrain.segments, levelPointsCollected)
+        
         return new Level(
             levelSettings.name,
             terrain,
@@ -36,6 +28,23 @@ class LevelGenerator {
             levelSettings.skyColour,
             levelSettings.gravity
         )
+    }
+
+    private generateCollectablePoints(segments: Array<Position2D>, collectedPoints: Array<Position2D>): Array<CollectablePoint> {
+        const collectables: Array<CollectablePoint> = [];
+
+        for(let i = 21; i < segments.length; i+= 20) {
+            const segment: Position2D = segments[i];
+            const collectablePosition = segment.add(new Vector2D(0, -100));
+            
+            if(collectedPoints.find(position => collectablePosition.x === position.x)) {
+                collectables.push(new CollectablePoint(collectablePosition, true));
+            } else {
+                collectables.push(new CollectablePoint(collectablePosition, false));
+            }
+        }
+
+        return collectables;
     }
 
     private generateBackgroundObjects(levelSettings: LevelSettings): Array<BackgroundObject> {

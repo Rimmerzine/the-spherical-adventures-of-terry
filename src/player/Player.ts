@@ -1,9 +1,12 @@
-import { Position2D } from "../utils/Position2D";
+import Ball from "../ball/Ball.js";
+import { Position2D } from "../utils/Position2D.js";
 
 class Player {
+    ball: Ball;
     levelPointsCollected: Map<string, Array<Position2D>>;
 
     constructor() {
+        this.ball = new Ball();
         this.levelPointsCollected = new Map();
     }
 
