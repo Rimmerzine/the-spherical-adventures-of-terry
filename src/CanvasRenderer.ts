@@ -3,7 +3,7 @@ import {Camera} from './Camera.js';
 import { Position2D } from './utils/Position2D.js';
 import { BackgroundObject } from './background/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
-import { Terrain } from './terrain/Terrain.js';
+import { Segment, Terrain } from './terrain/Terrain.js';
 import { CollectablePoint } from './level/Level.js';
 
 class CanvasRenderer {
@@ -42,47 +42,55 @@ class CanvasRenderer {
     
     const visibleTerrain = terrain.segments.filter(
       floor => {
-        const floorX: number = floor.x;
-        const segmentWidth: number = terrain.settings.segmentWidth;
-        return floorX >= canvasMapLeft - segmentWidth * 3 && floorX <= canvasMapRight + segmentWidth * 2
+        const previousMidPoint: number = floor.previousMidPoint.x;
+        const nextMidPoint: number = floor.nextMidPoint.x;
+        return nextMidPoint >= canvasMapLeft && previousMidPoint <= canvasMapRight;
       }
     );
-
-    let lowestVisible: number = 0;
     
-    for(let i = 0; i < visibleTerrain.length; i++) {
-      if(lowestVisible < visibleTerrain[i].y) {
-        lowestVisible = visibleTerrain[i].y;
-      }
-    }
-
-    this.context.beginPath();
     this.context.lineWidth = 21;
     this.context.strokeStyle = terrain.settings.surfaceColour;
     this.context.fillStyle = terrain.settings.subsurfaceColour;
-    this.context.moveTo(0, lowestVisible - cameraCanvasOffsetY);
-    this.context.lineTo(
-      visibleTerrain[0].x - cameraCanvasOffsetX,
-      visibleTerrain[0].y - cameraCanvasOffsetY
-    );
 
-    for (let i = 1; i < visibleTerrain.length - 1; i++) {
-      const currentVisible: Position2D = visibleTerrain[i];
-      const nextVisible: Position2D = visibleTerrain[i + 1];
+    for (let i = 0; i < visibleTerrain.length; i++) {
+      const currentSegment: Segment = visibleTerrain[i];
 
-      const cpx = currentVisible.x - cameraCanvasOffsetX;
-      const cpy = currentVisible.y - cameraCanvasOffsetY;
-      const x = (currentVisible.x + nextVisible.x) / 2 - cameraCanvasOffsetX;
-      const y = (currentVisible.y - cameraCanvasOffsetY + nextVisible.y - cameraCanvasOffsetY) / 2;
-      this.context.quadraticCurveTo(cpx, cpy, x, y);
+      const visualX1: number = currentSegment.previousMidPoint.x - cameraCanvasOffsetX;
+      const visualY1: number = currentSegment.previousMidPoint.y - cameraCanvasOffsetY;
+      const cpx = currentSegment.position.x - cameraCanvasOffsetX;
+      const cpy = currentSegment.position.y - cameraCanvasOffsetY;
+      const visualX2: number = currentSegment.nextMidPoint.x - cameraCanvasOffsetX;
+      const visualY2: number = currentSegment.nextMidPoint.y - cameraCanvasOffsetY;
+
+      let lowestY: number = Math.max(visualY1, visualY2, cpy);
+
+      this.context.beginPath();
+      this.context.moveTo(visualX1, lowestY);
+      this.context.lineTo(visualX1, visualY1);
+      this.context.quadraticCurveTo(cpx, cpy, visualX2 + 1, visualY2);
+      this.context.lineTo(visualX2, lowestY);
+      this.context.fill();
+
+      this.context.fillRect(visualX1 - 1, lowestY - 1, (visualX2 - visualX1) + 2, (canvasHeight - lowestY) + 2);
     }
-    this.context.lineTo(canvasWidth, lowestVisible - cameraCanvasOffsetY);
+
+    this.context.beginPath();
+
+    for (let i = 0; i < visibleTerrain.length; i++) {
+      const currentSegment: Segment = visibleTerrain[i];
+
+      const visualX1: number = currentSegment.previousMidPoint.x - cameraCanvasOffsetX;
+      const visualY1: number = currentSegment.previousMidPoint.y - cameraCanvasOffsetY;
+      const cpx = currentSegment.position.x - cameraCanvasOffsetX;
+      const cpy = currentSegment.position.y - cameraCanvasOffsetY;
+      const visualX2: number = currentSegment.nextMidPoint.x - cameraCanvasOffsetX;
+      const visualY2: number = currentSegment.nextMidPoint.y - cameraCanvasOffsetY;
+
+      this.context.moveTo(visualX1, visualY1 - 10);
+      this.context.quadraticCurveTo(cpx, cpy - 10, visualX2, visualY2 - 10);
+    }
+
     this.context.stroke();
-    this.context.fill();
-
-
-    this.context.fillRect(0, lowestVisible - cameraCanvasOffsetY - 1, canvasWidth, canvasHeight - (lowestVisible - cameraCanvasOffsetY - 1))
-    
   }
 
   drawBackgroundObjects(backgroundObjects: Array<BackgroundObject>) {

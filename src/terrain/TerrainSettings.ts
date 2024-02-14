@@ -15,6 +15,7 @@ class TerrainSettings {
   subsurfaceColour: string;
   differenceMinHeight: number;
   differenceMaxHeight: number;
+  hasHoles: boolean;
 
   constructor(
     segmentWidth: number, // width of each terrain segment
@@ -29,7 +30,8 @@ class TerrainSettings {
     surfaceGripCoefficient: number, // conversion between rotation and linear motion
     surfaceElasticity: number, // how bouncy the terrain is
     surfaceColour: string, // color of the terrain surface
-    subsurfaceColour: string // color of the terrain subsurface
+    subsurfaceColour: string, // color of the terrain subsurface
+    hasHoles: boolean = false
   ) {
     // Assign all the properties to the class instance
     this.segmentWidth = segmentWidth;
@@ -51,6 +53,8 @@ class TerrainSettings {
     this.surfaceElasticity = surfaceElasticity;
     this.surfaceColour = surfaceColour;
     this.subsurfaceColour = subsurfaceColour;
+
+    this.hasHoles = hasHoles;
   }
 }
 // Export the class as the default export

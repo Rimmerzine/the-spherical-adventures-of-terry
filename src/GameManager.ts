@@ -25,15 +25,14 @@ class GameManager {
   totalPoints: number;
   requiredDelay: number;
   lastTime: number;
-  ball: Ball;
   camera: Camera;
   levelSettings: Map<string, LevelSettings>;
   currentLevel: Level;
   player: Player;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.ball = new Ball();
-    this.camera = new Camera(this.ball);
+    this.player = new Player();
+    this.camera = new Camera(this.player.ball);
     this.renderer = new CanvasRenderer(canvas, this.camera);
     this.inputManager = new InputManager(this);
     this.levelGenerator = new LevelGenerator();
@@ -42,7 +41,6 @@ class GameManager {
     this.totalPoints = 0;
     this.requiredDelay = 0;
     this.lastTime = Date.now();
-    this.player = new Player();
 
     const grasslandsLevelSettings: LevelSettings = new LevelSettings(
       "grasslands",
@@ -89,13 +87,23 @@ class GameManager {
       (position: Position2D) => new Star(position)
     );
 
+    const holyMolyLevelSettings: LevelSettings = new LevelSettings(
+      "holymoly",
+      new TerrainSettings(400, 5, 1000, 1000, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)', true),
+      10,
+      "rgb(150, 210, 255)",
+      Gravity,
+      (position: Position2D) => new Cloud(position)
+    );
+
     this.levelSettings = new Map<string, LevelSettings>(
       [
         ["grasslands", grasslandsLevelSettings],
         ["tarmac", tarmacLevelSettings],
         ["ice", iceLevelSettings],
         ["hell", hellLevelSettings],
-        ["moon", moonLevelSettings]
+        ["moon", moonLevelSettings],
+        ["holymoly", holyMolyLevelSettings]
       ]
     );
 
@@ -103,10 +111,10 @@ class GameManager {
   }
 
   resetLevel(level: string) {
-    const newDistance = Math.max(0, this.ball.position.x - this.distanceReached);
+    const newDistance = Math.max(0, this.player.ball.position.x - this.distanceReached);
     const pointsGained = Math.floor(newDistance / 5000);
 
-    this.distanceReached = this.ball.position.x;
+    this.distanceReached = this.player.ball.position.x;
     this.totalPoints += pointsGained;
 
     playerStats.addDistanceTravelled(this.distanceReached);
@@ -114,7 +122,7 @@ class GameManager {
 
     document.getElementById('total-points-attribute').innerText = this.totalPoints.toFixed(1).toString();
 
-    this.ball.resetPosition();
+    this.player.ball.resetPosition();
 
     this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get(level));
 
@@ -124,10 +132,10 @@ class GameManager {
   draw(): void {
 
     this.currentLevel.draw(this.renderer);
-    this.renderer.drawBall(this.ball);
-    // this.renderer.drawFps(GameSettings.fps);
+    this.renderer.drawBall(this.player.ball);
+    this.renderer.drawFps(GameSettings.fps);
     if (DebugSettings.debugMode) {
-      this.renderer.drawDebugInformation(this.ball);
+      this.renderer.drawDebugInformation(this.player.ball);
     }
 
   }
@@ -137,18 +145,18 @@ class GameManager {
     const deltaTime: number = Math.min(1 / 30, (currentTime - this.lastTime) / 1000); // convert to seconds
     this.lastTime = currentTime;
 
-    if (this.inputManager.isLeftPressed()) this.ball.pushLeft(deltaTime);
-    if (this.inputManager.isRightPressed()) this.ball.pushRight(deltaTime);
-    if (this.inputManager.isJumpPressed()) this.ball.jump();
+    if (this.inputManager.isLeftPressed()) this.player.ball.pushLeft(deltaTime);
+    if (this.inputManager.isRightPressed()) this.player.ball.pushRight(deltaTime);
+    if (this.inputManager.isJumpPressed()) this.player.ball.jump();
 
-    this.ball.update(this.currentLevel.gravity, deltaTime);
-    this.collisionDetection.ballFloorCollision(this.ball, this.currentLevel.terrain, deltaTime);
-    this.ball.move(deltaTime);
+    this.player.ball.update(this.currentLevel.gravity, deltaTime);
+    this.collisionDetection.ballFloorCollision(this.player.ball, this.currentLevel.terrain, deltaTime);
+    this.player.ball.move(deltaTime);
 
     this.currentLevel.collectables.forEach(collectable => {
-      const diffXSquared = (this.ball.position.x - collectable.position.x) ** 2;
-      const diffYSquared = (this.ball.position.y - collectable.position.y) ** 2;
-      if(diffXSquared + diffYSquared <= (this.ball.attributes.radius + CollectablePoint.size / 2) ** 2) {
+      const diffXSquared = (this.player.ball.position.x - collectable.position.x) ** 2;
+      const diffYSquared = (this.player.ball.position.y - collectable.position.y) ** 2;
+      if(diffXSquared + diffYSquared <= (this.player.ball.attributes.radius + CollectablePoint.size / 2) ** 2) {
         this.player.collectPoint(this.currentLevel.name, collectable.position);
 
         this.currentLevel.collectables = this.currentLevel.collectables.filter(c => c != collectable);
@@ -163,7 +171,7 @@ class GameManager {
       }
     });
 
-    playerStats.trackRelevantStats(this.ball);
+    playerStats.trackRelevantStats(this.player.ball);
   }
 
   manageFps(): void {

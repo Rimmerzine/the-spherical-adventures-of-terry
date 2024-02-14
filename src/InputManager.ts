@@ -42,6 +42,7 @@ class InputManager {
     document.getElementById('reset-level-ice').addEventListener('click', this.resetLevelIce.bind(this));
     document.getElementById('reset-level-hell').addEventListener('click', this.resetLevelHell.bind(this));
     document.getElementById('reset-level-moon').addEventListener('click', this.resetLevelMoon.bind(this));
+    document.getElementById('reset-level-holymoly').addEventListener('click', this.resetLevelHolyMoly.bind(this));
     const canvasContainer = document.getElementById('canvas');
     canvasContainer.addEventListener('touchstart', this.touchStartHandler);
     canvasContainer.addEventListener('touchend', this.touchEndHandler);
@@ -49,10 +50,7 @@ class InputManager {
 
   handleKeyDown(event: KeyboardEvent): void {
     event.preventDefault();
-    if (
-      !this.keys.get(event.key) ||
-      this.keys.get(event.key).cooldown <= performance.now()
-    ) {
+    if (!this.keys.get(event.key) || this.keys.get(event.key).cooldown <= performance.now()) {
       const pressEvent = new PressEvent(true, 0);
       this.keys.set(event.key, pressEvent);
     }
@@ -99,7 +97,7 @@ class InputManager {
   }
 
   upgradeStat(skillKey: string): void {
-    const stat: BallSkill = this.game.ball.skills.getSkill(skillKey)
+    const stat: BallSkill = this.game.player.ball.skills.getSkill(skillKey)
     const nextUpgradeCost: number = stat.nextUpgradeCost();
 
     if(this.game.totalPoints >= nextUpgradeCost) {
@@ -121,16 +119,16 @@ class InputManager {
   }
 
   feedTerry(): void {
-    if(this.game.ball.attributes.radius < 200) {
-      this.game.ball.attributes.radius += 10;
-      this.game.ball.position.y -= 10;
+    if(this.game.player.ball.attributes.radius < 200) {
+      this.game.player.ball.attributes.radius += 10;
+      this.game.player.ball.position.y -= 10;
     }
   }
   
   burpTerry(): void {
-    if(this.game.ball.attributes.radius > 10) {
-      this.game.ball.attributes.radius -= 10;
-      this.game.ball.position.y += 10;
+    if(this.game.player.ball.attributes.radius > 10) {
+      this.game.player.ball.attributes.radius -= 10;
+      this.game.player.ball.position.y += 10;
     }
   }
 
@@ -173,6 +171,10 @@ class InputManager {
 
   resetLevelMoon() {
     this.game.resetLevel('moon');
+  }
+
+  resetLevelHolyMoly() {
+    this.game.resetLevel('holymoly');
   }
 }
 
