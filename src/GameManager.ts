@@ -87,13 +87,23 @@ class GameManager {
       (position: Position2D) => new Star(position)
     );
 
+    const holyMolyLevelSettings: LevelSettings = new LevelSettings(
+      "holymoly",
+      new TerrainSettings(400, 5, 1000, 1000, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)', true),
+      10,
+      "rgb(150, 210, 255)",
+      Gravity,
+      (position: Position2D) => new Cloud(position)
+    );
+
     this.levelSettings = new Map<string, LevelSettings>(
       [
         ["grasslands", grasslandsLevelSettings],
         ["tarmac", tarmacLevelSettings],
         ["ice", iceLevelSettings],
         ["hell", hellLevelSettings],
-        ["moon", moonLevelSettings]
+        ["moon", moonLevelSettings],
+        ["holymoly", holyMolyLevelSettings]
       ]
     );
 
@@ -123,7 +133,7 @@ class GameManager {
 
     this.currentLevel.draw(this.renderer);
     this.renderer.drawBall(this.player.ball);
-    // this.renderer.drawFps(GameSettings.fps);
+    this.renderer.drawFps(GameSettings.fps);
     if (DebugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.player.ball);
     }

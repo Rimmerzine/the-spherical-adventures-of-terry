@@ -1,5 +1,6 @@
 import { BackgroundObject } from "../background/BackgroundObject.js";
 import { Player } from "../player/Player.js";
+import { Segment } from "../terrain/Terrain.js";
 import TerrainManager from "../terrain/TerrainManager.js";
 import { Position2D } from "../utils/Position2D.js";
 import { Vector2D } from "../utils/Vector2D.js";
@@ -14,7 +15,6 @@ class LevelGenerator {
     }
 
     generateLevel(player: Player, levelSettings: LevelSettings): Level {
-
         const terrain = this.terrainManager.generateTerrain(levelSettings.terrainSettings);
         const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings)
         const levelPointsCollected: Array<Position2D> = player.levelPointsCollected.get(levelSettings.name) || [];
@@ -30,12 +30,12 @@ class LevelGenerator {
         )
     }
 
-    private generateCollectablePoints(segments: Array<Position2D>, collectedPoints: Array<Position2D>): Array<CollectablePoint> {
+    private generateCollectablePoints(segments: Array<Segment>, collectedPoints: Array<Position2D>): Array<CollectablePoint> {
         const collectables: Array<CollectablePoint> = [];
 
         for(let i = 21; i < segments.length; i+= 20) {
-            const segment: Position2D = segments[i];
-            const collectablePosition = segment.add(new Vector2D(0, -100));
+            const segment: Segment = segments[i];
+            const collectablePosition = segment.nextMidPoint.add(new Vector2D(0, -100));
             
             if(collectedPoints.find(position => collectablePosition.x === position.x)) {
                 collectables.push(new CollectablePoint(collectablePosition, true));

@@ -42,6 +42,7 @@ class InputManager {
     document.getElementById('reset-level-ice').addEventListener('click', this.resetLevelIce.bind(this));
     document.getElementById('reset-level-hell').addEventListener('click', this.resetLevelHell.bind(this));
     document.getElementById('reset-level-moon').addEventListener('click', this.resetLevelMoon.bind(this));
+    document.getElementById('reset-level-holymoly').addEventListener('click', this.resetLevelHolyMoly.bind(this));
     const canvasContainer = document.getElementById('canvas');
     canvasContainer.addEventListener('touchstart', this.touchStartHandler);
     canvasContainer.addEventListener('touchend', this.touchEndHandler);
@@ -49,10 +50,7 @@ class InputManager {
 
   handleKeyDown(event: KeyboardEvent): void {
     event.preventDefault();
-    if (
-      !this.keys.get(event.key) ||
-      this.keys.get(event.key).cooldown <= performance.now()
-    ) {
+    if (!this.keys.get(event.key) || this.keys.get(event.key).cooldown <= performance.now()) {
       const pressEvent = new PressEvent(true, 0);
       this.keys.set(event.key, pressEvent);
     }
@@ -173,6 +171,10 @@ class InputManager {
 
   resetLevelMoon() {
     this.game.resetLevel('moon');
+  }
+
+  resetLevelHolyMoly() {
+    this.game.resetLevel('holymoly');
   }
 }
 
