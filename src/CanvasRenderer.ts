@@ -55,23 +55,23 @@ class CanvasRenderer {
     for (let i = 0; i < visibleTerrain.length; i++) {
       const currentSegment: Segment = visibleTerrain[i];
 
-      const visualX1: number = currentSegment.previousMidPoint.x - cameraCanvasOffsetX;
-      const visualY1: number = currentSegment.previousMidPoint.y - cameraCanvasOffsetY;
-      const cpx = currentSegment.position.x - cameraCanvasOffsetX;
-      const cpy = currentSegment.position.y - cameraCanvasOffsetY;
-      const visualX2: number = currentSegment.nextMidPoint.x - cameraCanvasOffsetX;
-      const visualY2: number = currentSegment.nextMidPoint.y - cameraCanvasOffsetY;
+      const visualX1: number = Math.floor(currentSegment.previousMidPoint.x - cameraCanvasOffsetX);
+      const visualY1: number = Math.floor(currentSegment.previousMidPoint.y - cameraCanvasOffsetY);
+      const cpx = Math.floor(currentSegment.position.x - cameraCanvasOffsetX);
+      const cpy = Math.floor(currentSegment.position.y - cameraCanvasOffsetY);
+      const visualX2: number = Math.floor(currentSegment.nextMidPoint.x - cameraCanvasOffsetX);
+      const visualY2: number = Math.floor(currentSegment.nextMidPoint.y - cameraCanvasOffsetY);
 
       let lowestY: number = Math.max(visualY1, visualY2, cpy);
 
       this.context.beginPath();
       this.context.moveTo(visualX1, lowestY);
       this.context.lineTo(visualX1, visualY1);
-      this.context.quadraticCurveTo(cpx, cpy, visualX2 + 1, visualY2);
+      this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
       this.context.lineTo(visualX2, lowestY);
       this.context.fill();
 
-      this.context.fillRect(visualX1 - 1, lowestY - 1, (visualX2 - visualX1) + 2, (canvasHeight - lowestY) + 2);
+      this.context.fillRect(visualX1, lowestY, (visualX2 - visualX1), (canvasHeight - lowestY));
     }
 
     this.context.beginPath();
@@ -79,15 +79,15 @@ class CanvasRenderer {
     for (let i = 0; i < visibleTerrain.length; i++) {
       const currentSegment: Segment = visibleTerrain[i];
 
-      const visualX1: number = currentSegment.previousMidPoint.x - cameraCanvasOffsetX;
-      const visualY1: number = currentSegment.previousMidPoint.y - cameraCanvasOffsetY;
-      const cpx = currentSegment.position.x - cameraCanvasOffsetX;
-      const cpy = currentSegment.position.y - cameraCanvasOffsetY;
-      const visualX2: number = currentSegment.nextMidPoint.x - cameraCanvasOffsetX;
-      const visualY2: number = currentSegment.nextMidPoint.y - cameraCanvasOffsetY;
+      const visualX1: number = Math.floor(currentSegment.previousMidPoint.x - cameraCanvasOffsetX);
+      const visualY1: number = Math.floor(currentSegment.previousMidPoint.y - cameraCanvasOffsetY);
+      const cpx = Math.floor(currentSegment.position.x - cameraCanvasOffsetX);
+      const cpy = Math.floor(currentSegment.position.y - cameraCanvasOffsetY);
+      const visualX2: number = Math.floor(currentSegment.nextMidPoint.x - cameraCanvasOffsetX);
+      const visualY2: number = Math.floor(currentSegment.nextMidPoint.y - cameraCanvasOffsetY);
 
-      this.context.moveTo(visualX1, visualY1 - 10);
-      this.context.quadraticCurveTo(cpx, cpy - 10, visualX2, visualY2 - 10);
+      this.context.moveTo(visualX1, visualY1);
+      this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
     }
 
     this.context.stroke();
@@ -127,7 +127,7 @@ class CanvasRenderer {
 
     for (let i = 0; i < visibleBackgroundObjects.length; i++) {
       const backgroundObject = visibleBackgroundObjects[i];
-      backgroundObject.draw(this.context, cameraCanvasOffsetX, cameraCanvasOffsetY);
+      backgroundObject.draw(this.context, Math.floor(cameraCanvasOffsetX), Math.floor(cameraCanvasOffsetY));
     }
   }
 
@@ -165,7 +165,7 @@ class CanvasRenderer {
 
     for (let i = 0; i < visibleCollectables.length; i++) {
       const collectable = visibleCollectables[i];
-      collectable.draw(this.context, cameraCanvasOffsetX, cameraCanvasOffsetY);
+      collectable.draw(this.context, Math.floor(cameraCanvasOffsetX), Math.floor(cameraCanvasOffsetY));
     }
   }
 
