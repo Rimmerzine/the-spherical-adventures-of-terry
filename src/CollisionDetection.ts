@@ -4,7 +4,7 @@ import {Position2D} from './utils/Position2D.js';
 import Ball from './ball/Ball.js';
 import { playerStats } from './player/PlayerStats.js';
 import { Terrain } from './terrain/Terrain.js';
-import { CollectablePoint } from './level/Level.js';
+import { Level } from './level/Level.js';
 
 class CollisionDetection {
   constructor() {}
@@ -64,10 +64,11 @@ class CollisionDetection {
 
   ballFloorCollision(
     ball: Ball,
-    terrain: Terrain,
+    level: Level,
     deltaTime: number
   ) {
 
+    const terrain: Terrain = level.terrain;
     const ballNextPosition = ball.getNextPosition(deltaTime);
     
     const collidableFloor = terrain.segments.map(segment => segment.position).filter(
@@ -104,6 +105,10 @@ class CollisionDetection {
 
       const distance = calculateDistance(interPosition, position);
       if (distance <= ball.attributes.radius && distance < currentPositionDistance) {
+        
+        const gravityReductionScale = new Vector2D(Math.abs(position.x - ball.position.x), Math.abs(position.y - ball.position.y)).normalize().y ** 2;
+        ball.attributes.velocity = ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime).multiply(gravityReductionScale));
+
         const normalisedDisplacementVector = new Vector2D(
           interPosition.x - position.x,
           interPosition.y - position.y
