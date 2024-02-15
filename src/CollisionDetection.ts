@@ -106,7 +106,7 @@ class CollisionDetection {
       const distance = calculateDistance(interPosition, position);
       if (distance <= ball.attributes.radius && distance < currentPositionDistance) {
         
-        const gravityReductionScale = new Vector2D(Math.abs(position.x - ball.position.x), Math.abs(position.y - ball.position.y)).normalize().y ** 2;
+        const gravityReductionScale = new Vector2D(Math.abs(position.x - ball.position.x), Math.abs(position.y - ball.position.y)).normalize().y ** 3;
         ball.attributes.velocity = ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime).multiply(gravityReductionScale));
 
         const normalisedDisplacementVector = new Vector2D(
