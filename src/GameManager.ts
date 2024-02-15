@@ -150,7 +150,7 @@ class GameManager {
     if (this.inputManager.isJumpPressed()) this.player.ball.jump();
 
     this.player.ball.update(this.currentLevel.gravity, deltaTime);
-    this.collisionDetection.ballFloorCollision(this.player.ball, this.currentLevel.terrain, deltaTime);
+    this.collisionDetection.ballFloorCollision(this.player.ball, this.currentLevel, deltaTime);
     this.player.ball.move(deltaTime);
 
     this.currentLevel.collectables.forEach(collectable => {
