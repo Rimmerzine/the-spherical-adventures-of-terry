@@ -1,3 +1,4 @@
+import Ball from './ball/Ball.js';
 import { BallSkill } from './ball/BallSkills.js';
 import {GameManager} from './GameManager.js';
 import { playerStats } from './player/PlayerStats.js';
@@ -23,36 +24,53 @@ class InputManager {
     this.game = game;
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
+    this.bindEventHandlers();
+    this.attachEventListeners();
+  }
+
+  bindEventHandlers() {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.touchStartHandler = this.touchStartHandler.bind(this);
     this.touchEndHandler = this.touchEndHandler.bind(this);
+    this.upgradeStat = this.upgradeStat.bind(this);
+    this.feedTerry = this.feedTerry.bind(this);
+    this.burpTerry = this.burpTerry.bind(this);
+    this.addFivePoints = this.addFivePoints.bind(this);
+    this.resetLevel = this.resetLevel.bind(this);
+  }
+
+  attachEventListeners() {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
-
-    const statNames: Array<string> = ["acceleration", "max-rps", "jumps", "grip", "shock-absorber"]
-    statNames.forEach(key =>
-      document.getElementById(`upgrade-${key}-button`).addEventListener('click', this.upgradeStat.bind(this, key))
-    );
-    document.getElementById('upgrade-feed-button').addEventListener('click', this.feedTerry.bind(this));
-    document.getElementById('upgrade-burp-button').addEventListener('click', this.burpTerry.bind(this));
-    document.getElementById('add-free-points').addEventListener('click', this.addFivePoints.bind(this));
-    document.getElementById('reset-level-grasslands').addEventListener('click', this.resetLevelGrasslands.bind(this));
-    document.getElementById('reset-level-tarmac').addEventListener('click', this.resetLevelTarmac.bind(this));
-    document.getElementById('reset-level-ice').addEventListener('click', this.resetLevelIce.bind(this));
-    document.getElementById('reset-level-hell').addEventListener('click', this.resetLevelHell.bind(this));
-    document.getElementById('reset-level-moon').addEventListener('click', this.resetLevelMoon.bind(this));
-    document.getElementById('reset-level-holymoly').addEventListener('click', this.resetLevelHolyMoly.bind(this));
+    this.attachButtonClickListeners();
     const canvasContainer = document.getElementById('canvas');
     canvasContainer.addEventListener('touchstart', this.touchStartHandler);
     canvasContainer.addEventListener('touchend', this.touchEndHandler);
   }
 
+  attachButtonClickListeners() {
+    const statNames = ["acceleration", "max-rps", "jumps", "grip", "shock-absorber"];
+    statNames.forEach(key =>
+      document.getElementById(`upgrade-${key}-button`).addEventListener('click', () => this.upgradeStat(key))
+    );
+    document.getElementById('upgrade-feed-button').addEventListener('click', this.feedTerry);
+    document.getElementById('upgrade-burp-button').addEventListener('click', this.burpTerry);
+    document.getElementById('add-free-points').addEventListener('click', this.addFivePoints);
+    this.attachLevelResetListeners();
+  }
+
+  attachLevelResetListeners() {
+    const levels = ['grasslands', 'tarmac', 'ice', 'hell', 'moon', 'holymoly'];
+    levels.forEach(level =>
+      document.getElementById(`reset-level-${level}`).addEventListener('click', () => this.resetLevel(level))
+    );
+  }
+
   handleKeyDown(event: KeyboardEvent): void {
     event.preventDefault();
     if (!this.keys.get(event.key) || this.keys.get(event.key).cooldown <= performance.now()) {
-      const pressEvent = new PressEvent(true, 0);
-      this.keys.set(event.key, pressEvent);
+      this.keys.set(event.key, new PressEvent(true, 0));
     }
   }
 
@@ -63,23 +81,11 @@ class InputManager {
   }
 
   isLeftPressed(): boolean {
-    if (this.leftScreenTouch) {
-      return true;
-    } else if (this.keys.get('a')) {
-      return this.keys.get('a').pressed;
-    } else {
-      return false;
-    }
+    return this.leftScreenTouch || (this.keys.get('a') && this.keys.get('a').pressed) || false;
   }
 
   isRightPressed(): boolean {
-    if (this.rightScreenTouch) {
-      return true;
-    } else if (this.keys.get('d')) {
-      return this.keys.get('d').pressed;
-    } else {
-      return false;
-    }
+    return this.rightScreenTouch || (this.keys.get('d') && this.keys.get('d').pressed) || false;
   }
 
   isJumpPressed(): boolean {
@@ -119,16 +125,18 @@ class InputManager {
   }
 
   feedTerry(): void {
-    if(this.game.player.ball.attributes.radius < 200) {
-      this.game.player.ball.attributes.radius += 10;
-      this.game.player.ball.position.y -= 10;
+    const ball: Ball = this.game.player.ball;
+    if(ball.attributes.radius < 200) {
+      ball.attributes.radius += 10;
+      ball.position.y -= 10;
     }
   }
   
   burpTerry(): void {
-    if(this.game.player.ball.attributes.radius > 10) {
-      this.game.player.ball.attributes.radius -= 10;
-      this.game.player.ball.position.y += 10;
+    const ball: Ball = this.game.player.ball;
+    if(ball.attributes.radius > 10) {
+      ball.attributes.radius -= 10;
+      ball.position.y += 10;
     }
   }
 
@@ -140,12 +148,8 @@ class InputManager {
   touchStartHandler(event: TouchEvent) {
     const touchX = event.touches[0].clientX;
     const canvasWidth = document.getElementById('canvas').clientWidth;
-    
-    if (touchX < canvasWidth / 2) {
-      this.leftScreenTouch = true;
-    } else {
-      this.rightScreenTouch = true;
-    }
+    this.leftScreenTouch = touchX < canvasWidth / 2;
+    this.rightScreenTouch = !this.leftScreenTouch;
   }
 
   touchEndHandler() {
@@ -175,6 +179,10 @@ class InputManager {
 
   resetLevelHolyMoly() {
     this.game.resetLevel('holymoly');
+  }
+
+  resetLevel(level: string) {
+    this.game.resetLevel(level);
   }
 }
 

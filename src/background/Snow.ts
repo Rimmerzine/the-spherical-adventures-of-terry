@@ -1,64 +1,38 @@
-import { Position2D } from "../utils/Position2D";
-import { BackgroundObject } from "./BackgroundObject.js";
+import { Position2D } from "../utils/Position2D.js";
+import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
 
-class Snow implements BackgroundObject {
-    position: Position2D;
-    width: number;
-    height: number;
-    canvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-
+class Snow extends BoundedBackgroundObject {
     static collectionCount: number = 100;
     static collection: Array<HTMLCanvasElement> = [];
 
-    constructor(
-        position: Position2D
-    ) {
-        this.position = position;
-        if(Snow.collection.length < Snow.collectionCount) {
-            const sizeRand: number = Math.random() * 20 + 10
-
-            this.width = sizeRand;
-            this.height = sizeRand;
-    
-            this.canvas = document.createElement('canvas');
-            this.canvas.width = this.width;
-            this.canvas.height = this.height;
-    
-            this.context = this.canvas.getContext('2d');
-    
-            const gradiant = this.context.createRadialGradient(this.width / 2, this.height / 2, 0, this.width / 2, this.height / 2, this.height / 2);
-            gradiant.addColorStop(0, `hsla(0, 100%, 100%, 1)`);
-            gradiant.addColorStop(1, `hsla(0, 100%, 100%, 0)`);
-            this.context.fillStyle = gradiant;
-            this.context.beginPath();
-            this.context.arc(this.width / 2, this.height / 2, this.height, 0, 2 * Math.PI);
-            this.context.fill();
-    
-            this.context.strokeStyle = "white";
-            this.context.beginPath();
-            this.context.moveTo(this.width / 2, 0);
-            this.context.lineTo(this.width / 2, this.height);
-            this.context.moveTo(0, this.height / 2);
-            this.context.lineTo(this.width, this.height / 2);
-
-            this.context.moveTo(this.width / 6, this.height / 6);
-            this.context.lineTo(this.width * 5 / 6, this.height * 5 / 6);
-            this.context.moveTo(this.width * 5 / 6, this.height / 6);
-            this.context.lineTo(this.width / 6, this.height * 5 / 6);
-            
-            this.context.stroke();
-
-            Snow.collection.push(this.canvas);
-        } else {
-            this.canvas = Snow.collection[Math.floor(Math.random() * Snow.collectionCount)];
-            this.width = this.canvas.width;
-            this.height = this.canvas.height;
-        }
+    constructor(position: Position2D) {
+        const randomSize: number = Math.random() * 15 + 10;
+        super(position, randomSize, randomSize, Snow.collection, Snow.collectionCount);
     }
 
-    draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {
-        context.drawImage(this.canvas, this.position.x - cameraOffsetX - this.canvas.width / 2, this.position.y - this.canvas.height / 2 - cameraOffsetY / 2);
+    drawCanvas(): void {
+        const gradiant = this.context.createRadialGradient(this.width / 2, this.height / 2, 0, this.width / 2, this.height / 2, this.height / 2);
+        gradiant.addColorStop(0, `hsla(0, 100%, 100%, 1)`);
+        gradiant.addColorStop(1, `hsla(0, 100%, 100%, 0)`);
+
+        this.context.fillStyle = gradiant;
+        this.context.beginPath();
+        this.context.arc(this.width / 2, this.height / 2, this.height, 0, 2 * Math.PI);
+        this.context.fill();
+    
+        this.context.strokeStyle = "white";
+        this.context.beginPath();
+        this.context.moveTo(this.width / 2, 0);
+        this.context.lineTo(this.width / 2, this.height);
+        this.context.moveTo(0, this.height / 2);
+        this.context.lineTo(this.width, this.height / 2);
+
+        this.context.moveTo(this.width / 6, this.height / 6);
+        this.context.lineTo(this.width * 5 / 6, this.height * 5 / 6);
+        this.context.moveTo(this.width * 5 / 6, this.height / 6);
+        this.context.lineTo(this.width / 6, this.height * 5 / 6);
+        
+        this.context.stroke();
     }
 }
 

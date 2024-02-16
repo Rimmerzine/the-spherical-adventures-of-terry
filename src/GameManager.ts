@@ -1,7 +1,6 @@
 import CanvasRenderer from './CanvasRenderer.js';
 import CollisionDetection from './CollisionDetection.js';
 import {DebugSettings, GameSettings, Gravity} from './Settings.js';
-import Ball from './ball/Ball.js';
 import {Position2D} from './utils/Position2D.js';
 import InputManager from './InputManager.js';
 import TerrainSettings from './terrain/TerrainSettings.js';
@@ -15,6 +14,7 @@ import { LevelGenerator } from './level/LevelGenerator.js';
 import { LevelSettings } from './level/LevelSettings.js';
 import { Snow } from './background/Snow.js';
 import { Player } from './player/Player.js';
+import { Skyscraper } from './background/Skyscraper.js';
 
 class GameManager {
   renderer: CanvasRenderer;
@@ -53,11 +53,11 @@ class GameManager {
 
     const tarmacLevelSettings: LevelSettings = new LevelSettings(
       "tarmac",
-      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 1.0, 0.8, 'rgb(50, 50, 50)', 'rgb(20, 20, 20)'),
-      10,
-      "rgb(150, 210, 255)",
+      new TerrainSettings(300, 5, 1000, 1000, -2000, 0, -20000, 200, 500, 1.0, 0.8, 'rgb(10, 10, 10)', 'rgb(20, 20, 20)'),
+      1/3,
+      "rgb(10, 5, 20)",
       Gravity,
-      (position: Position2D) => new Cloud(position)
+      (position: Position2D) => new Skyscraper(position)
     );
 
     const iceLevelSettings: LevelSettings = new LevelSettings(
@@ -107,37 +107,24 @@ class GameManager {
       ]
     );
 
-    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("grasslands"));
+    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("tarmac"));
   }
 
   resetLevel(level: string) {
-    const newDistance = Math.max(0, this.player.ball.position.x - this.distanceReached);
-    const pointsGained = Math.floor(newDistance / 5000);
-
-    this.distanceReached = this.player.ball.position.x;
-    this.totalPoints += pointsGained;
-
-    playerStats.addDistanceTravelled(this.distanceReached);
-    playerStats.addPointsEarned(pointsGained);
-
-    document.getElementById('total-points-attribute').innerText = this.totalPoints.toFixed(1).toString();
+    playerStats.addDistanceTravelled(this.player.ball.position.x);
+    playerStats.addNumberOfResets();
 
     this.player.ball.resetPosition();
-
     this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get(level));
-
-    playerStats.addNumberOfResets();
   }
 
   draw(): void {
-
     this.currentLevel.draw(this.renderer);
     this.renderer.drawBall(this.player.ball);
     this.renderer.drawFps(GameSettings.fps);
     if (DebugSettings.debugMode) {
       this.renderer.drawDebugInformation(this.player.ball);
     }
-
   }
 
   update(): void {
@@ -163,8 +150,10 @@ class GameManager {
 
         if(!collectable.collected) {
           this.totalPoints += 1;
+          playerStats.addPointsEarned(1);
         } else {
           this.totalPoints += 0.1;
+          playerStats.addPointsEarned(0.1);
         }
 
         document.getElementById('total-points-attribute').innerText = this.totalPoints.toFixed(1).toString();
