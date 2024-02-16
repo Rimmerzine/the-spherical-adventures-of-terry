@@ -1,39 +1,25 @@
 import Ball from "../ball/Ball.js";
 
 class PlayerStats {
-  furthestDistanceReached: number;
-  totalDistanceTravelled: number;
-  totalResetDistance: number;
-  numberOfJumpsMade: number;
-  pointsEarned: number;
-  pointsSpent: number;
-  maxRotationsUpgradesBought: number;
-  accelerationUpgradesBought: number;
-  jumpUpgradesBought: number;
-  fastestSpeedAchieved: number;
-  furthestJump: number;
-  longestTimeMidair: number;
-  numberOfLevelResets: number;
-  lastCollision: number;
-  lastBounceX: number;
+  furthestDistanceReached: number = 0;
+  totalDistanceTravelled: number = 0;
+  totalResetDistance: number = 0;
+  numberOfJumpsMade: number = 0;
+  pointsEarned: number = 0;
+  pointsSpent: number = 0;
+  maxRotationsUpgradesBought: number = 0;
+  accelerationUpgradesBought: number = 0;
+  gripUpgradesBought: number = 0;
+  shockAbsorberUpgradesBought: number = 0;
+  jumpUpgradesBought: number = 0;
+  fastestSpeedAchieved: number = 0;
+  furthestJump: number = 0;
+  longestTimeMidair: number = 0;
+  numberOfLevelResets: number = 0;
+  lastCollision: number = performance.now();
+  lastBounceX: number = null;
 
-  constructor() {
-    this.furthestDistanceReached = 0;
-    this.totalDistanceTravelled = 0;
-    this.totalResetDistance = 0;
-    this.numberOfJumpsMade = 0;
-    this.pointsEarned = 0;
-    this.pointsSpent = 0;
-    this.maxRotationsUpgradesBought = 0;
-    this.accelerationUpgradesBought = 0;
-    this.jumpUpgradesBought = 0;
-    this.fastestSpeedAchieved = 0;
-    this.furthestJump = 0;
-    this.longestTimeMidair = 0;
-    this.numberOfLevelResets = 0;
-    this.lastCollision = performance.now();
-    this.lastBounceX = null;
-  }
+  constructor() {}
 
   updateStat(statName: string, newValue: number): void {
     if(newValue % 1 === 0) {
@@ -109,6 +95,14 @@ class PlayerStats {
       case "max-rps":
         this.maxRotationsUpgradesBought++;
         this.updateStat("total-max-rps-upgrades", this.maxRotationsUpgradesBought);
+        break;
+      case "grip":
+        this.gripUpgradesBought++;
+        this.updateStat("total-grip-upgrades", this.gripUpgradesBought);
+        break;
+      case "shock-absorber":
+        this.shockAbsorberUpgradesBought++;
+        this.updateStat("total-shock-absorber-upgrades", this.shockAbsorberUpgradesBought);
         break;
       case "jumps":
         this.jumpUpgradesBought++;

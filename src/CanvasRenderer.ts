@@ -5,6 +5,7 @@ import { BackgroundObject } from './background/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
 import { Segment, Terrain } from './terrain/Terrain.js';
 import { CollectablePoint } from './level/Level.js';
+import { HeightlessBackgroundObject } from './background/HeightlessBackgroundObject.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -52,6 +53,26 @@ class CanvasRenderer {
     this.context.strokeStyle = terrain.settings.surfaceColour;
     this.context.fillStyle = terrain.settings.subsurfaceColour;
 
+    this.context.beginPath();
+
+    for (let i = 0; i < visibleTerrain.length; i++) {
+      const currentSegment: Segment = visibleTerrain[i];
+
+      const visualX1: number = Math.floor(currentSegment.previousMidPoint.x - cameraCanvasOffsetX);
+      const visualY1: number = Math.floor(currentSegment.previousMidPoint.y - cameraCanvasOffsetY);
+      const cpx = Math.floor(currentSegment.position.x - cameraCanvasOffsetX);
+      const cpy = Math.floor(currentSegment.position.y - cameraCanvasOffsetY);
+      const visualX2: number = Math.floor(currentSegment.nextMidPoint.x - cameraCanvasOffsetX);
+      const visualY2: number = Math.floor(currentSegment.nextMidPoint.y - cameraCanvasOffsetY);
+
+      this.context.moveTo(visualX1, visualY1);
+      this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
+    }
+
+    this.context.stroke();
+
+    this.context.beginPath();
+
     for (let i = 0; i < visibleTerrain.length; i++) {
       const currentSegment: Segment = visibleTerrain[i];
 
@@ -73,24 +94,6 @@ class CanvasRenderer {
 
       this.context.fillRect(visualX1, lowestY, (visualX2 - visualX1), (canvasHeight - lowestY));
     }
-
-    this.context.beginPath();
-
-    for (let i = 0; i < visibleTerrain.length; i++) {
-      const currentSegment: Segment = visibleTerrain[i];
-
-      const visualX1: number = Math.floor(currentSegment.previousMidPoint.x - cameraCanvasOffsetX);
-      const visualY1: number = Math.floor(currentSegment.previousMidPoint.y - cameraCanvasOffsetY);
-      const cpx = Math.floor(currentSegment.position.x - cameraCanvasOffsetX);
-      const cpy = Math.floor(currentSegment.position.y - cameraCanvasOffsetY);
-      const visualX2: number = Math.floor(currentSegment.nextMidPoint.x - cameraCanvasOffsetX);
-      const visualY2: number = Math.floor(currentSegment.nextMidPoint.y - cameraCanvasOffsetY);
-
-      this.context.moveTo(visualX1, visualY1);
-      this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
-    }
-
-    this.context.stroke();
   }
 
   drawBackgroundObjects(backgroundObjects: Array<BackgroundObject>) {
@@ -111,6 +114,7 @@ class CanvasRenderer {
     
     const visibleBackgroundObjects = backgroundObjects.filter(
       backgroundObject => {
+        const isHeightless: boolean = backgroundObject instanceof HeightlessBackgroundObject
         const objectLeft: number = backgroundObject.position.x - backgroundObject.width / 2;
         const objectUp: number = backgroundObject.position.y - backgroundObject.height / 2 + cameraCanvasOffsetY / 2;
         const objectRight: number = objectLeft + backgroundObject.width;
@@ -121,7 +125,7 @@ class CanvasRenderer {
         const isNotOffscreenAbove = objectDown >= canvasMapTop;
         const isNotOffscreenBelow = objectUp <= canvasMapBottom;
 
-        return isNotOffscreenToTheLeft && isNotOffscreenToTheRight && isNotOffscreenAbove && isNotOffscreenBelow;
+        return isNotOffscreenToTheLeft && isNotOffscreenToTheRight && isHeightless || isNotOffscreenAbove && isNotOffscreenBelow;
       }
     );
 
