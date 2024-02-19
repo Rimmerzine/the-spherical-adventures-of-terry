@@ -112,9 +112,9 @@ class CanvasRenderer {
     const cameraCanvasOffsetX: number = cameraPositionX - canvasWidth / 2;
     const cameraCanvasOffsetY: number = cameraPositionY - canvasHeight / 2;
     
-    const visibleBackgroundObjects = backgroundObjects.filter(
+    const visibleBackgroundObjects: Array<BackgroundObject> = backgroundObjects.filter(
       backgroundObject => {
-        const isHeightless: boolean = backgroundObject instanceof HeightlessBackgroundObject
+        const isHeightless: boolean = backgroundObject.type == "heightless";
         const objectLeft: number = backgroundObject.position.x - backgroundObject.width / 2;
         const objectUp: number = backgroundObject.position.y - backgroundObject.height / 2 + cameraCanvasOffsetY / 2;
         const objectRight: number = objectLeft + backgroundObject.width;
@@ -125,7 +125,7 @@ class CanvasRenderer {
         const isNotOffscreenAbove = objectDown >= canvasMapTop;
         const isNotOffscreenBelow = objectUp <= canvasMapBottom;
 
-        return isNotOffscreenToTheLeft && isNotOffscreenToTheRight && isHeightless || isNotOffscreenAbove && isNotOffscreenBelow;
+        return isNotOffscreenToTheLeft && isNotOffscreenToTheRight && (isHeightless || isNotOffscreenAbove && isNotOffscreenBelow);
       }
     );
 

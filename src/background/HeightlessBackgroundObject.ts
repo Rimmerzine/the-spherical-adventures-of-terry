@@ -3,7 +3,7 @@ import { BackgroundObject } from "./BackgroundObject.js";
 
 abstract class HeightlessBackgroundObject extends BackgroundObject {
     constructor(xPosition: number, width: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
-        super(new Position2D(xPosition, 0), width, 0, collection, collectionCount);
+        super("heightless", new Position2D(xPosition, 0), width, 0, collection, collectionCount);
     }
 
     draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {
