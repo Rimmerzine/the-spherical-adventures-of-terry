@@ -3,7 +3,7 @@ import { BackgroundObject } from "./BackgroundObject.js";
 
 abstract class BoundedBackgroundObject extends BackgroundObject {
     constructor(position: Position2D, width: number, height: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
-        super(position, width, height, collection, collectionCount);
+        super("bounded", position, width, height, collection, collectionCount);
     }
 
     draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {
