@@ -82,7 +82,7 @@ class GameManager {
       "moon",
       new TerrainSettings(400, 10, 1000, 1000, -2000, 0, -20000, 250, 1000, 0.2, 0.75, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
       100,
-      "rgb(5, 5, 5)",
+      "rgb(0, 0, 0)",
       Gravity.multiply(0.2),
       (position: Position2D) => new Star(position)
     );

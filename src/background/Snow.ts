@@ -12,7 +12,7 @@ class Snow extends BoundedBackgroundObject {
 
     drawCanvas(): void {
         const gradiant = this.context.createRadialGradient(this.width / 2, this.height / 2, 0, this.width / 2, this.height / 2, this.height / 2);
-        gradiant.addColorStop(0, `hsla(0, 100%, 100%, 1)`);
+        gradiant.addColorStop(0, `hsla(0, 100%, 100%, 0.75)`);
         gradiant.addColorStop(1, `hsla(0, 100%, 100%, 0)`);
 
         this.context.fillStyle = gradiant;
@@ -27,10 +27,25 @@ class Snow extends BoundedBackgroundObject {
         this.context.moveTo(0, this.height / 2);
         this.context.lineTo(this.width, this.height / 2);
 
-        this.context.moveTo(this.width / 6, this.height / 6);
-        this.context.lineTo(this.width * 5 / 6, this.height * 5 / 6);
-        this.context.moveTo(this.width * 5 / 6, this.height / 6);
-        this.context.lineTo(this.width / 6, this.height * 5 / 6);
+        this.context.moveTo(this.width / 2, this.height / 4);
+        this.context.lineTo(this.width / 4, this.height / 8);
+        this.context.moveTo(this.width / 2, this.height / 4);
+        this.context.lineTo(this.width * 3 / 4, this.height / 8);
+
+        this.context.moveTo(this.width / 2, this.height * 3 / 4);
+        this.context.lineTo(this.width / 4, this.height * 7 / 8);
+        this.context.moveTo(this.width / 2, this.height * 3 / 4);
+        this.context.lineTo(this.width * 3 / 4, this.height * 7 / 8);
+
+        this.context.moveTo(this.width / 4, this.height / 2);
+        this.context.lineTo(this.width / 8, this.height / 4);
+        this.context.moveTo(this.width / 4, this.height / 2);
+        this.context.lineTo(this.width / 8, this.height * 3 / 4);
+
+        this.context.moveTo(this.width * 3 / 4, this.height / 2);
+        this.context.lineTo(this.width * 7 / 8, this.height / 4);
+        this.context.moveTo(this.width * 3 / 4, this.height / 2);
+        this.context.lineTo(this.width * 7 / 8, this.height * 3 / 4);
         
         this.context.stroke();
     }
