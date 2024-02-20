@@ -11,10 +11,11 @@ import { Eye } from './background/Eye.js';
 import { Star } from './background/Star.js';
 import { CollectablePoint, Level } from './level/Level.js';
 import { LevelGenerator } from './level/LevelGenerator.js';
-import { LevelSettings } from './level/LevelSettings.js';
+import { BackgroundObjectCreationSettings, LevelSettings } from './level/LevelSettings.js';
 import { Snow } from './background/Snow.js';
 import { Player } from './player/Player.js';
 import { Skyscraper } from './background/Skyscraper.js';
+import { LavaFalls } from './background/LavaFalls.js';
 
 class GameManager {
   renderer: CanvasRenderer;
@@ -45,55 +46,65 @@ class GameManager {
     const grasslandsLevelSettings: LevelSettings = new LevelSettings(
       "grasslands",
       new TerrainSettings(400, 5, 1000, 1000, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
-      10,
       "rgb(150, 210, 255)",
       Gravity,
-      (position: Position2D) => new Cloud(position)
+      [
+        new BackgroundObjectCreationSettings((position: Position2D) => new Cloud(position), 10)
+      ]
     );
 
     const tarmacLevelSettings: LevelSettings = new LevelSettings(
       "tarmac",
       new TerrainSettings(300, 5, 1000, 1000, -2000, 0, -20000, 200, 500, 1.0, 0.8, 'rgb(10, 10, 10)', 'rgb(20, 20, 20)'),
-      1/3,
       "rgb(10, 5, 20)",
       Gravity,
-      (position: Position2D) => new Skyscraper(position)
+      [
+        new BackgroundObjectCreationSettings((position: Position2D) => new Star(position), 20),
+        new BackgroundObjectCreationSettings((position: Position2D) => new Skyscraper(position), 1/3)
+      ]
     );
 
     const iceLevelSettings: LevelSettings = new LevelSettings(
       "ice",
       new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0.02, 0.9, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
-      100,
       "rgb(180, 225, 255)",
       Gravity,
-      (position: Position2D) => new Snow(position)
+      [
+        new BackgroundObjectCreationSettings((position: Position2D) => new Cloud(position), 5),
+        new BackgroundObjectCreationSettings((position: Position2D) => new Snow(position), 50)
+      ]
     );
 
     const hellLevelSettings: LevelSettings = new LevelSettings(
       "hell",
       new TerrainSettings(300, 10, 1000, 1000, -2000, 0, -20000, 250, 1000, 0.4, 0, "rgb(75, 25, 25)", "rgb(100, 0, 0)"),
-      10,
       "rgb(45, 0, 0)",
       Gravity,
-      (position: Position2D) => new Eye(position)
+      [
+        new BackgroundObjectCreationSettings((position: Position2D) => new Eye(position), 10),
+        new BackgroundObjectCreationSettings((position: Position2D) => new LavaFalls(position), 1/8)
+      ]
     );
 
     const moonLevelSettings: LevelSettings = new LevelSettings(
       "moon",
       new TerrainSettings(400, 10, 1000, 1000, -2000, 0, -20000, 250, 1000, 0.2, 0.75, "rgb(75, 75, 75)", "rgb(50, 50, 50)"),
-      100,
       "rgb(0, 0, 0)",
       Gravity.multiply(0.2),
-      (position: Position2D) => new Star(position)
+      [
+        new BackgroundObjectCreationSettings((position: Position2D) => new Star(position), 50)
+      ]
     );
 
     const holyMolyLevelSettings: LevelSettings = new LevelSettings(
       "holymoly",
       new TerrainSettings(400, 5, 1000, 1000, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)', true),
-      10,
-      "rgb(150, 210, 255)",
+      "rgb(70, 120, 175)",
       Gravity,
-      (position: Position2D) => new Cloud(position)
+      [
+        new BackgroundObjectCreationSettings((position: Position2D) => new Star(position), 10),
+        new BackgroundObjectCreationSettings((position: Position2D) => new Cloud(position), 10)
+      ]
     );
 
     this.levelSettings = new Map<string, LevelSettings>(

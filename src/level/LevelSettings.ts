@@ -6,26 +6,35 @@ import { Vector2D } from "../utils/Vector2D.js";
 class LevelSettings {
     name: string;
     terrainSettings: TerrainSettings
-    backgroundObjectDensity: number;
     skyColour: string;
     gravity: Vector2D;
-    backgroundObjectCreation: (position: Position2D) => BackgroundObject;
+    backgroundObjectsCreation: Array<BackgroundObjectCreationSettings>;
 
     constructor(
         name: string,
         terrainSettings: TerrainSettings,
-        backgroundObjectDensity: number,
         skyColour: string,
         gravity: Vector2D,
-        backgroundObjectCreation: (position: Position2D) => BackgroundObject
+        backgroundObjectCreation: Array<BackgroundObjectCreationSettings>
     ) {
         this.name = name;
         this.terrainSettings = terrainSettings;
-        this.backgroundObjectDensity = backgroundObjectDensity;
         this.skyColour = skyColour;
         this.gravity = gravity;
-        this.backgroundObjectCreation = backgroundObjectCreation;
+        this.backgroundObjectsCreation = backgroundObjectCreation;
     }
 }
 
 export {LevelSettings}
+
+class BackgroundObjectCreationSettings {
+    create: (position: Position2D) => BackgroundObject;
+    density: number;
+
+    constructor(create: (position: Position2D) => BackgroundObject, density: number) {
+        this.create = create;
+        this.density = density;
+    }
+}
+
+export {BackgroundObjectCreationSettings}
