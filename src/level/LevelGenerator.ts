@@ -51,16 +51,19 @@ class LevelGenerator {
         const backgroundObjects: Array<BackgroundObject> = [];
         const curveCount = levelSettings.terrainSettings.curveCount;
         const segmentWidth = levelSettings.terrainSettings.segmentWidth;
-        const density = levelSettings.backgroundObjectDensity;
-    
-        for (let i = -20 * density; i <= curveCount * density + 20 * density; i++) {
-        //   const xRange: number = Math.random() * 500 - 250;
-          const yRange: number = -Math.random() * 10000 + 1000;
 
-          const position = new Position2D(i * segmentWidth / density, yRange)
-          const backgroundObject = levelSettings.backgroundObjectCreation(position);
-    
-          backgroundObjects.push(backgroundObject);
+        for(let j = 0; j < levelSettings.backgroundObjectsCreation.length; j++) {
+            const density = levelSettings.backgroundObjectsCreation[j].density;
+        
+            for (let i = -20 * density; i <= curveCount * density + 20 * density; i++) {
+                //   const xRange: number = Math.random() * 500 - 250;
+                const yRange: number = -Math.random() * 10000 + 1000;
+
+                const position = new Position2D(i * segmentWidth / density, yRange)
+                const backgroundObject = levelSettings.backgroundObjectsCreation[j].create(position);
+            
+                backgroundObjects.push(backgroundObject);
+            }
         }
     
         return backgroundObjects;

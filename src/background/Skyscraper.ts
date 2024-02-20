@@ -12,7 +12,7 @@ class Skyscraper extends HeightlessBackgroundObject {
     }
 
     drawCanvas(): void {
-        this.canvas.height = 2000;
+        this.canvas.height = 1500;
         this.height = 1500;
         this.context.strokeStyle = "#222222";
         this.context.fillStyle = "#333333"

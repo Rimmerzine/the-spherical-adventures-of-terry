@@ -5,7 +5,6 @@ import { BackgroundObject } from './background/BackgroundObject.js';
 import { DebugSettings } from './Settings.js';
 import { Segment, Terrain } from './terrain/Terrain.js';
 import { CollectablePoint } from './level/Level.js';
-import { HeightlessBackgroundObject } from './background/HeightlessBackgroundObject.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
