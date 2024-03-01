@@ -1,14 +1,14 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 
 abstract class BackgroundObject {
     type: string;
-    position: Position2D;
+    position: Vector;
     width: number;
     height: number;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
 
-    constructor(type: string, position: Position2D, canvasWidth: number, canvasHeight: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
+    constructor(type: string, position: Vector, canvasWidth: number, canvasHeight: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
         this.position = position;
 
         if (collection.length < collectionCount) {

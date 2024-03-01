@@ -1,7 +1,7 @@
 import CanvasRenderer from './CanvasRenderer.js';
 import CollisionDetection from './CollisionDetection.js';
 import {DebugSettings, GameSettings, Gravity} from './Settings.js';
-import {Position2D} from './utils/Position2D.js';
+import {Vector} from './utils/Vector.js';
 import InputManager from './InputManager.js';
 import TerrainSettings from './terrain/TerrainSettings.js';
 import {Cloud} from './background/Cloud.js';
@@ -47,9 +47,9 @@ class GameManager {
       "grasslands",
       new TerrainSettings(400, 5, 1000, 1000, -2000, 0, -20000, 150, 800, 0.4, 0.6, 'rgb(0, 130, 0)', 'rgb(100, 50, 0)'),
       "rgb(150, 210, 255)",
-      Gravity,
+      Gravity.multiply(1),
       [
-        new BackgroundObjectCreationSettings((position: Position2D) => new Cloud(position), 10)
+        new BackgroundObjectCreationSettings((position: Vector) => new Cloud(position), 10)
       ]
     );
 
@@ -59,8 +59,8 @@ class GameManager {
       "rgb(10, 5, 20)",
       Gravity,
       [
-        new BackgroundObjectCreationSettings((position: Position2D) => new Star(position), 20),
-        new BackgroundObjectCreationSettings((position: Position2D) => new Skyscraper(position), 1/3)
+        new BackgroundObjectCreationSettings((position: Vector) => new Star(position), 20),
+        new BackgroundObjectCreationSettings((position: Vector) => new Skyscraper(position), 1/3)
       ]
     );
 
@@ -70,8 +70,8 @@ class GameManager {
       "rgb(180, 225, 255)",
       Gravity,
       [
-        new BackgroundObjectCreationSettings((position: Position2D) => new Cloud(position), 5),
-        new BackgroundObjectCreationSettings((position: Position2D) => new Snow(position), 50)
+        new BackgroundObjectCreationSettings((position: Vector) => new Cloud(position), 5),
+        new BackgroundObjectCreationSettings((position: Vector) => new Snow(position), 50)
       ]
     );
 
@@ -81,8 +81,8 @@ class GameManager {
       "rgb(45, 0, 0)",
       Gravity,
       [
-        new BackgroundObjectCreationSettings((position: Position2D) => new Eye(position), 10),
-        new BackgroundObjectCreationSettings((position: Position2D) => new LavaFalls(position), 1/8)
+        new BackgroundObjectCreationSettings((position: Vector) => new Eye(position), 10),
+        new BackgroundObjectCreationSettings((position: Vector) => new LavaFalls(position), 1/8)
       ]
     );
 
@@ -92,7 +92,7 @@ class GameManager {
       "rgb(0, 0, 0)",
       Gravity.multiply(0.2),
       [
-        new BackgroundObjectCreationSettings((position: Position2D) => new Star(position), 50)
+        new BackgroundObjectCreationSettings((position: Vector) => new Star(position), 50)
       ]
     );
 
@@ -102,8 +102,8 @@ class GameManager {
       "rgb(70, 120, 175)",
       Gravity,
       [
-        new BackgroundObjectCreationSettings((position: Position2D) => new Star(position), 10),
-        new BackgroundObjectCreationSettings((position: Position2D) => new Cloud(position), 10)
+        new BackgroundObjectCreationSettings((position: Vector) => new Star(position), 10),
+        new BackgroundObjectCreationSettings((position: Vector) => new Cloud(position), 10)
       ]
     );
 
@@ -143,12 +143,18 @@ class GameManager {
     const deltaTime: number = Math.min(1 / 30, (currentTime - this.lastTime) / 1000); // convert to seconds
     this.lastTime = currentTime;
 
-    if (this.inputManager.isLeftPressed()) this.player.ball.pushLeft(deltaTime);
-    if (this.inputManager.isRightPressed()) this.player.ball.pushRight(deltaTime);
-    if (this.inputManager.isJumpPressed()) this.player.ball.jump();
+    if (this.inputManager.isLeftPressed()) {
+      this.player.ball.pushLeft(deltaTime);
+    }
+    if (this.inputManager.isRightPressed()) {
+      this.player.ball.pushRight(deltaTime);
+    }
+    if (this.inputManager.isJumpPressed()) {
+      this.player.ball.jump();
+    }
 
     this.player.ball.update(this.currentLevel.gravity, deltaTime);
-    this.collisionDetection.ballFloorCollision(this.player.ball, this.currentLevel, deltaTime);
+    this.collisionDetection.detectBallFloorCollision(this.player.ball, this.currentLevel, deltaTime);
     this.player.ball.move(deltaTime);
 
     this.currentLevel.collectables.forEach(collectable => {

@@ -1,16 +1,16 @@
 import Ball from "../ball/Ball.js";
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 
 class Player {
     ball: Ball;
-    levelPointsCollected: Map<string, Array<Position2D>>;
+    levelPointsCollected: Map<string, Array<Vector>>;
 
-    constructor() {
-        this.ball = new Ball();
+    constructor(startingX: number = 0) {
+        this.ball = new Ball(startingX);
         this.levelPointsCollected = new Map();
     }
 
-    collectPoint(level: string, point: Position2D) {
+    collectPoint(level: string, point: Vector) {
         if(this.levelPointsCollected.has(level)) {
             this.levelPointsCollected.get(level).push(point);
         } else {

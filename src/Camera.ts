@@ -1,4 +1,5 @@
-import {Position2D, PositionedObject} from "./utils/Position2D.js";
+import { PositionedObject } from "./ball/Ball.js";
+import {Vector} from "./utils/Vector.js";
 
 class Camera {
   attachedObject: PositionedObject;
@@ -11,7 +12,7 @@ class Camera {
     this.attachedObject = positionObject;
   }
 
-  getPosition(): Position2D {
+  getPosition(): Vector {
     return this.attachedObject.position;
   }
 

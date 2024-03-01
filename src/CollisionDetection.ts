@@ -1,208 +1,77 @@
 import {DebugSettings} from './Settings.js';
-import {Vector2D} from './utils/Vector2D.js';
-import {Position2D} from './utils/Position2D.js';
+import {Vector} from './utils/Vector.js';
 import Ball from './ball/Ball.js';
 import { playerStats } from './player/PlayerStats.js';
-import { Terrain } from './terrain/Terrain.js';
+import { Segment, Terrain } from './terrain/Terrain.js';
 import { Level } from './level/Level.js';
 
 class CollisionDetection {
   constructor() {}
 
-  // Reflect the ball's velocity based on the given reflection vector
-  reflect(
-    ball: Ball,
-    surfaceGripCoefficient: number,
-    surfaceElasticity: number,
-    reflectionVector: Vector2D
-  ) {
-    const {perpendicular} = calculateParallelAndPerpendicular(
-      reflectionVector,
-      ball.attributes.velocity
+  detectBallFloorCollision(ball: Ball, level: Level, deltaTime: number): void {
+    const ballNextPosition = ball.getNextPosition(deltaTime);
+
+    const collidableFloorSegments: Array<Segment> = level.terrain.segments.filter(
+      floor => {
+        const floorX: number = floor.position.x;
+        const segmentWidth: number = level.terrain.settings.segmentWidth;
+        return floorX >= ballNextPosition.x - segmentWidth && floorX <= ballNextPosition.x + segmentWidth
+      }
     );
-    const circumferance = 2 * Math.PI * ball.attributes.radius;
-    const potentialMovement =
-      (circumferance * ball.attributes.rotationsPerSecond +
-        Math.sign(perpendicular.x) * perpendicular.distance()) /
-      2;
-    const movementGain =
-      potentialMovement - Math.sign(perpendicular.x) * perpendicular.distance();
 
-    const gripFactor = (surfaceGripCoefficient + surfaceGripCoefficient + ball.skills.getSkill("grip").currentValue) / 3;
+    DebugSettings.collisionFloors = collidableFloorSegments;
 
-    ball.attributes.rotationsPerSecond +=
-      (potentialMovement / circumferance - ball.attributes.rotationsPerSecond) *
-      gripFactor;
+    let closestPointFinal;
 
-    const perpendicularFaceVectorAddition = reflectionVector
-      .normalize()
-      .perpendicularDirection()
-      .multiply(movementGain)
-      .multiply(gripFactor);
-
-    DebugSettings.perpendicularFaceVectorAddition =
-      perpendicularFaceVectorAddition;
-
-    const dotProduct = ball.attributes.velocity.dotProduct(reflectionVector);
-    const bounceFactor = (0.5 + ((surfaceElasticity + (1 - ball.skills.getSkill("shock-absorber").currentValue) + (1 - ball.skills.getSkill("shock-absorber").currentValue)) / 3) / 2)
-
-    const reflection = new Vector2D(
-      reflectionVector.x * dotProduct * 2 * bounceFactor,
-      reflectionVector.y * -Math.abs(dotProduct) * 2 * bounceFactor
-    );
-    if (DebugSettings.drawReflectionVector) {
-      DebugSettings.reflectionVector = new Vector2D(reflection.x, reflection.y);
+    for(let i = 0; i < collidableFloorSegments.length; i++) {
+     const closestPoint: Vector = collidableFloorSegments[i].closestPointTo(ballNextPosition);
+     if(!DebugSettings.closestPoint || ball.position.subtract(closestPoint).magnitude() < ball.position.subtract(DebugSettings.closestPoint).magnitude()) {
+       DebugSettings.closestPoint = closestPoint;
+     }
+     const closestPointSize = ballNextPosition.subtract(closestPoint).magnitude()
+      if(closestPointSize <= ball.attributes.radius) {
+        if(!closestPointFinal || ballNextPosition.subtract(closestPointFinal).magnitude() > closestPointSize) {
+          closestPointFinal = closestPoint;
+        }
+      }
     }
 
-    const velocityChange = ball.attributes.velocity
-      .add(perpendicularFaceVectorAddition)
-      .subtract(reflection);
-    ball.attributes.velocity = velocityChange;
+    if(closestPointFinal) {
+      this.resolveBallPointCollision(ball, closestPointFinal, level, deltaTime);
+    }
+  }
 
+  resolveBallPointCollision(ball: Ball, point: Vector, level: Level, deltaTime: number): void {
+    const reflectionVector: Vector = ball.getNextPosition(deltaTime).subtract(point).unit();
+    
+    DebugSettings.normalisedDisplacementVector = reflectionVector;
+
+    ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime));
+
+    const surfaceGrip = level.terrain.settings.surfaceGripCoefficient;
+    const gripFactor = (surfaceGrip + surfaceGrip + ball.skills.getSkill("grip").currentValue) / 3;
+
+    const surfaceElasticity = level.terrain.settings.surfaceElasticity;
+    const bounceFactor = (0.5 + ((surfaceElasticity + (1 - ball.skills.getSkill("shock-absorber").currentValue) + (1 - ball.skills.getSkill("shock-absorber").currentValue)) / 3) / 2)
+
+    this.resolveImpactAndRotation(ball, reflectionVector, bounceFactor, gripFactor);
+    
     ball.jumpsRemaining = ball.skills.getSkill('jumps').currentValue;
   }
 
-  ballFloorCollision(
-    ball: Ball,
-    level: Level,
-    deltaTime: number
-  ) {
+  resolveImpactAndRotation(ball: Ball, reflectionUnitVector: Vector, elasticity: number, grip: number): void {
+    const seperatingVelocity = Vector.dot(ball.attributes.velocity, reflectionUnitVector);
+    const seperatingVelocityTotal = seperatingVelocity * 2 * elasticity;
+    const perpendicular = ball.attributes.velocity.subtract(reflectionUnitVector.multiply(Vector.dot(reflectionUnitVector, ball.attributes.velocity)));
+    const ballCircumference = ball.attributes.radius * Math.PI * 2;
+    const potentialMovement = (ballCircumference * ball.attributes.rotationsPerSecond + Math.sign(perpendicular.x) * perpendicular.magnitude()) / 2;
+    const movementGain = potentialMovement - Math.sign(perpendicular.x) * perpendicular.magnitude();
+    const perpendicularFaceVectorAddition = reflectionUnitVector.normal().multiply(movementGain).multiply(grip);
 
-    const terrain: Terrain = level.terrain;
-    const ballNextPosition = ball.getNextPosition(deltaTime);
-    
-    const collidableFloor = terrain.segments.map(segment => segment.position).filter(
-      floor => {
-        const floorX: number = floor.x;
-        const segmentWidth: number = terrain.settings.segmentWidth;
-        return floorX >= ballNextPosition.x - segmentWidth * 4 && floorX <= ballNextPosition.x + segmentWidth * 4
-      }
-    );
-
-    DebugSettings.collisionFloors = collidableFloor;
-
-    const numPositions = Math.ceil(240 / (1 / deltaTime));
-    const interPositions = [];
-
-    for (let i = 0; i <= 1; i += 1 / numPositions) {
-      interPositions.push(
-        ball.position.add(
-          ball.attributes.velocity.multiply(deltaTime).multiply(i)
-        )
-      );
-    }
-
-    for (let i = 0; i < interPositions.length; i++) {
-      const interPosition = interPositions[i];
-
-      // get the closest point to the ball on the floor
-      const position = findClosestPoint(collidableFloor, interPosition, terrain.settings.segmentWidth);
-      const currentPositionDistance = calculateDistance(ball.position, position);
-
-      if (DebugSettings.drawClosestCollisionPoint) {
-        DebugSettings.closestPoint = position;
-      }
-
-      const distance = calculateDistance(interPosition, position);
-      if (distance <= ball.attributes.radius && distance < currentPositionDistance) {
-        
-        const gravityReductionScale = new Vector2D(Math.abs(position.x - ball.position.x), Math.abs(position.y - ball.position.y)).normalize().y ** 3;
-        ball.attributes.velocity = ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime).multiply(gravityReductionScale));
-
-        const normalisedDisplacementVector = new Vector2D(
-          interPosition.x - position.x,
-          interPosition.y - position.y
-        ).normalize();
-
-        if (DebugSettings.drawNormalisedDisplacementVector) {
-          DebugSettings.normalisedDisplacementVector =
-            normalisedDisplacementVector;
-        }
-
-        this.reflect(
-          ball,
-          terrain.settings.surfaceGripCoefficient,
-          terrain.settings.surfaceElasticity,
-          normalisedDisplacementVector
-        );
-
-        playerStats.updateCollided(ball);
-
-        break;
-      }
-    }
+    ball.attributes.velocity = ball.attributes.velocity.add(reflectionUnitVector.multiply(-seperatingVelocityTotal)).add(perpendicularFaceVectorAddition);
+    ball.attributes.rotationsPerSecond += (potentialMovement / ballCircumference - ball.attributes.rotationsPerSecond) * grip;
   }
+
 }
 
 export default CollisionDetection;
-
-function calculateParallelAndPerpendicular(a: Vector2D, b: Vector2D) {
-  // Step 1: Calculate the unit vector of "a"
-  const magnitudeA = a.magnitude();
-  const uA = new Vector2D(a.x / magnitudeA, a.y / magnitudeA);
-
-  // Step 2: Calculate the dot product between "uA" and "b"
-  const dotProduct = uA.dotProduct(b);
-
-  // Step 3: Calculate the parallel vector
-  const parallelB = uA.multiply(dotProduct);
-
-  // Step 4: Calculate the perpendicular vector
-  const perpendicularB = b.subtract(parallelB);
-
-  return {parallel: parallelB, perpendicular: perpendicularB};
-}
-
-function calculateDistance(pointOne: Position2D, pointTwo: Position2D) {
-  if (pointOne === null || pointTwo === null) return Infinity;
-  const dx = pointTwo.x - pointOne.x;
-  const dy = pointTwo.y - pointOne.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  return distance;
-}
-
-function findClosestPoint(floor: Array<Position2D>, givenPoint: Position2D, segmentWidth: number) {
-  let point = null;
-
-  for (let i = 1; i < floor.length - 1; i++) {
-    const initialFloor = floor[i];
-    const previousFloor = floor[i - 1];
-    const nextFloor = floor[i + 1];
-
-    const sx = (previousFloor.x + initialFloor.x) / 2;
-    const sy = (previousFloor.y + initialFloor.y) / 2;
-    const cpx = initialFloor.x;
-    const cpy = initialFloor.y;
-    const x = (initialFloor.x + nextFloor.x) / 2;
-    const y = (initialFloor.y + nextFloor.y) / 2;
-
-    for (let j = 0.0; j <= 1.0; j += 1 / segmentWidth) {
-      const newPoint = getQuadraticCurvePoint(sx, sy, cpx, cpy, x, y, j);
-      if (calculateDistance(newPoint, givenPoint) < calculateDistance(point, givenPoint)) {
-        point = newPoint;
-      }
-    }
-  }
-
-  return point;
-}
-
-function _getQBezierValue(t: number, p1: number, p2: number, p3: number) {
-  const iT = 1 - t;
-  return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
-}
-
-function getQuadraticCurvePoint(
-  startX: number,
-  startY: number,
-  cpX: number,
-  cpY: number,
-  endX: number,
-  endY: number,
-  position: number
-) {
-  return new Position2D(
-    _getQBezierValue(position, startX, cpX, endX),
-    _getQBezierValue(position, startY, cpY, endY)
-  );
-}

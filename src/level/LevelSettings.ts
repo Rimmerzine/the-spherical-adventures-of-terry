@@ -1,20 +1,19 @@
 import { BackgroundObject } from "../background/BackgroundObject.js";
 import TerrainSettings from "../terrain/TerrainSettings.js";
-import { Position2D } from "../utils/Position2D.js";
-import { Vector2D } from "../utils/Vector2D.js";
+import { Vector } from "../utils/Vector.js";
 
 class LevelSettings {
     name: string;
     terrainSettings: TerrainSettings
     skyColour: string;
-    gravity: Vector2D;
+    gravity: Vector;
     backgroundObjectsCreation: Array<BackgroundObjectCreationSettings>;
 
     constructor(
         name: string,
         terrainSettings: TerrainSettings,
         skyColour: string,
-        gravity: Vector2D,
+        gravity: Vector,
         backgroundObjectCreation: Array<BackgroundObjectCreationSettings>
     ) {
         this.name = name;
@@ -28,10 +27,10 @@ class LevelSettings {
 export {LevelSettings}
 
 class BackgroundObjectCreationSettings {
-    create: (position: Position2D) => BackgroundObject;
+    create: (position: Vector) => BackgroundObject;
     density: number;
 
-    constructor(create: (position: Position2D) => BackgroundObject, density: number) {
+    constructor(create: (position: Vector) => BackgroundObject, density: number) {
         this.create = create;
         this.density = density;
     }

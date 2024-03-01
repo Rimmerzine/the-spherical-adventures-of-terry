@@ -66,8 +66,8 @@ class PlayerStats {
         this.updateStat("furthest-distance-reached", this.furthestDistanceReached);
     }
 
-    if(this.fastestSpeedAchieved < ball.attributes.velocity.distance()) {
-        this.fastestSpeedAchieved = ball.attributes.velocity.distance();
+    if(this.fastestSpeedAchieved < ball.attributes.velocity.magnitude()) {
+        this.fastestSpeedAchieved = ball.attributes.velocity.magnitude();
         this.updateStat("fastest-speed-achieved", this.fastestSpeedAchieved / 200)
     }
   }

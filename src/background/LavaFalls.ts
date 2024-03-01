@@ -1,11 +1,11 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { HeightlessBackgroundObject } from "./HeightlessBackgroundObject.js";
 
 class LavaFalls extends HeightlessBackgroundObject {
     static collectionCount: number = 100;
     static collection: Array<HTMLCanvasElement> = [];
 
-    constructor(position: Position2D) {
+    constructor(position: Vector) {
         const randomXFloat: number = Math.random() * 2000 - 2000;
         super(position.x + randomXFloat, 100, LavaFalls.collection, LavaFalls.collectionCount);
     }
