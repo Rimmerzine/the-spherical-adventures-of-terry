@@ -1,11 +1,11 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
 
 class Cloud extends BoundedBackgroundObject {
   static collectionCount: number = 100;
   static collection: Array<HTMLCanvasElement> = [];
 
-  constructor(position: Position2D) {
+  constructor(position: Vector) {
     super(position, 700, 500, Cloud.collection, Cloud.collectionCount);
   }
 
@@ -14,7 +14,7 @@ class Cloud extends BoundedBackgroundObject {
 
     for (let j = 0; j <= 15; j++) {
       const cloudParticle = new CloudParticle(
-        new Position2D(
+        new Vector(
           Math.random() * 500 - 250,
           Math.random() * 300 - 150
         ),
@@ -28,11 +28,11 @@ class Cloud extends BoundedBackgroundObject {
 }
 
 class CloudParticle {
-  position: Position2D;
+  position: Vector;
   radius: number;
   context: CanvasRenderingContext2D;
 
-  constructor(position: Position2D, radius: number, context: CanvasRenderingContext2D) {
+  constructor(position: Vector, radius: number, context: CanvasRenderingContext2D) {
     this.position = position;
     this.radius = radius;
     this.context = context;

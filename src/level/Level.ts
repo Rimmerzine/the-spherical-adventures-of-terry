@@ -1,8 +1,7 @@
 import CanvasRenderer from "../CanvasRenderer.js";
 import { Terrain } from "../terrain/Terrain.js";
 import { BackgroundObject } from "../background/BackgroundObject.js";
-import { Vector2D } from "../utils/Vector2D.js";
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 
 class Level {
     name: string;
@@ -10,9 +9,9 @@ class Level {
     backgroundObjects: Array<BackgroundObject>;
     collectables: Array<CollectablePoint>;
     skyColour: string;
-    gravity: Vector2D;
+    gravity: Vector;
 
-    constructor(name: string, terrain: Terrain, backgroundObjects: Array<BackgroundObject>, collectables: Array<CollectablePoint>, skyColour: string, gravity: Vector2D) {
+    constructor(name: string, terrain: Terrain, backgroundObjects: Array<BackgroundObject>, collectables: Array<CollectablePoint>, skyColour: string, gravity: Vector) {
         this.name = name;
         this.terrain = terrain;
         this.backgroundObjects = backgroundObjects;
@@ -32,13 +31,13 @@ class Level {
 export {Level, CollectablePoint};
 
 class CollectablePoint {
-    position: Position2D;
+    position: Vector;
     collected: boolean;
     static canvas: HTMLCanvasElement;
     static collectedCanvas: HTMLCanvasElement;
     static size: number;
 
-    constructor(position: Position2D, collected: boolean) {
+    constructor(position: Vector, collected: boolean) {
         this.position = position;
         this.collected = collected;
 

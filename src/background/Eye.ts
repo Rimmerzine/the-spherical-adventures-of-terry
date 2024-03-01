@@ -1,11 +1,11 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
 
 class Eye extends BoundedBackgroundObject {
     static collectionCount: number = 100;
     static collection: Array<HTMLCanvasElement> = [];
 
-    constructor(position: Position2D) {
+    constructor(position: Vector) {
         super(position, 200, Math.random() * 100 + 100, Eye.collection, Eye.collectionCount);
     }
 

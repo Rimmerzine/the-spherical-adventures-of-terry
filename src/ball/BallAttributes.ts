@@ -1,29 +1,24 @@
-import {Position2D} from '../utils/Position2D.js';
-import {Vector2D} from '../utils/Vector2D.js';
+import {Vector} from '../utils/Vector.js';
 
 class BallAttributes {
-  startingPosition: Position2D;
+  startingPosition: Vector;
   radius: number;
   colour: string;
-  velocity: Vector2D = new Vector2D(0, 0);
-  jumpVelocity: Vector2D;
+  velocity: Vector = new Vector(0, 0);
+  jumpVelocity: Vector;
   rotation = 0;
   rotationsPerSecond = 0;
 
   constructor(
-    position: Position2D,
+    position: Vector,
     radius: number,
     colour: string,
-    jumpVelocity: Vector2D
+    jumpVelocity: Vector
   ) {
     this.startingPosition = position;
     this.radius = radius;
     this.colour = colour;
-
-    this.velocity = new Vector2D(0, 0);
     this.jumpVelocity = jumpVelocity;
-    this.rotation = 0;
-    this.rotationsPerSecond = 0;
   }
 }
 

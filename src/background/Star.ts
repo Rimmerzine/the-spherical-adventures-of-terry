@@ -1,11 +1,11 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
 
 class Star extends BoundedBackgroundObject {
     static collectionCount: number = 100;
     static collection: Array<HTMLCanvasElement> = [];
 
-    constructor(position: Position2D) {
+    constructor(position: Vector) {
         const randomSize: number = Math.random() * 20 + 5;
         super(position, randomSize, randomSize, Star.collection, Star.collectionCount);
     }

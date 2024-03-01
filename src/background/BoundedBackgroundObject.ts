@@ -1,8 +1,8 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { BackgroundObject } from "./BackgroundObject.js";
 
 abstract class BoundedBackgroundObject extends BackgroundObject {
-    constructor(position: Position2D, width: number, height: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
+    constructor(position: Vector, width: number, height: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
         super("bounded", position, width, height, collection, collectionCount);
     }
 

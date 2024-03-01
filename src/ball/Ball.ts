@@ -1,27 +1,30 @@
 import {BallAttributes} from './BallAttributes.js';
 import {BallSkills} from './BallSkills.js';
 import {playerStats} from '../player/PlayerStats.js';
-import {Position2D, PositionedObject} from '../utils/Position2D.js';
-import {Vector2D, addVectors} from '../utils/Vector2D.js';
+import {Vector} from '../utils/Vector.js';
+
+interface PositionedObject {
+  position: Vector;
+}
 
 class Ball implements PositionedObject {
   attributes: BallAttributes;
   skills: BallSkills;
   jumpsRemaining: number;
-  position: Position2D;
+  position: Vector;
 
-  constructor() {
+  constructor(startingX: number = 0) {
     const ballRadius: number = 100;
     
-    this.attributes = new BallAttributes(new Position2D(0, -ballRadius), ballRadius, 'yellow', new Vector2D(0, -800));
+    this.attributes = new BallAttributes(new Vector(startingX, -ballRadius), ballRadius, 'yellow', new Vector(0, -800));
     this.position = this.attributes.startingPosition;
     this.skills = new BallSkills();
     this.jumpsRemaining = this.skills.getSkill('jumps').currentValue;
   }
 
-  draw(context: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): void {
-    const drawPositionX: number = canvasWidth / 2;
-    const drawPositionY: number = canvasHeight / 2;
+  draw(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
+    const drawPositionX: number = this.position.x - offsetX;
+    const drawPositionY: number = this.position.y - offsetY;
 
     const ballRadius: number = this.attributes.radius;
     const scale = 0.8 * ballRadius;
@@ -103,13 +106,13 @@ class Ball implements PositionedObject {
     this.attributes.rotationsPerSecond = 0;
   }
   
-  update(gravityForce: Vector2D, deltaTime: number): void {
+  update(gravityForce: Vector, deltaTime: number): void {
     this.applyGravity(gravityForce.multiply(deltaTime));
     this.updateRotation(deltaTime);
     this.handleStartingPositionCollision(deltaTime);
   }
-  applyGravity(gravityForce: Vector2D): void {
-    this.attributes.velocity = addVectors(this.attributes.velocity, gravityForce);
+  applyGravity(gravityForce: Vector): void {
+    this.attributes.velocity = this.attributes.velocity.add(gravityForce);
   }
   updateRotation(deltaTime: number): void {
     const rotationDelta = this.attributes.rotationsPerSecond * 360 * deltaTime;
@@ -122,7 +125,7 @@ class Ball implements PositionedObject {
     if (collided) {
       this.attributes.velocity.x = 0;
       this.attributes.velocity.y = 0;
-      this.attributes.rotationsPerSecond = 0;
+      // this.attributes.rotationsPerSecond = 0;
       this.position.x = this.attributes.startingPosition.x + 1;
     }
   }
@@ -154,9 +157,11 @@ class Ball implements PositionedObject {
     }
   }
 
-  getNextPosition(deltaTime: number): Position2D {
+  getNextPosition(deltaTime: number): Vector {
     return this.position.add(this.attributes.velocity.multiply(deltaTime));
   }
 }
 
 export default Ball;
+
+export {PositionedObject}

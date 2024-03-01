@@ -1,9 +1,9 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { BackgroundObject } from "./BackgroundObject.js";
 
 abstract class HeightlessBackgroundObject extends BackgroundObject {
     constructor(xPosition: number, width: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
-        super("heightless", new Position2D(xPosition, 0), width, 0, collection, collectionCount);
+        super("heightless", new Vector(xPosition, 0), width, 0, collection, collectionCount);
     }
 
     draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {

@@ -1,11 +1,11 @@
-import { Position2D } from "../utils/Position2D.js";
+import { Vector } from "../utils/Vector.js";
 import { HeightlessBackgroundObject } from "./HeightlessBackgroundObject.js";
 
 class Skyscraper extends HeightlessBackgroundObject {
     static collectionCount: number = 100;
     static collection: Array<HTMLCanvasElement> = [];
 
-    constructor(position: Position2D) {
+    constructor(position: Vector) {
         const randWidth: number = Math.random() * 400 + 500;
         const randomXFloat: number = Math.random() * 300 - 300;
         super(position.x + randomXFloat, randWidth, Skyscraper.collection, Skyscraper.collectionCount);

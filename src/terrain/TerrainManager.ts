@@ -1,5 +1,5 @@
-import {Position2D} from '../utils/Position2D.js';
-import { Segment, Terrain } from './Terrain.js';
+import {Vector} from '../utils/Vector.js';
+import { Terrain } from './Terrain.js';
 import TerrainSettings from './TerrainSettings.js';
 
 class TerrainManager {
@@ -9,18 +9,18 @@ class TerrainManager {
     const terrain: Terrain = new Terrain(terrainSettings)
 
     for(let i = 20; i > 0; i--) {
-      terrain.addSegment(new Position2D(-terrainSettings.segmentWidth * i, 0))
+      terrain.addSegment(new Vector(-terrainSettings.segmentWidth * i, 0))
     }
 
     for(let i = 0; i < terrainSettings.flatCount; i++) {
-      terrain.addSegment(new Position2D(terrainSettings.segmentWidth * i, 0))
+      terrain.addSegment(new Vector(terrainSettings.segmentWidth * i, 0));
     }
 
-    let lastPosition: Position2D = terrain.segments.slice(-1)[0].position || new Position2D(0, 0);
+    let lastPosition: Vector = terrain.segments.slice(-1)[0].position || new Vector(0, 0);
 
     for(let i = 0; i < terrainSettings.curveCount; i++) {
       const nextHeight: number = this.calculateNextHeight(terrainSettings, i, lastPosition.y)
-      const nextPosition: Position2D = this.calculateNextPosition(terrainSettings.segmentWidth, lastPosition, nextHeight)
+      const nextPosition: Vector = this.calculateNextPosition(terrainSettings.segmentWidth, lastPosition, nextHeight)
       terrain.addSegment(nextPosition)
       lastPosition = nextPosition
     }
@@ -66,10 +66,10 @@ class TerrainManager {
     return targetHeight;
   }
 
-  calculateNextPosition(segmentWidth: number, lastPosition: Position2D, newHeight: number) {
+  calculateNextPosition(segmentWidth: number, lastPosition: Vector, newHeight: number) {
     lastPosition =
-      lastPosition || new Position2D(0, 0);
-    return new Position2D(
+      lastPosition || new Vector(0, 0);
+    return new Vector(
       lastPosition.x + segmentWidth,
       newHeight
     );
