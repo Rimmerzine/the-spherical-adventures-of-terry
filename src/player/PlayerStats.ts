@@ -1,4 +1,4 @@
-import Ball from "../ball/Ball.js";
+import {Ball} from "../ball/Ball.js";
 
 class PlayerStats {
   furthestDistanceReached: number = 0;

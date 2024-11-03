@@ -1,6 +1,6 @@
 import {Vector} from '../utils/Vector.js';
-import { Terrain } from './Terrain.js';
-import TerrainSettings from './TerrainSettings.js';
+import {Terrain} from './Terrain.js';
+import {TerrainSettings} from './TerrainSettings.js';
 
 class TerrainManager {
   constructor() {}
@@ -76,4 +76,4 @@ class TerrainManager {
   }
 }
 
-export default TerrainManager;
+export {TerrainManager};

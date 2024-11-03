@@ -107,6 +107,7 @@ class Ball implements PositionedObject {
   }
   
   update(gravityForce: Vector, deltaTime: number): void {
+    this.attributes.remainingMovement = 1.0;
     this.applyGravity(gravityForce.multiply(deltaTime));
     this.updateRotation(deltaTime);
     this.handleStartingPositionCollision(deltaTime);
@@ -131,7 +132,7 @@ class Ball implements PositionedObject {
   }
   move(deltaTime: number): void {
     this.position = this.position.add(
-      this.attributes.velocity.multiply(deltaTime)
+      this.attributes.velocity.multiply(this.attributes.remainingMovement).multiply(deltaTime)
     );
   }
   pushLeft(deltaTime: number): void {
@@ -162,6 +163,6 @@ class Ball implements PositionedObject {
   }
 }
 
-export default Ball;
+export {Ball};
 
 export {PositionedObject}

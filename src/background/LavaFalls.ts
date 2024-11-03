@@ -1,5 +1,5 @@
-import { Vector } from "../utils/Vector.js";
-import { HeightlessBackgroundObject } from "./HeightlessBackgroundObject.js";
+import {Vector} from "../utils/Vector.js";
+import {HeightlessBackgroundObject} from "./HeightlessBackgroundObject.js";
 
 class LavaFalls extends HeightlessBackgroundObject {
     static collectionCount: number = 100;

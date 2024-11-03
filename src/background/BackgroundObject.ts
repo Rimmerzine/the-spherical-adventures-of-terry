@@ -1,4 +1,4 @@
-import { Vector } from "../utils/Vector.js";
+import {Vector} from "../utils/Vector.js";
 
 abstract class BackgroundObject {
     type: string;

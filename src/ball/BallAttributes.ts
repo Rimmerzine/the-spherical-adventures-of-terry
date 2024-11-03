@@ -5,6 +5,7 @@ class BallAttributes {
   radius: number;
   colour: string;
   velocity: Vector = new Vector(0, 0);
+  remainingMovement: number = 1.0;
   jumpVelocity: Vector;
   rotation = 0;
   rotationsPerSecond = 0;

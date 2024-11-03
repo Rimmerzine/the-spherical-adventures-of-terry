@@ -1,21 +1,21 @@
-import CanvasRenderer from './CanvasRenderer.js';
-import CollisionDetection from './CollisionDetection.js';
+import {CanvasRenderer} from './CanvasRenderer.js';
+import {CollisionDetection} from './CollisionDetection.js';
 import {DebugSettings, GameSettings, Gravity} from './Settings.js';
 import {Vector} from './utils/Vector.js';
-import InputManager from './InputManager.js';
-import TerrainSettings from './terrain/TerrainSettings.js';
+import {InputManager} from './InputManager.js';
+import {TerrainSettings} from './terrain/TerrainSettings.js';
 import {Cloud} from './background/Cloud.js';
 import {Camera} from './Camera.js';
-import { playerStats } from './player/PlayerStats.js';
-import { Eye } from './background/Eye.js';
-import { Star } from './background/Star.js';
-import { CollectablePoint, Level } from './level/Level.js';
-import { LevelGenerator } from './level/LevelGenerator.js';
-import { BackgroundObjectCreationSettings, LevelSettings } from './level/LevelSettings.js';
-import { Snow } from './background/Snow.js';
-import { Player } from './player/Player.js';
-import { Skyscraper } from './background/Skyscraper.js';
-import { LavaFalls } from './background/LavaFalls.js';
+import {playerStats} from './player/PlayerStats.js';
+import {Eye} from './background/Eye.js';
+import {Star} from './background/Star.js';
+import {CollectablePoint, Level} from './level/Level.js';
+import {LevelGenerator} from './level/LevelGenerator.js';
+import {BackgroundObjectCreationSettings, LevelSettings} from './level/LevelSettings.js';
+import {Snow} from './background/Snow.js';
+import {Player} from './player/Player.js';
+import {Skyscraper} from './background/Skyscraper.js';
+import {LavaFalls} from './background/LavaFalls.js';
 
 class GameManager {
   renderer: CanvasRenderer;
@@ -118,7 +118,7 @@ class GameManager {
       ]
     );
 
-    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("grasslands"));
+    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("tarmac"));
   }
 
   resetLevel(level: string) {
@@ -156,7 +156,7 @@ class GameManager {
     this.player.ball.update(this.currentLevel.gravity, deltaTime);
     this.collisionDetection.detectBallFloorCollision(this.player.ball, this.currentLevel, deltaTime);
     this.player.ball.move(deltaTime);
-
+    
     this.currentLevel.collectables.forEach(collectable => {
       const diffXSquared = (this.player.ball.position.x - collectable.position.x) ** 2;
       const diffYSquared = (this.player.ball.position.y - collectable.position.y) ** 2;

@@ -1,4 +1,4 @@
-import { PositionedObject } from "./ball/Ball.js";
+import {PositionedObject} from "./ball/Ball.js";
 import {Vector} from "./utils/Vector.js";
 
 class Camera {
