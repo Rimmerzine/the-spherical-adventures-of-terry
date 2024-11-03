@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "http-server": "^14.1.1",
+    "live-server": "1.2.2",
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "start": "http-server -c-1 -p 5407"
+    "start": "live-server --port=5407"
   }
 }

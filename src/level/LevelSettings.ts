@@ -1,6 +1,6 @@
-import { BackgroundObject } from "../background/BackgroundObject.js";
-import TerrainSettings from "../terrain/TerrainSettings.js";
-import { Vector } from "../utils/Vector.js";
+import {BackgroundObject} from "../background/BackgroundObject.js";
+import {TerrainSettings} from "../terrain/TerrainSettings.js";
+import {Vector} from "../utils/Vector.js";
 
 class LevelSettings {
     name: string;

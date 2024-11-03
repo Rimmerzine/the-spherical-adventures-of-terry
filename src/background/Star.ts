@@ -1,5 +1,5 @@
-import { Vector } from "../utils/Vector.js";
-import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
+import {Vector} from "../utils/Vector.js";
+import {BoundedBackgroundObject} from "./BoundedBackgroundObject.js";
 
 class Star extends BoundedBackgroundObject {
     static collectionCount: number = 100;

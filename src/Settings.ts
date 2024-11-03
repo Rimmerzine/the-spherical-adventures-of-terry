@@ -1,4 +1,4 @@
-import { Segment } from './terrain/Terrain.js';
+import {Segment} from './terrain/Terrain.js';
 import {Vector} from './utils/Vector.js';
 
 export class GameSettings {

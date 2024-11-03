@@ -1,5 +1,5 @@
-import { Vector } from "../utils/Vector.js";
-import { HeightlessBackgroundObject } from "./HeightlessBackgroundObject.js";
+import {Vector} from "../utils/Vector.js";
+import {HeightlessBackgroundObject} from "./HeightlessBackgroundObject.js";
 
 class Skyscraper extends HeightlessBackgroundObject {
     static collectionCount: number = 100;

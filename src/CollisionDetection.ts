@@ -1,9 +1,8 @@
 import {DebugSettings} from './Settings.js';
 import {Vector} from './utils/Vector.js';
-import Ball from './ball/Ball.js';
-import { playerStats } from './player/PlayerStats.js';
-import { Segment, Terrain } from './terrain/Terrain.js';
-import { Level } from './level/Level.js';
+import {Ball} from './ball/Ball.js';
+import {Segment} from './terrain/Terrain.js';
+import {Level} from './level/Level.js';
 
 class CollisionDetection {
   constructor() {}
@@ -52,7 +51,18 @@ class CollisionDetection {
     const gripFactor = (surfaceGrip + surfaceGrip + ball.skills.getSkill("grip").currentValue) / 3;
 
     const surfaceElasticity = level.terrain.settings.surfaceElasticity;
-    const bounceFactor = (0.5 + ((surfaceElasticity + (1 - ball.skills.getSkill("shock-absorber").currentValue) + (1 - ball.skills.getSkill("shock-absorber").currentValue)) / 3) / 2)
+    const bounceFactor = (0.5 + ((surfaceElasticity + (1 - ball.skills.getSkill("shock-absorber").currentValue) + (1 - ball.skills.getSkill("shock-absorber").currentValue)) / 3) / 2);
+
+    const newBallPosition = point.add(reflectionVector.multiply(ball.attributes.radius));
+    const startVelocityMagnitude = ball.attributes.velocity.magnitude();
+    const ballDifferenceMagnitude = ball.position.subtract(newBallPosition).magnitude();
+    const remainingDistance = ballDifferenceMagnitude / startVelocityMagnitude;
+
+    ball.position = newBallPosition;
+    if(startVelocityMagnitude > 0) {
+      console.info(remainingDistance)
+      ball.attributes.remainingMovement = remainingDistance;
+    }
 
     this.resolveImpactAndRotation(ball, reflectionVector, bounceFactor, gripFactor);
     
@@ -74,4 +84,4 @@ class CollisionDetection {
 
 }
 
-export default CollisionDetection;
+export {CollisionDetection};

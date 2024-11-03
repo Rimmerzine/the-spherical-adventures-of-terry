@@ -1,5 +1,5 @@
-import { Vector } from "../utils/Vector.js";
-import TerrainSettings from "./TerrainSettings.js";
+import {Vector} from "../utils/Vector.js";
+import {TerrainSettings} from "./TerrainSettings.js";
 
 class Terrain {
     segments: Array<Segment>;
@@ -84,7 +84,7 @@ class Segment {
   }
 
   closestPointTo(point: Vector): Vector {
-    const numberOfPoints: number = Math.ceil(this.estimateLength());
+    const numberOfPoints: number = Math.ceil(this.estimateLength()) * 2;
 
     let closestPointAndDistance: { point: Vector, distance: number };
 

@@ -1,10 +1,10 @@
-import Ball from './ball/Ball.js';
+import {Ball} from './ball/Ball.js';
 import {Camera} from './Camera.js';
-import { Vector } from './utils/Vector.js';
-import { BackgroundObject } from './background/BackgroundObject.js';
-import { DebugSettings } from './Settings.js';
-import { Segment, Terrain } from './terrain/Terrain.js';
-import { CollectablePoint } from './level/Level.js';
+import {Vector} from './utils/Vector.js';
+import {BackgroundObject} from './background/BackgroundObject.js';
+import {DebugSettings} from './Settings.js';
+import {Segment, Terrain} from './terrain/Terrain.js';
+import {CollectablePoint} from './level/Level.js';
 
 class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -18,8 +18,8 @@ class CanvasRenderer {
   }
 
   drawFps(fps: number): void {
-    this.context.font = '50px arial';
-    this.context.strokeText(`${fps} fps`, 25, 60);
+    this.context.font = '24px arial';
+    this.context.strokeText(`${fps} fps`, 20, 35);
   }
 
   drawBall(ball: Ball) {
@@ -62,12 +62,12 @@ class CanvasRenderer {
     for (let i = 0; i < visibleTerrain.length; i++) {
       const currentSegment: Segment = visibleTerrain[i];
 
-      const visualX1: number = Math.floor(currentSegment.previousMidPoint.x - cameraCanvasOffsetX);
-      const visualY1: number = Math.floor(currentSegment.previousMidPoint.y - cameraCanvasOffsetY);
-      const cpx = Math.floor(currentSegment.position.x - cameraCanvasOffsetX);
-      const cpy = Math.floor(currentSegment.position.y - cameraCanvasOffsetY);
-      const visualX2: number = Math.floor(currentSegment.nextMidPoint.x - cameraCanvasOffsetX);
-      const visualY2: number = Math.floor(currentSegment.nextMidPoint.y - cameraCanvasOffsetY);
+      const visualX1: number = currentSegment.previousMidPoint.x - cameraCanvasOffsetX;
+      const visualY1: number = currentSegment.previousMidPoint.y - cameraCanvasOffsetY;
+      const cpx = currentSegment.position.x - cameraCanvasOffsetX;
+      const cpy = currentSegment.position.y - cameraCanvasOffsetY;
+      const visualX2: number = currentSegment.nextMidPoint.x - cameraCanvasOffsetX;
+      const visualY2: number = currentSegment.nextMidPoint.y - cameraCanvasOffsetY;
 
       this.context.moveTo(visualX1, visualY1);
       this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
@@ -135,7 +135,7 @@ class CanvasRenderer {
 
     for (let i = 0; i < visibleBackgroundObjects.length; i++) {
       const backgroundObject = visibleBackgroundObjects[i];
-      backgroundObject.draw(this.context, Math.floor(cameraCanvasOffsetX), Math.floor(cameraCanvasOffsetY));
+      backgroundObject.draw(this.context, cameraCanvasOffsetX, cameraCanvasOffsetY);
     }
   }
 
@@ -173,7 +173,7 @@ class CanvasRenderer {
 
     for (let i = 0; i < visibleCollectables.length; i++) {
       const collectable = visibleCollectables[i];
-      collectable.draw(this.context, Math.floor(cameraCanvasOffsetX), Math.floor(cameraCanvasOffsetY));
+      collectable.draw(this.context, cameraCanvasOffsetX, cameraCanvasOffsetY);
     }
   }
 
@@ -304,12 +304,12 @@ class CanvasRenderer {
       for (let i = 0; i < DebugSettings.collisionFloors.length; i++) {
         const currentSegment: Segment = DebugSettings.collisionFloors[i];
   
-        const visualX1: number = Math.floor(currentSegment.previousMidPoint.x - cameraCanvasOffsetX);
-        const visualY1: number = Math.floor(currentSegment.previousMidPoint.y - cameraCanvasOffsetY);
-        const cpx = Math.floor(currentSegment.position.x - cameraCanvasOffsetX);
-        const cpy = Math.floor(currentSegment.position.y - cameraCanvasOffsetY);
-        const visualX2: number = Math.floor(currentSegment.nextMidPoint.x - cameraCanvasOffsetX);
-        const visualY2: number = Math.floor(currentSegment.nextMidPoint.y - cameraCanvasOffsetY);
+        const visualX1: number = currentSegment.previousMidPoint.x - cameraCanvasOffsetX;
+        const visualY1: number = currentSegment.previousMidPoint.y - cameraCanvasOffsetY;
+        const cpx = currentSegment.position.x - cameraCanvasOffsetX;
+        const cpy = currentSegment.position.y - cameraCanvasOffsetY;
+        const visualX2: number = currentSegment.nextMidPoint.x - cameraCanvasOffsetX;
+        const visualY2: number = currentSegment.nextMidPoint.y - cameraCanvasOffsetY;
   
         this.context.moveTo(visualX1, visualY1);
         this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
@@ -340,4 +340,4 @@ class CanvasRenderer {
   }
 }
 
-export default CanvasRenderer;
+export {CanvasRenderer};

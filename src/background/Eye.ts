@@ -1,5 +1,5 @@
-import { Vector } from "../utils/Vector.js";
-import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
+import {Vector} from "../utils/Vector.js";
+import {BoundedBackgroundObject} from "./BoundedBackgroundObject.js";
 
 class Eye extends BoundedBackgroundObject {
     static collectionCount: number = 100;

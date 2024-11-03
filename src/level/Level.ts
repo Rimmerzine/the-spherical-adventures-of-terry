@@ -1,7 +1,7 @@
-import CanvasRenderer from "../CanvasRenderer.js";
-import { Terrain } from "../terrain/Terrain.js";
-import { BackgroundObject } from "../background/BackgroundObject.js";
-import { Vector } from "../utils/Vector.js";
+import {CanvasRenderer} from "../CanvasRenderer.js";
+import {Terrain} from "../terrain/Terrain.js";
+import {BackgroundObject} from "../background/BackgroundObject.js";
+import {Vector} from "../utils/Vector.js";
 
 class Level {
     name: string;

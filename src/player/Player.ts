@@ -1,5 +1,5 @@
-import Ball from "../ball/Ball.js";
-import { Vector } from "../utils/Vector.js";
+import {Ball} from "../ball/Ball.js";
+import {Vector} from "../utils/Vector.js";
 
 class Player {
     ball: Ball;

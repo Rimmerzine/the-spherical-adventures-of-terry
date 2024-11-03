@@ -57,5 +57,5 @@ class TerrainSettings {
     this.hasHoles = hasHoles;
   }
 }
-// Export the class as the default export
-export default TerrainSettings;
+
+export {TerrainSettings};

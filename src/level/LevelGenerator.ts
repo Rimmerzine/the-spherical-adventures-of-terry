@@ -1,7 +1,7 @@
 import { BackgroundObject } from "../background/BackgroundObject.js";
 import { Player } from "../player/Player.js";
 import { Segment } from "../terrain/Terrain.js";
-import TerrainManager from "../terrain/TerrainManager.js";
+import {TerrainManager} from "../terrain/TerrainManager.js";
 import { Vector } from "../utils/Vector.js";
 import { CollectablePoint, Level } from "./Level.js";
 import { LevelSettings } from "./LevelSettings.js";

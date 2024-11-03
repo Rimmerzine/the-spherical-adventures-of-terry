@@ -1,7 +1,7 @@
-import Ball from './ball/Ball.js';
-import { BallSkill } from './ball/BallSkills.js';
+import {Ball} from './ball/Ball.js';
+import {BallSkill} from './ball/BallSkills.js';
 import {GameManager} from './GameManager.js';
-import { playerStats } from './player/PlayerStats.js';
+import {playerStats} from './player/PlayerStats.js';
 
 class PressEvent {
   pressed: boolean;
@@ -186,4 +186,4 @@ class InputManager {
   }
 }
 
-export default InputManager;
+export {InputManager};
