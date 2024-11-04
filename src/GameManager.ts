@@ -118,7 +118,7 @@ class GameManager {
       ]
     );
 
-    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("tarmac"));
+    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("grasslands"));
   }
 
   resetLevel(level: string) {
