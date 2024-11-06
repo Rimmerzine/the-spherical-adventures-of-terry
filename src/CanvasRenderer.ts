@@ -94,9 +94,9 @@ class CanvasRenderer {
       this.context.lineTo(visualX1, visualY1);
       this.context.quadraticCurveTo(cpx, cpy, visualX2, visualY2);
       this.context.lineTo(visualX2, lowestY);
-      this.context.fill();
+      // this.context.fill();
 
-      this.context.fillRect(visualX1, lowestY, (visualX2 - visualX1), (canvasHeight - lowestY));
+      // this.context.fillRect(visualX1, lowestY, (visualX2 - visualX1), (canvasHeight - lowestY));
     }
   }
 
@@ -256,8 +256,6 @@ class CanvasRenderer {
     const cameraCanvasOffsetY: number = startPosition.y - canvasHeight / 2;
 
     const endPosition = ball.position.add(ball.attributes.velocity.multiply(0.25));
-
-    // console.warn(ball.attributes.velocity);
 
     this.context.beginPath();
     this.context.strokeStyle = 'green';

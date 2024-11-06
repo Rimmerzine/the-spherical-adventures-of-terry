@@ -7,7 +7,7 @@ export class GameSettings {
 }
 
 export class DebugSettings {
-  static debugMode = false;
+  static debugMode = true;
   static drawClosestCollisionPoint = true;
   static drawNormalisedDisplacementVector = true;
   static drawReflectionVector = true;

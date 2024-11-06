@@ -1,9 +1,43 @@
 import {Vector} from '../utils/Vector.js';
 import {Terrain} from './Terrain.js';
 import {TerrainSettings} from './TerrainSettings.js';
+import {Segment} from './Terrain.js';
 
 class TerrainManager {
   constructor() {}
+
+  generateManualTerrain(terrainSettings: TerrainSettings): Terrain {
+    const terrain: Terrain = new Terrain(terrainSettings);
+
+    // terrain.addManualSegment(new Segment(
+    //   new Vector(0, 0),
+    //   new Vector(-200, 0),
+    //   new Vector(200, 0),
+    // ))
+
+    terrain.addSegment(new Vector(0, 200));
+    terrain.addSegment(new Vector(400, 100));
+    terrain.addSegment(new Vector(400, -400))
+    terrain.addSegment(new Vector(0, -600))
+    terrain.addSegment(new Vector(-400, -400));
+    terrain.addSegment(new Vector(-400, 100));
+    terrain.addSegment(new Vector(0, 200));
+    // terrain.addSegment(new Vector(800, 0));
+    // terrain.addSegment(new Vector(1200, 0));
+    // terrain.addSegment(new Vector(1600, -200));
+    // terrain.addSegment(new Vector(1600, -400));
+    // terrain.addSegment(new Vector(1400, -600));
+    // terrain.addSegment(new Vector(1000, -600))
+
+    // terrain.addManualSegment(new Segment(new Vector(300, 0), new Vector(200, 0), new Vector(400, -100)));
+    // terrain.addManualSegment(new Segment(new Vector(500, -200), new Vector(400, -100), new Vector(400, -300)));
+
+    // terrain.addSegment(new Vector(400, -250));
+
+
+
+    return terrain;
+  }
   
   generateTerrain(terrainSettings: TerrainSettings): Terrain {
     const terrain: Terrain = new Terrain(terrainSettings)

@@ -3,6 +3,7 @@ import {Vector} from './utils/Vector.js';
 import {Ball} from './ball/Ball.js';
 import {Segment} from './terrain/Terrain.js';
 import {Level} from './level/Level.js';
+import {playerStats} from './player/PlayerStats.js';
 
 class CollisionDetection {
   constructor() {}
@@ -47,6 +48,8 @@ class CollisionDetection {
 
     // ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime));
 
+    playerStats.updateCollided(ball);
+
     const surfaceGrip = level.terrain.settings.surfaceGripCoefficient;
     const gripFactor = (surfaceGrip + surfaceGrip + ball.skills.getSkill("grip").currentValue) / 3;
 
@@ -60,7 +63,6 @@ class CollisionDetection {
 
     ball.position = newBallPosition;
     if(startVelocityMagnitude > 0) {
-      console.info(remainingDistance)
       ball.attributes.remainingMovement = remainingDistance;
     }
 

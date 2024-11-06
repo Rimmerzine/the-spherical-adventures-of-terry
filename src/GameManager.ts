@@ -30,6 +30,7 @@ class GameManager {
   levelSettings: Map<string, LevelSettings>;
   currentLevel: Level;
   player: Player;
+  lastFrame: number;
 
   constructor(canvas: HTMLCanvasElement) {
     this.player = new Player();
@@ -42,6 +43,7 @@ class GameManager {
     this.totalPoints = 0;
     this.requiredDelay = 0;
     this.lastTime = Date.now();
+    this.lastFrame = performance.now();
 
     const grasslandsLevelSettings: LevelSettings = new LevelSettings(
       "grasslands",
@@ -107,6 +109,14 @@ class GameManager {
       ]
     );
 
+    const experimentalLevelSettings: LevelSettings = new LevelSettings(
+      "experimental",
+      new TerrainSettings(400, 10, 0, 0, 0, 0, 0, 0, 0, 1, 0.25, "green", "brown", false),
+      "rgb(70, 120, 175)",
+      Gravity,
+      []
+    )
+
     this.levelSettings = new Map<string, LevelSettings>(
       [
         ["grasslands", grasslandsLevelSettings],
@@ -114,11 +124,12 @@ class GameManager {
         ["ice", iceLevelSettings],
         ["hell", hellLevelSettings],
         ["moon", moonLevelSettings],
-        ["holymoly", holyMolyLevelSettings]
+        ["holymoly", holyMolyLevelSettings],
+        ["experimental", experimentalLevelSettings],
       ]
     );
 
-    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("grasslands"));
+    this.currentLevel = this.levelGenerator.generateLevel(this.player, this.levelSettings.get("experimental"));
   }
 
   resetLevel(level: string) {
@@ -194,8 +205,12 @@ class GameManager {
 
   play() {
     window.requestAnimationFrame(() => {
-      this.manageFps();
-      this.draw();
+      
+      if(performance.now() > this.lastFrame) {
+        this.draw();
+        this.lastFrame = performance.now();
+        this.manageFps();
+      }
       this.update();
       this.play();
     });

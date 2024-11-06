@@ -14,19 +14,36 @@ class LevelGenerator {
     }
 
     generateLevel(player: Player, levelSettings: LevelSettings): Level {
-        const terrain = this.terrainManager.generateTerrain(levelSettings.terrainSettings);
-        const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings)
-        const levelPointsCollected: Array<Vector> = player.levelPointsCollected.get(levelSettings.name) || [];
-        const collectables = this.generateCollectablePoints(terrain.segments, levelPointsCollected)
-        
-        return new Level(
-            levelSettings.name,
-            terrain,
-            backgroundObjects,
-            collectables,
-            levelSettings.skyColour,
-            levelSettings.gravity
-        )
+        if(levelSettings.name === "experimental") {
+
+            const terrain = this.terrainManager.generateManualTerrain(levelSettings.terrainSettings);
+
+            return new Level(
+                levelSettings.name,
+                terrain,
+                [],
+                [],
+                levelSettings.skyColour,
+                levelSettings.gravity
+            )
+
+        } else {
+
+            const terrain = this.terrainManager.generateTerrain(levelSettings.terrainSettings);
+            const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings)
+            const levelPointsCollected: Array<Vector> = player.levelPointsCollected.get(levelSettings.name) || [];
+            const collectables = this.generateCollectablePoints(terrain.segments, levelPointsCollected)
+            
+            return new Level(
+                levelSettings.name,
+                terrain,
+                backgroundObjects,
+                collectables,
+                levelSettings.skyColour,
+                levelSettings.gravity
+            )
+
+        }
     }
 
     private generateCollectablePoints(segments: Array<Segment>, collectedPoints: Array<Vector>): Array<CollectablePoint> {

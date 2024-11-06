@@ -61,7 +61,7 @@ class InputManager {
   }
 
   attachLevelResetListeners() {
-    const levels = ['grasslands', 'tarmac', 'ice', 'hell', 'moon', 'holymoly'];
+    const levels = ['grasslands', 'tarmac', 'ice', 'hell', 'moon', 'holymoly', 'experimental'];
     levels.forEach(level =>
       document.getElementById(`reset-level-${level}`).addEventListener('click', () => this.resetLevel(level))
     );
@@ -155,30 +155,6 @@ class InputManager {
   touchEndHandler() {
     this.leftScreenTouch = false;
     this.rightScreenTouch = false;
-  }
-
-  resetLevelGrasslands() {
-    this.game.resetLevel('grasslands');
-  }
-
-  resetLevelTarmac() {
-    this.game.resetLevel('tarmac');
-  }
-
-  resetLevelIce() {
-    this.game.resetLevel('ice');
-  }
-
-  resetLevelHell() {
-    this.game.resetLevel('hell');
-  }
-
-  resetLevelMoon() {
-    this.game.resetLevel('moon');
-  }
-
-  resetLevelHolyMoly() {
-    this.game.resetLevel('holymoly');
   }
 
   resetLevel(level: string) {

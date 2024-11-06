@@ -25,6 +25,10 @@ class Terrain {
       this.segments.push(new Segment(position, previousMidPoint, nextMidPoint));
     }
 
+    addManualSegment(segment: Segment) {
+      this.segments.push(segment);
+    }
+
     private middleOf(position: Vector, position2: Vector) {
       return new Vector(
         (position.x + position2.x) / 2,
