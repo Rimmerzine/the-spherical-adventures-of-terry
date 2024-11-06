@@ -32,12 +32,20 @@ class Vector {
         }
     }
 
-    normal(): Vector {
-        return new Vector(-this.y, this.x).unit();
+    normal(clockwise: boolean = false): Vector {
+        if (clockwise) {
+            return new Vector(-this.y, this.x).unit();
+        } else {
+            return new Vector(this.y, -this.x).unit();
+        }
     }
 
     static dot(vectorOne: Vector, vectorTwo: Vector): number {
         return vectorOne.x * vectorTwo.x + vectorOne.y * vectorTwo.y;
+    }
+
+    static cross(vectorOne: Vector, vectorTwo: Vector): number {
+        return vectorOne.x * vectorTwo.y - vectorOne.y * vectorTwo.x;
     }
 }
 
