@@ -70,16 +70,48 @@ class CollisionDetection {
   }
 
   resolveImpactAndRotation(ball: Ball, reflectionUnitVector: Vector, elasticity: number, grip: number): void {
-    const seperatingVelocity = Vector.dot(ball.attributes.velocity, reflectionUnitVector);
-    const seperatingVelocityTotal = seperatingVelocity * 2 * elasticity;
-    const perpendicular = ball.attributes.velocity.subtract(reflectionUnitVector.multiply(Vector.dot(reflectionUnitVector, ball.attributes.velocity)));
-    const ballCircumference = ball.attributes.radius * Math.PI * 2;
-    const potentialMovement = (ballCircumference * ball.attributes.rotationsPerSecond + Math.sign(perpendicular.x) * perpendicular.magnitude()) / 2;
-    const movementGain = potentialMovement - Math.sign(perpendicular.x) * perpendicular.magnitude();
-    const perpendicularFaceVectorAddition = reflectionUnitVector.normal().multiply(movementGain).multiply(grip);
+    
+    // Calculate the component of the ball's velocity in the direction of the reflection vector
+    const velocityReflection = Vector.dot(ball.attributes.velocity, reflectionUnitVector);
+    
+    // Calculate the change in velocity due to the bounce, scaled by elasticity (bounciness factor).
+    const impactVelocityChange: Vector = reflectionUnitVector
+      .multiply(velocityReflection)
+      .multiply(2 * elasticity)
+      .multiply(-1);
 
-    ball.attributes.velocity = ball.attributes.velocity.add(reflectionUnitVector.multiply(-seperatingVelocityTotal)).add(perpendicularFaceVectorAddition);
-    ball.attributes.rotationsPerSecond += (potentialMovement / ballCircumference - ball.attributes.rotationsPerSecond) * grip;
+    // Calculate the ball's circumference, relating its radius to potential rotational speed.
+    const ballCircumference = ball.attributes.radius * Math.PI * 2;
+
+    // Find the velocity component perpendicular to the reflection vector, 
+    const perpendicular = ball.attributes.velocity.subtract(
+      reflectionUnitVector.multiply(velocityReflection)
+    );
+
+    // Determine the direction of the rotation normal based on current rotation,
+    const rotationNormal = reflectionUnitVector.normal(
+      ball.attributes.rotationsPerSecond >= 0
+    );
+
+    // Calculate the potential rotational velocity, based on current rotational speed and the ball's circumference, for a realistic rolling effect.
+    const potentialRotationalVelocity = rotationNormal
+      .multiply(ballCircumference * Math.abs(ball.attributes.rotationsPerSecond))
+      .add(perpendicular)
+      .multiply(0.5);
+
+    // Calculate the velocity adjustment from grip, which affects sliding vs. rolling.
+    const rotationalVelocityAddition = potentialRotationalVelocity
+      .subtract(perpendicular)
+      .multiply(grip);
+
+    // Update the ball's velocity with the impact and grip-influenced changes.
+    ball.attributes.velocity = ball.attributes.velocity
+      .add(impactVelocityChange)
+      .add(rotationalVelocityAddition);
+
+    // Adjust the ball's rotational speed to gradually align with its linear velocity.
+    ball.attributes.rotationsPerSecond += (Math.sign(Vector.cross(reflectionUnitVector, perpendicular)) * potentialRotationalVelocity.magnitude() / ballCircumference - ball.attributes.rotationsPerSecond) / 2;
+
   }
 
 }
