@@ -45,7 +45,7 @@ class CollisionDetection {
     
     DebugSettings.normalisedDisplacementVector = reflectionVector;
 
-    ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime));
+    // ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime));
 
     const surfaceGrip = level.terrain.settings.surfaceGripCoefficient;
     const gripFactor = (surfaceGrip + surfaceGrip + ball.skills.getSkill("grip").currentValue) / 3;
@@ -110,7 +110,7 @@ class CollisionDetection {
       .add(rotationalVelocityAddition);
 
     // Adjust the ball's rotational speed to gradually align with its linear velocity.
-    ball.attributes.rotationsPerSecond += (Math.sign(Vector.cross(reflectionUnitVector, perpendicular)) * potentialRotationalVelocity.magnitude() / ballCircumference - ball.attributes.rotationsPerSecond) / 2;
+    ball.attributes.rotationsPerSecond += ((Math.sign(Vector.cross(reflectionUnitVector, potentialRotationalVelocity)) * potentialRotationalVelocity.magnitude() / ballCircumference - ball.attributes.rotationsPerSecond) / 2) * grip;
 
   }
 
