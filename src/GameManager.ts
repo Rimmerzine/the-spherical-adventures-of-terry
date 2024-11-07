@@ -66,7 +66,7 @@ class GameManager {
 
     const iceLevelSettings: LevelSettings = new LevelSettings(
       "ice",
-      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0, 1, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
+      new TerrainSettings(300, 10, 1000, 100, -100, 1000, -1000, 200, 500, 0, 0.9, 'rgb(30, 130, 200)', 'rgb(50, 180, 255)'),
       "rgb(180, 225, 255)",
       Gravity,
       [
