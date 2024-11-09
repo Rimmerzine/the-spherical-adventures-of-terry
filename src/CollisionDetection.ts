@@ -48,7 +48,7 @@ class CollisionDetection {
     // ball.attributes.velocity.subtract(level.gravity.multiply(deltaTime));
 
     const surfaceGrip = level.terrain.settings.surfaceGripCoefficient;
-    const gripFactor = (surfaceGrip + surfaceGrip + ball.skills.getSkill("grip").currentValue) / 3;
+    const gripFactor = surfaceGrip * ball.skills.getSkill("grip").currentValue;
 
     const surfaceElasticity = level.terrain.settings.surfaceElasticity;
     const bounceFactor = (0.5 + ((surfaceElasticity + (1 - ball.skills.getSkill("shock-absorber").currentValue) + (1 - ball.skills.getSkill("shock-absorber").currentValue)) / 3) / 2);
