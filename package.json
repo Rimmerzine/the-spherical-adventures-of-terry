@@ -1,9 +1,11 @@
 {
   "devDependencies": {
-    "live-server": "1.2.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^7.3.1"
   },
   "scripts": {
-    "start": "live-server --port=5407"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   }
 }
