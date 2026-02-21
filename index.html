@@ -1,205 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"/>
-    <link rel="manifest" href="manifest.json" />
-    <style>
-      canvas {
-        display: block;
-      }
-      h1 {
-        user-select: none;
-      }
-      dt:first-child {
-        padding-top: 1em;
-      }
-      dt:not(:first-child) {
-        margin-top: 1em;
-        padding-top: 1em;
-        border-top: 1px gray solid;
-      }
-    </style>
-    <title>The Spherical Adventures of Terry</title>
-    <meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=no" />
-    <meta charset="utf-8" />
-    <meta name="theme-color" content="#ffff00" />
-  </head>
-  <body>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="statsOffcanvas" aria-labelledby="statsOffcanvasLabel">
-      <div class="offcanvas-header">
-        <h2 class="offcanvas-title" id="statsOffcanvasLabel">Stats</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body">
-        <dl>
-          <dt>Furthest distance reached</dt>
-          <dd><span id="furthest-distance-reached-stat">0</span> meters</dd>
-          <dt>Total distance travelled</dt>
-          <dd><span id="total-distance-travelled-stat">0</span> meters</dd>
-          <dt>Total number of jumps</dt>
-          <dd><span id="total-jumps-stat">0</span> jumps</dd>
-          <dt>Total points earnt</dt>
-          <dd><span id="total-points-earned-stat">0</span> points</dd>
-          <dt>Total points spent</dt>
-          <dd><span id="total-points-spent-stat">0</span> points</dd>
-          <dt>Total max RPS upgrades bought</dt>
-          <dd><span id="total-max-rps-upgrades-stat">0</span> upgrades</dd>
-          <dt>Total acceleration upgrades bought</dt>
-          <dd><span id="total-acceleration-upgrades-stat">0</span> upgrades</dd>
-          <dt>Total grip upgrades bought</dt>
-          <dd><span id="total-grip-upgrades-stat">0</span> upgrades</dd>
-          <dt>Total shock absorber upgrades bought</dt>
-          <dd><span id="total-shock-absorber-upgrades-stat">0</span> upgrades</dd>
-          <dt>Total jump upgrades bought</dt>
-          <dd><span id="total-jump-upgrades-stat">0</span> upgrades</dd>
-          <dt>Fastest speed achieved</dt>
-          <dd><span id="fastest-speed-achieved-stat">0</span> meters per second</dd>
-          <dt>Furthest jump achieved</dt>
-          <dd><span id="furthest-jump-achieved-stat">0</span> meters</dd>
-          <dt>Longest time spent mid-air</dt>
-          <dd><span id="longest-time-midair-stat">0</span> seconds</dd>
-          <dt>Total number of level resets</dt>
-          <dd><span id="total-level-resets-stat">0</span> resets</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="upgradesOffcanvas" aria-labelledby="upgradesOffcanvasLabel">
-      <div class="offcanvas-header">
-        <h2 class="offcanvas-title" id="upgradesOffcanvasLabel">Upgrades</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body">
-        <h3>Total points: <span id="total-points-attribute">0</span></h3>
-        <p class="text-secondary">Maximize your points by advancing as far as you can in each level, and then strategically reset. You'll earn points based on the distance you surpass from your previous attempt.</p>
-        <dl>
-          <dt>Acceleration</dt>
-          <dd class="text-secondary">How fast you can increase or decrease your speed.</dd>
-          <dd>
-            <span id="acceleration-attribute">0.5</span> Revolutions per second
-          </dd>
-          <dd class="d-grid">
-            <button id="upgrade-acceleration-button" type="button" class="btn btn-success">
-              Upgrade acceleration (<span id="upgrade-acceleration-cost">2</span> points)
-            </button>
-          </dd>
-          <dt>Maximum revolutions per second</dt>
-          <dd class="text-secondary">The maxiumum speed you can achieve manually.</dd>
-          <dd>
-            <span id="max-rps-attribute">1.0</span> Revolutions per second
-          </dd>
-          <dd class="d-grid">
-            <button id="upgrade-max-rps-button" type="button" class="btn btn-success">
-              Upgrade maximum RPS (<span id="upgrade-max-rps-cost">2</span> points)
-            </button>
-          </dd>
-          <dt>Grip</dt>
-          <dd class="text-secondary">How much rotational force is converted into movement.</dd>
-          <dd>
-            <span id="grip-attribute">0.1</span>
-          </dd>
-          <dd class="d-grid">
-            <button id="upgrade-grip-button" type="button" class="btn btn-success">
-              Upgrade Grip (<span id="upgrade-grip-cost">2</span> points)
-            </button>
-          </dd>
-          <dt>Shock Absorber</dt>
-          <dd class="text-secondary">Decreases how much you bounce when you impact a surface.</dd>
-          <dd>
-            <span id="shock-absorber-attribute">0.1</span>
-          </dd>
-          <dd class="d-grid">
-            <button id="upgrade-shock-absorber-button" type="button" class="btn btn-success">
-              Upgrade Shock Absorber (<span id="upgrade-shock-absorber-cost">2</span> points)
-            </button>
-          </dd>
-          <dt>Jumps</dt>
-          <dd class="text-secondary">The number of times you can jump before landing.</dd>
-          <dd>
-            <span id="jumps-attribute">0</span> Jumps
-          </dd>
-          <dd class="d-grid">
-            <button id="upgrade-jumps-button" type="button" class="btn btn-success">
-              Upgrade Jumps (<span id="upgrade-jumps-cost">10</span> points)
-            </button>
-          </dd>
-          <br>
-          <br>
-          <br>
-          <dt>Secret (Do not use)</dt>
-          <dd class="text-secondary">Testing only</dd>
-          <dd class="d-grid">
-            <button id="upgrade-feed-button" type="button" class="btn btn-success">
-              Feed Terry
-            </button>
-          </dd>
-          <dd class="d-grid">
-            <button id="upgrade-burp-button" type="button" class="btn btn-success">
-              Burp Terry
-            </button>
-          </dd>
-          <dd class="d-grid">
-            <button id="add-free-points" type="button" class="btn btn-success">
-              Add 5 points
-            </button>
-          </dd>
-        </dl>
-      </div>
-    </div>
-    <nav id="navbar" class="navbar bg-dark navbar-solid" data-bs-theme="dark">
-      <div class="container-fluid">
-        <span class="navbar-text"><h1>The Spherical Adventures of Terry</h1></span>
-        <div class="d-flex">
-          <!-- <button class="btn btn-primary me-4" type="button" id="reset-level-grasslands">
-            Reset Level
-          </button> -->
-          <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle me-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Reset Level
-            </button>
-            <ul class="dropdown-menu">
-              <li>
-                <button class="dropdown-item" id="reset-level-grasslands">
-                  Grasslands (Normal)
-                </button>
-              </li>
-              <li>
-                <button class="dropdown-item" id="reset-level-tarmac">
-                  Tarmac (maximum surface grip)
-                </button>
-              </li>
-              <li>
-                <button class="dropdown-item" id="reset-level-ice">
-                  Ice (very low surface grip)
-                </button>
-              </li>
-              <li>
-                <button class="dropdown-item" id="reset-level-hell">
-                  Hell (experimental, zero bounce)
-                </button>
-              </li>
-              <li>
-                <button class="dropdown-item" id="reset-level-moon">
-                  Moon (Low gravity)
-                </button>
-              </li>
-              <li>
-                <button class="dropdown-item" id="reset-level-holymoly">
-                  Holy Moly (New feature: holes)
-                </button>
-              </li>
-            </ul>
-          </div>
-          <button class="btn btn-primary me-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#statsOffcanvas" aria-controls="statsOffcanvas">
-            Stats
-          </button>
-          <button class="btn btn-primary me-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#upgradesOffcanvas" aria-controls="upgradesOffcanvas">
-            Upgrades
-          </button>
-        </div>
-      </div>
-    </nav>
-    <canvas style="transform:translateZ(0);" id="canvas"></canvas>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script type="module" src="/src/index.ts"></script>
-  </body>
+    <head>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <link rel="manifest" href="manifest.json" />
+        <style>
+            canvas {
+                display: block;
+            }
+            h1 {
+                user-select: none;
+            }
+            dt:first-child {
+                padding-top: 1em;
+            }
+            dt:not(:first-child) {
+                margin-top: 1em;
+                padding-top: 1em;
+                border-top: 1px gray solid;
+            }
+        </style>
+        <title>The Spherical Adventures of Terry</title>
+        <meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=no" />
+        <meta charset="utf-8" />
+        <meta name="theme-color" content="#ffff00" />
+    </head>
+    <body>
+        <nav id="navbar" class="navbar bg-dark navbar-solid" data-bs-theme="dark">
+            <div class="container-fluid">
+                <span class="navbar-text"><h1>The Spherical Adventures of Terry</h1></span>
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle me-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reset Level</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button class="dropdown-item" id="reset-level-grasslands">Grasslands (Normal)</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" id="reset-level-tarmac">Tarmac (maximum surface grip)</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" id="reset-level-ice">Ice (very low surface grip)</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" id="reset-level-hell">Hell (experimental, zero bounce)</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" id="reset-level-moon">Moon (Low gravity)</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" id="reset-level-holymoly">Holy Moly (New feature: holes)</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <canvas style="transform: translateZ(0)" id="canvas"></canvas>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"
+        ></script>
+        <script type="module" src="/src/index.ts"></script>
+    </body>
 </html>

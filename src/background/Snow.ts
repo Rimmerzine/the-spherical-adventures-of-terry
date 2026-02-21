@@ -1,5 +1,5 @@
-import {Vector} from "../utils/Vector.js";
-import {BoundedBackgroundObject} from "./BoundedBackgroundObject.js";
+import { Vector } from "../utils/Vector.js";
+import { BoundedBackgroundObject } from "./BoundedBackgroundObject.js";
 
 class Snow extends BoundedBackgroundObject {
     static collectionCount: number = 100;
@@ -19,7 +19,7 @@ class Snow extends BoundedBackgroundObject {
         this.context.beginPath();
         this.context.arc(this.width / 2, this.height / 2, this.height, 0, 2 * Math.PI);
         this.context.fill();
-    
+
         this.context.strokeStyle = "white";
         this.context.beginPath();
         this.context.moveTo(this.width / 2, 0);
@@ -30,25 +30,25 @@ class Snow extends BoundedBackgroundObject {
         this.context.moveTo(this.width / 2, this.height / 4);
         this.context.lineTo(this.width / 4, this.height / 8);
         this.context.moveTo(this.width / 2, this.height / 4);
-        this.context.lineTo(this.width * 3 / 4, this.height / 8);
+        this.context.lineTo((this.width * 3) / 4, this.height / 8);
 
-        this.context.moveTo(this.width / 2, this.height * 3 / 4);
-        this.context.lineTo(this.width / 4, this.height * 7 / 8);
-        this.context.moveTo(this.width / 2, this.height * 3 / 4);
-        this.context.lineTo(this.width * 3 / 4, this.height * 7 / 8);
+        this.context.moveTo(this.width / 2, (this.height * 3) / 4);
+        this.context.lineTo(this.width / 4, (this.height * 7) / 8);
+        this.context.moveTo(this.width / 2, (this.height * 3) / 4);
+        this.context.lineTo((this.width * 3) / 4, (this.height * 7) / 8);
 
         this.context.moveTo(this.width / 4, this.height / 2);
         this.context.lineTo(this.width / 8, this.height / 4);
         this.context.moveTo(this.width / 4, this.height / 2);
-        this.context.lineTo(this.width / 8, this.height * 3 / 4);
+        this.context.lineTo(this.width / 8, (this.height * 3) / 4);
 
-        this.context.moveTo(this.width * 3 / 4, this.height / 2);
-        this.context.lineTo(this.width * 7 / 8, this.height / 4);
-        this.context.moveTo(this.width * 3 / 4, this.height / 2);
-        this.context.lineTo(this.width * 7 / 8, this.height * 3 / 4);
-        
+        this.context.moveTo((this.width * 3) / 4, this.height / 2);
+        this.context.lineTo((this.width * 7) / 8, this.height / 4);
+        this.context.moveTo((this.width * 3) / 4, this.height / 2);
+        this.context.lineTo((this.width * 7) / 8, (this.height * 3) / 4);
+
         this.context.stroke();
     }
 }
 
-export {Snow}
+export { Snow };
