@@ -1,5 +1,5 @@
-import {Vector} from "../utils/Vector.js";
-import {BackgroundObject} from "./BackgroundObject.js";
+import { Vector } from "../utils/Vector.js";
+import { BackgroundObject } from "./BackgroundObject.js";
 
 abstract class BoundedBackgroundObject extends BackgroundObject {
     constructor(position: Vector, width: number, height: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
@@ -11,4 +11,4 @@ abstract class BoundedBackgroundObject extends BackgroundObject {
     }
 }
 
-export {BoundedBackgroundObject};
+export { BoundedBackgroundObject };

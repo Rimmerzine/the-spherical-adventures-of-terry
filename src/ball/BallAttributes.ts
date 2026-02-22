@@ -1,26 +1,21 @@
-import {Vector} from '../utils/Vector.js';
+import { Vector } from "../utils/Vector.js";
 
 class BallAttributes {
-  startingPosition: Vector;
-  radius: number;
-  colour: string;
-  velocity: Vector = new Vector(0, 0);
-  remainingMovement: number = 1.0;
-  jumpVelocity: Vector;
-  rotation = 0;
-  rotationsPerSecond = 0;
+    startingPosition: Vector;
+    radius: number;
+    colour: string;
+    velocity: Vector = new Vector(0, 0);
+    remainingMovement: number = 1.0;
+    jumpVelocity: Vector;
+    rotation = 0;
+    rotationsPerSecond = 0;
 
-  constructor(
-    position: Vector,
-    radius: number,
-    colour: string,
-    jumpVelocity: Vector
-  ) {
-    this.startingPosition = position;
-    this.radius = radius;
-    this.colour = colour;
-    this.jumpVelocity = jumpVelocity;
-  }
+    constructor(position: Vector, radius: number, colour: string, jumpVelocity: Vector) {
+        this.startingPosition = position;
+        this.radius = radius;
+        this.colour = colour;
+        this.jumpVelocity = jumpVelocity;
+    }
 }
 
-export {BallAttributes};
+export { BallAttributes };

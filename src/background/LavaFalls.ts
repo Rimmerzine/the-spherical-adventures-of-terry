@@ -1,5 +1,5 @@
-import {Vector} from "../utils/Vector.js";
-import {HeightlessBackgroundObject} from "./HeightlessBackgroundObject.js";
+import { Vector } from "../utils/Vector.js";
+import { HeightlessBackgroundObject } from "./HeightlessBackgroundObject.js";
 
 class LavaFalls extends HeightlessBackgroundObject {
     static collectionCount: number = 100;
@@ -14,7 +14,7 @@ class LavaFalls extends HeightlessBackgroundObject {
         this.canvas.height = 1500;
         this.height = 1500;
         this.context.strokeStyle = "#ff8000";
-        this.context.fillStyle = "#c2570a"
+        this.context.fillStyle = "#c2570a";
         this.context.lineWidth = 11;
 
         this.context.beginPath();
@@ -28,4 +28,4 @@ class LavaFalls extends HeightlessBackgroundObject {
     }
 }
 
-export {LavaFalls}
+export { LavaFalls };

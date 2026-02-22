@@ -1,5 +1,5 @@
-import {Vector} from "../utils/Vector.js";
-import {HeightlessBackgroundObject} from "./HeightlessBackgroundObject.js";
+import { Vector } from "../utils/Vector.js";
+import { HeightlessBackgroundObject } from "./HeightlessBackgroundObject.js";
 
 class Skyscraper extends HeightlessBackgroundObject {
     static collectionCount: number = 100;
@@ -15,7 +15,7 @@ class Skyscraper extends HeightlessBackgroundObject {
         this.canvas.height = 1500;
         this.height = 1500;
         this.context.strokeStyle = "#222222";
-        this.context.fillStyle = "#333333"
+        this.context.fillStyle = "#333333";
         this.context.lineWidth = 11;
 
         this.context.beginPath();
@@ -26,7 +26,7 @@ class Skyscraper extends HeightlessBackgroundObject {
         this.context.moveTo(this.width, 0);
         this.context.lineTo(this.width, this.height);
         this.context.stroke();
-        
+
         const edgeBuffer: number = 50;
         let windowSizeX: number = 150;
         let possibleWindowCountX: number = 0;
@@ -45,15 +45,20 @@ class Skyscraper extends HeightlessBackgroundObject {
 
         const windowSizeY: number = 250;
 
-        for(let i = 0; i < possibleWindowCountX; i++) {
-            for(let j = 0; j < 6; j++) {
-                if(Math.floor(Math.random() * 2) === 0) {
+        for (let i = 0; i < possibleWindowCountX; i++) {
+            for (let j = 0; j < 6; j++) {
+                if (Math.floor(Math.random() * 2) === 0) {
                     this.context.fillStyle = "#999966";
                 } else {
                     this.context.fillStyle = "#111111";
                 }
                 this.context.beginPath();
-                this.context.rect(edgeBuffer + i * (windowSizeX + edgeBuffer), edgeBuffer + j * (windowSizeY + edgeBuffer), windowSizeX, windowSizeY - edgeBuffer);
+                this.context.rect(
+                    edgeBuffer + i * (windowSizeX + edgeBuffer),
+                    edgeBuffer + j * (windowSizeY + edgeBuffer),
+                    windowSizeX,
+                    windowSizeY - edgeBuffer,
+                );
                 this.context.fill();
                 this.context.stroke();
             }
@@ -61,4 +66,4 @@ class Skyscraper extends HeightlessBackgroundObject {
     }
 }
 
-export {Skyscraper}
+export { Skyscraper };

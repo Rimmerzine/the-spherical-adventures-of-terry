@@ -1,7 +1,7 @@
 import { BackgroundObject } from "../background/BackgroundObject.js";
 import { Player } from "../player/Player.js";
 import { Segment } from "../terrain/Terrain.js";
-import {TerrainManager} from "../terrain/TerrainManager.js";
+import { TerrainManager } from "../terrain/TerrainManager.js";
 import { Vector } from "../utils/Vector.js";
 import { CollectablePoint, Level } from "./Level.js";
 import { LevelSettings } from "./LevelSettings.js";
@@ -15,28 +15,21 @@ class LevelGenerator {
 
     generateLevel(player: Player, levelSettings: LevelSettings): Level {
         const terrain = this.terrainManager.generateTerrain(levelSettings.terrainSettings);
-        const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings)
+        const backgroundObjects: Array<BackgroundObject> = this.generateBackgroundObjects(levelSettings);
         const levelPointsCollected: Array<Vector> = player.levelPointsCollected.get(levelSettings.name) || [];
-        const collectables = this.generateCollectablePoints(terrain.segments, levelPointsCollected)
-        
-        return new Level(
-            levelSettings.name,
-            terrain,
-            backgroundObjects,
-            collectables,
-            levelSettings.skyColour,
-            levelSettings.gravity
-        )
+        const collectables = this.generateCollectablePoints(terrain.segments, levelPointsCollected);
+
+        return new Level(levelSettings.name, terrain, backgroundObjects, collectables, levelSettings.skyColour, levelSettings.gravity);
     }
 
     private generateCollectablePoints(segments: Array<Segment>, collectedPoints: Array<Vector>): Array<CollectablePoint> {
         const collectables: Array<CollectablePoint> = [];
 
-        for(let i = 21; i < segments.length; i+= 20) {
+        for (let i = 21; i < segments.length; i += 20) {
             const segment: Segment = segments[i];
             const collectablePosition = segment.nextMidPoint.add(new Vector(0, -100));
-            
-            if(collectedPoints.find(position => collectablePosition.x === position.x)) {
+
+            if (collectedPoints.find((position) => collectablePosition.x === position.x)) {
                 collectables.push(new CollectablePoint(collectablePosition, true));
             } else {
                 collectables.push(new CollectablePoint(collectablePosition, false));
@@ -51,23 +44,22 @@ class LevelGenerator {
         const curveCount = levelSettings.terrainSettings.curveCount;
         const segmentWidth = levelSettings.terrainSettings.segmentWidth;
 
-        for(let j = 0; j < levelSettings.backgroundObjectsCreation.length; j++) {
+        for (let j = 0; j < levelSettings.backgroundObjectsCreation.length; j++) {
             const density = levelSettings.backgroundObjectsCreation[j].density;
-        
+
             for (let i = -20 * density; i <= curveCount * density + 20 * density; i++) {
                 //   const xRange: number = Math.random() * 500 - 250;
                 const yRange: number = -Math.random() * 10000 + 1000;
 
-                const position = new Vector(i * segmentWidth / density, yRange)
+                const position = new Vector((i * segmentWidth) / density, yRange);
                 const backgroundObject = levelSettings.backgroundObjectsCreation[j].create(position);
-            
+
                 backgroundObjects.push(backgroundObject);
             }
         }
-    
-        return backgroundObjects;
-      }
 
+        return backgroundObjects;
+    }
 }
 
-export {LevelGenerator}
+export { LevelGenerator };

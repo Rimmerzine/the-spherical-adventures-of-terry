@@ -1,10 +1,10 @@
-import {BackgroundObject} from "../background/BackgroundObject.js";
-import {TerrainSettings} from "../terrain/TerrainSettings.js";
-import {Vector} from "../utils/Vector.js";
+import { BackgroundObject } from "../background/BackgroundObject.js";
+import { TerrainSettings } from "../terrain/TerrainSettings.js";
+import { Vector } from "../utils/Vector.js";
 
 class LevelSettings {
     name: string;
-    terrainSettings: TerrainSettings
+    terrainSettings: TerrainSettings;
     skyColour: string;
     gravity: Vector;
     backgroundObjectsCreation: Array<BackgroundObjectCreationSettings>;
@@ -14,7 +14,7 @@ class LevelSettings {
         terrainSettings: TerrainSettings,
         skyColour: string,
         gravity: Vector,
-        backgroundObjectCreation: Array<BackgroundObjectCreationSettings>
+        backgroundObjectCreation: Array<BackgroundObjectCreationSettings>,
     ) {
         this.name = name;
         this.terrainSettings = terrainSettings;
@@ -24,7 +24,7 @@ class LevelSettings {
     }
 }
 
-export {LevelSettings}
+export { LevelSettings };
 
 class BackgroundObjectCreationSettings {
     create: (position: Vector) => BackgroundObject;
@@ -36,4 +36,4 @@ class BackgroundObjectCreationSettings {
     }
 }
 
-export {BackgroundObjectCreationSettings}
+export { BackgroundObjectCreationSettings };

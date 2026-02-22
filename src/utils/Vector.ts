@@ -40,12 +40,12 @@ class Vector {
         }
     }
 
-    static dot(vectorOne: Vector, vectorTwo: Vector): number {
-        return vectorOne.x * vectorTwo.x + vectorOne.y * vectorTwo.y;
+    dot(vector: Vector): number {
+        return this.x * vector.x + this.y * vector.y
     }
 
-    static cross(vectorOne: Vector, vectorTwo: Vector): number {
-        return vectorOne.x * vectorTwo.y - vectorOne.y * vectorTwo.x;
+    cross(vector: Vector): number {
+        return this.x * vector.y - this.y * vector.x
     }
 }
 

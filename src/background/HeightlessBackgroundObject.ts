@@ -1,5 +1,5 @@
-import {Vector} from "../utils/Vector.js";
-import {BackgroundObject} from "./BackgroundObject.js";
+import { Vector } from "../utils/Vector.js";
+import { BackgroundObject } from "./BackgroundObject.js";
 
 abstract class HeightlessBackgroundObject extends BackgroundObject {
     constructor(xPosition: number, width: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
@@ -7,11 +7,15 @@ abstract class HeightlessBackgroundObject extends BackgroundObject {
     }
 
     draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void {
-        const sideCount: number = Math.ceil(((context.canvas.height - this.height) / 2) / this.height);
-        for(let i = -sideCount - 2; i <= sideCount; i++) {
-            context.drawImage(this.canvas, this.position.x - cameraOffsetX - this.width / 2, context.canvas.height / 2 - (cameraOffsetY % this.height) + this.height * i);
+        const sideCount: number = Math.ceil((context.canvas.height - this.height) / 2 / this.height);
+        for (let i = -sideCount - 2; i <= sideCount; i++) {
+            context.drawImage(
+                this.canvas,
+                this.position.x - cameraOffsetX - this.width / 2,
+                context.canvas.height / 2 - (cameraOffsetY % this.height) + this.height * i,
+            );
         }
     }
 }
 
-export {HeightlessBackgroundObject};
+export { HeightlessBackgroundObject };

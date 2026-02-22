@@ -1,5 +1,5 @@
-import {Ball} from "../ball/Ball.js";
-import {Vector} from "../utils/Vector.js";
+import { Ball } from "../ball/Ball.js";
+import { Vector } from "../utils/Vector.js";
 
 class Player {
     ball: Ball;
@@ -11,7 +11,7 @@ class Player {
     }
 
     collectPoint(level: string, point: Vector) {
-        if(this.levelPointsCollected.has(level)) {
+        if (this.levelPointsCollected.has(level)) {
             this.levelPointsCollected.get(level).push(point);
         } else {
             this.levelPointsCollected.set(level, [point]);
@@ -19,4 +19,4 @@ class Player {
     }
 }
 
-export {Player}
+export { Player };

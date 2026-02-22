@@ -1,4 +1,4 @@
-import {Vector} from "../utils/Vector.js";
+import { Vector } from "../utils/Vector.js";
 
 abstract class BackgroundObject {
     type: string;
@@ -10,16 +10,17 @@ abstract class BackgroundObject {
 
     constructor(type: string, position: Vector, canvasWidth: number, canvasHeight: number, collection: Array<HTMLCanvasElement>, collectionCount: number) {
         this.position = position;
+        this.type = type;
 
         if (collection.length < collectionCount) {
             this.width = canvasWidth;
             this.height = canvasHeight;
 
-            this.canvas = document.createElement('canvas');
+            this.canvas = document.createElement("canvas");
             this.canvas.width = this.width;
             this.canvas.height = this.height;
 
-            this.context = this.canvas.getContext('2d');
+            this.context = this.canvas.getContext("2d");
 
             this.drawCanvas();
 
@@ -36,4 +37,4 @@ abstract class BackgroundObject {
     abstract draw(context: CanvasRenderingContext2D, cameraOffsetX: number, cameraOffsetY: number): void;
 }
 
-export {BackgroundObject};
+export { BackgroundObject };
